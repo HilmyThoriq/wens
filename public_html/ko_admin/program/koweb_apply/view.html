@@ -1,0 +1,56 @@
+<?
+if(!$no){
+	$limit_query = "SELECT * FROM  koweb_event_info WHERE state='Y' ORDER BY sort DESC LIMIT 1";
+	$limit_result = mysql_query($limit_query);
+	$limit_row = mysql_fetch_array($limit_result);
+	$no = $limit_row[no];
+} 
+$query = "SELECT * FROM koweb_event_info WHERE no='$no'";
+$result = mysql_query($query);
+$row = mysql_fetch_array($result);
+$event_item = explode("|", $row[event_item]);
+$event_item_1 = explode("^", $event_item[0]);
+$event_item_2 = explode("^", $event_item[1]);
+?>
+
+<!-- menu on -->
+<script type="text/javascript">
+	$("#"+"<?=$no?>").addClass("active");
+</script>
+
+
+<h3><? if($apply){ ?>신청<? } else { ?>박람회소개<? } ?></h3>
+<? if($apply){ ?><span>Apply for free viewing</span><? } else { ?><span>Show introduction</span><? } ?>
+
+<!-- 내용 -->
+<div>	
+	<h4><?=$row[event_title]?></h4>
+	<p><?=$row[event_contents2]?></p>
+
+	<table class="table scroll">
+		<caption>전시품목</caption>
+		<colgroup>
+			<col style="width:18%">
+		</colgroup>
+		<tbody>
+			<tr>
+				<td class="tac">
+					<img src="/upload/program/<?=$program_id?>/<?=$row[event_poster]?>">
+				</td>
+				<td>
+					<ul>
+					<? for($i = 0; $i < count($event_item_1); $i++){ ?>
+						<li><strong><?=$event_item_1[$i]?></strong> : <?=$event_item_2[$i]?></li>
+					<? } ?>
+					</ul>
+				</td>
+				<td class="tac">
+					<? if($apply){ ?><a href="./program.html?program_id=koweb_event_info&amp;mode=apply_write&amp;no=<?=$row[no]?>"><img src="../../images/content/img_fair02.jpg"></a><? } ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h4>전시품목</h4>
+	<?=$row[event_contents1]?>
+</div>

@@ -1,0 +1,51 @@
+
+<div class="join_area">
+	<div class="box join">
+		<p class="title">Enter Member Info</p>
+		<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+		<input type="hidden" name="mode" value="login_proc" />
+		<input type="hidden" name="return_url" value="<?=$return_url?>" />
+			<ul class="designValue">
+				<li data-member-login="id" data-member-form="id">
+					<label for="id">Account</label>
+					<input type="text" id="id" name="id" class="inputFull required" title="아이디" />
+				</li>
+				<li data-member-login="pw" data-member-form="pw1">
+					<label for="password">Passwrod</label>
+					<input type="password" id="password" name="password" class="inputFull required" title="비밀번호" />
+				</li>
+			</ul>
+
+			<input type="submit" value="Login" class="btn_login"/>
+			<!-- <? if($site[use_naver_login] == "Y" || $site[use_kakao_login] == "Y"){ ?>
+			<div class="login_social">
+				<? if($site[use_naver_login] == "Y"){
+					// 네이버 로그인 접근토큰 요청
+					$naver_state = md5(microtime() . mt_rand());
+					$_SESSION['naver_state'] = $naver_state;
+					$naver_apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=".NAVER_CLIENT_ID."&redirect_uri=".urlencode(NAVER_CALLBACK_URL)."&state=".$naver_state;
+				?>
+				<a href="<?=$naver_apiURL?>" class="btn_login_naver">네이버 아이디로 로그인</a>
+				<? } ?>
+			
+				<? if($site[use_kakao_login] == "Y"){
+					// 카카오 로그인 접근토큰 요청
+					$kakao_state = md5(microtime() . mt_rand());
+					$_SESSION['kakao_state'] = $kakao_state;
+					$kakao_apiURL = "https://kauth.kakao.com/oauth/authorize?client_id=".KAKAO_CLIENT_ID."&redirect_uri=".KAKAO_CALLBACK_URL."&response_type=code&state=".$kakao_state;
+				?>
+				<a href="<?=$kakao_apiURL?>" class="btn_login_kakao">카카오계정으로 로그인</a>
+				<? } ?>
+			</div>
+			<? } ?> -->
+
+		</form>
+	</div>
+	<!-- 버튼 -->
+	<div class="btn_area social">
+		<!-- <a href="<?=$PHP_SELF?>?mode=agree">회원가입</a> -->
+		<a href="<?=$PHP_SELF?>?mode=find_id">Find Account</a>
+		<a href="<?=$PHP_SELF?>?mode=find_pw">Find Password</a>
+	</div>
+	<!-- //버튼 -->
+</div>

@@ -1,0 +1,30 @@
+<? include  "../head.php"; ?>
+		<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>홈페이지 통합관리자</title>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/layout.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/board.css"/>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<? if ((!$type && !$core) || ($type == "dashboard" && $core == "dashboard")) { ?>
+			<link rel="stylesheet" type="text/css" href="/ko_admin/css/main.css"/>
+		<? } ?>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/js/jquery.scrollbar.css"/>
+		<script type="text/javascript" src="/ko_admin/js/jquery-1.12.2.min.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/jquery.scrollbar.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/custom.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/content.css"/>
+	</head>
+	<body>
+		<div id="wrap">		
+					<?	
+						include_once $_SERVER['DOCUMENT_ROOT'] . "/program/program.php";
+					?>
+			</div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin">
+            <div class="adminCont">
+                
+                <!-- Patents list -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+                <div class="area_formTop">
+                    <div class="formTab typeB">
+                        <ul>
+                            <li class="on">
+                                <a href="">전체</a>
+                            </li>
+                            <li>
+                                <a href="">Filed​</a>
+                            </li>
+                            <li>
+                                <a href="">Registered​</a>
+                            </li>
+                                                    
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="area_formConts">
+                    <div class="area_btn">
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>선택삭제</button>
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>전체삭제</button>
+                    </div>
+                    
+                    <!-- 목록 -->
+                    <table class="bbsList form_patent">
+                        <caption>acknowledgement 목록</caption>
+                        <colgroup>
+                            <col data-table="check" style="width: 5%"/>
+                            <col data-table="category" style="width: 10%"/>
+                            <col data-table="title"/>
+                            <col data-table="pantentNo"/>
+                            <col data-table="applicationNo"/>
+                            <col data-table="status​"/>
+                            <col data-table="acknowledgement 네임"/>
+                            <col data-table="download"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" data-table="category">카테고리</th>
+                                <th scopt="col" data-table="pantentNo">Patent Number​</th>
+                                <th scopt="col" data-table="applicationNo">Application Number​</th>
+                                <th scopt="col" data-table="status​">status​​</th>
+                                <th scopt="col" data-table="acknowledgement">Acknowledgement 네임</th>
+                                <th scopt="col" data-table="download">Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <!-- 반복구간 -->
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="category"></td>
+                                <td data-table="pantentNo"></td>
+                                <td data-table="applicationNo"></td>
+                                <td data-table="status"></td>
+                                <td data-table="acknowledgement"></td>
+                                <td data-table="download">
+                                    <!-- 현페이지에서 다운로드 할 경우, 첨부된 파일이 압축되어 알집으로 다운 -->
+                                    <a href="" downdload><i class="fa-solid fa-file-arrow-down"></i></a>
+                                </td>
+                            </tr>
+                            <!-- 반복구간 끝 -->
+                           
+                            <tr>
+                                <td colspan="7" class="none">등록된 글이 없습니다.</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+
+                    <!-- 버튼 -->
+                    <div class="search_bbs">
+                        <!-- 버튼 -->
+                        <div class="btn">
+                            <a href="#" class="button"><span>글쓰기</span></a>
+                        </div>
+                    <!-- //버튼 -->
+                    </div>
+
+                    <!-- page -->
+                    <div class="pagination">
+                        <div class="page_control_prev">
+                            <a href="#" class="btn_end first">맨처음</a>
+                            <a href="#" class="btn_pager prev">이전</a>
+                        </div>		
+                        <ol>
+                            <li><a href="">1</a></li>
+                            <!-- 현재페이지일때 on -->
+                            <li class="on"><a href="">2</a></li>
+                            <li><a href="">3</a></li>
+                            <li><a href="">4</a></li>
+                            <li><a href="">5</a></li>
+                        </ol>
+                        <div class="page_control_next">
+                            <a href="#" class="btn_pager next">다음</a>
+                            <a href="#" class="btn_end last">맨마지막</a>			
+                        </div>			
+                    </div>
+                </div>
+
+              
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

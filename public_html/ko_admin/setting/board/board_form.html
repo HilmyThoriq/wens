@@ -1,0 +1,448 @@
+<? if($mode == "modify"){
+	$query = "SELECT * FROM koweb_board_config WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$tmp_id = explode("_", $row[id]);
+	$row[id] = $tmp_id[1];
+	$category = explode("|", $row[category_detail]);
+	$dept_auth_tmp = explode("|", $row[dept_auth]);
+
+}
+if($copy){
+	$query = "SELECT * FROM koweb_board_config WHERE id='$copy'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$category = explode("|", $row[category_detail]);
+	$dept_auth_tmp = explode("|", $row[dept_auth]);
+	$row['id'] = "";
+	$row['title'] = "";
+}
+
+if(!$mode){
+	$mode = "write";
+}
+
+if($mode == "write"){
+	$copy_query = "SELECT *  FROM koweb_board_config WHERE 1=1 ORDER BY sort ASC";
+	$copy_result = mysql_query($copy_query);
+}
+?>
+
+<script type="text/javascript">
+	$(function() {
+		$("select[name='auth_read'] option[value='<?=$row[auth_read]?>']").prop("selected", true);
+		$("select[name='auth_write'] option[value='<?=$row[auth_write]?>']").prop("selected", true);
+		$("select[name='auth_comment'] option[value='<?=$row[auth_comment]?>']").prop("selected", true);
+		$("select[name='auth_delete'] option[value='<?=$row[auth_delete]?>']").prop("selected", true);
+		$("select[name='auth_reply'] option[value='<?=$row[auth_reply]?>']").prop("selected", true);
+		$("select[name='skin'] option[value='<?=$row[skin]?>']").prop("selected", true);
+		$("select[name='file_count'] option[value='<?=$row[file_count]?>']").prop("selected", true);
+		$("input:radio[name='use_category']:radio[value='<?=$row[use_category]?>']").prop("checked",true);
+		$("input:radio[name='use_reply']:radio[value='<?=$row[use_reply]?>']").prop("checked",true);
+		$("input:radio[name='use_comment']:radio[value='<?=$row[use_comment]?>']").prop("checked",true);
+		$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true);
+		$("input:radio[name='is_membership']:radio[value='<?=$row[is_membership]?>']").prop("checked",true);
+		$(":checkbox[name='always_secret'][value='<?=$row['always_secret']?>']").prop("checked", true);
+		$(":checkbox[name='use_address'][value='<?=$row['use_address']?>']").prop("checked", true);
+		$("input:radio[name='sms_auth']:radio[value='<?=$row[sms_auth]?>']").prop("checked",true);
+		$("input:radio[name='spam_auth']:radio[value='<?=$row[spam_auth]?>']").prop("checked",true);
+
+
+		//notice 스킨 카테고리, 답변사용 불가 // 초기 로딩시 값 설정 disabled 설정
+		if ($("#skin option:selected").val() == "notice"){
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+		} else {
+				$(".category_list").prop("disabled", false);
+				$(".use_reply").prop("disabled",  false);
+				$(".use_category").prop("disabled", false);
+		}
+
+		$("input:radio[name='use_category']").click(function() {
+			if($(this).val() == "Y"){
+				$(".category_list").prop("disabled", false);
+			} else {
+				$(".category_list").prop("disabled", true);
+			}
+		});
+
+		$("#skin").change(function() {
+			if($(this).val() == "notice") {
+				$(".use_category:radio[value='N']").prop("checked",true);
+				$(".use_reply:radio[value='N']").prop("checked",true);
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+				$("#category_").css("display", "none");
+
+			} else if($(this).val() == "pdf") {
+				$(".use_category:radio[value='N']").prop("checked",true);
+				$(".use_reply:radio[value='N']").prop("checked",true);
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+				$("#category_").css("display", "none");
+
+			}	else if($(this).val() == "gallery") {
+				$(".use_category:radio[value='N']").prop("checked",true);
+				$(".use_reply:radio[value='N']").prop("checked",true);
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+				$("#category_").css("display", "none");
+			} else {
+				$(".category_list").prop("disabled", false);
+				$(".use_reply").prop("disabled",  false);
+				$(".use_category").prop("disabled", false);
+
+				$("input:radio[name='use_category']").click(function(){
+					var resultValue = $(this).val();
+					if(resultValue != "Y"){
+						$("#category_").css("display", "none");
+					} else {
+						$("#category_").css("display", "");
+					}
+				});
+			}
+		});
+
+		//카테고리 미사용일시 // 초기 로딩시 값 설정 disabled 설정
+		$("input:radio[name='use_category']").change(function(){
+			if ($("input:radio[name='use_category']:checked").val() != "Y"){
+				$(".category_list").prop("disabled", true);
+				$("#category_").css("display", "none");
+			} else {
+				$(".category_list").prop("disabled", false);
+				$("#category_").css("display", "");
+			}
+		});
+
+		//부서별 권한설정 사용안함 일시 체크 해제
+		$("#no_dept").click(function(){
+			if(!$(this).is(":checked")){
+				$("[data-dept-list]").attr("checked", false);
+			}
+		});
+
+		$("[data-dept-list]").click(function(){
+			if($(this).is(":checked")){
+				$("#no_dept").prop("checked", true);
+			}
+		});
+	});
+</script>
+
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+<input type="hidden" name="no" value="<?=$no?>" />
+<input type="hidden" name="manager_type" value="board" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+	<h2 class="mt0">게시판 설정</h2>
+	<table class="bbsView">
+		<caption>게시판 설정<</caption>
+		<colgroup>
+			<col style="width:15%"/>
+			<col/>
+			<col style="width:15%"/>
+			<col style="width:35%"/>
+		</colgroup>
+		<tbody>
+			<? if($mode == "write"){ ?>
+			<tr>
+				<th scope="row">복사</th>
+				<td colspan="3">
+					<select id="skin_copy">
+						<option value=''>복사할 게시판을 선택해주세요</option>
+						<? while($copy_row = mysql_fetch_array($copy_result)){ ?>
+							<option value='<?=$copy_row['id']?>'><?=$copy_row['title']?></option>
+						<? } ?>
+					</select>
+					<button class='button' type='button' onclick="board_write()">복사</button>
+
+					<script>
+						<? foreach ($_GET as $key => $value) {
+							if($key != "copy")
+							$str .=$key."=".$value."&";
+						} ?>
+
+						function board_write(){
+							var aHref = "<?=$_SERVER['PHP_SELF']?>?<?=$str?>";
+							var skinCopyId = document.getElementById("skin_copy").value;
+							window.location.href = aHref+"copy="+skinCopyId;
+						}
+					</script>
+				</td>				
+			</tr>
+			<? } ?>
+			<tr>
+				<th scope="row">게시판 ID</th>
+				<? if($mode == "modify"){ ?>
+					<td colspan="3"><span>board_<?=$row[id]?></span></td>
+				<? } else {?>
+					<td colspan="3">board_<input type="text" name="id" maxlength="20" value="<?=$row[id]?>" title="게시판 ID"  class="input100 required"/> <a href="#" class="button" onclick="id_ajax();">중복확인</a></td>
+				<? } ?>
+			</tr>
+			<tr>
+				<th scope="row">게시판 타입</th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="is_membership" value="Y" id="is_membership_y" /><label for="is_membership_y">회원전용</label>
+						<input type="radio" name="is_membership" value="N" id="is_membership_n" /><label for="is_membership_n">일반</label>
+					</div>
+					<em class="tip">* 회원전용 게시판은 로그인 후 쓰기, 읽기, 답변, 삭제등이 가능하며 비밀번호 입력이 없습니다. / 일반 게시판은 비밀번호 입력 폼이 있으며 비회원도 작성 가능합니다.</em>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">제목</th>
+				<td><input type="text" name="title" maxlength="" value="<?=$row[title]?>" title="게시판 제목" class="input400 required"/></td>
+				<th scope="row">스킨</th>
+				<td>
+					<select name="skin" title="스킨" id="skin">
+						<?
+							$dir = "./board/skin/";
+							$files = scandir($dir);
+							sort($files);
+							foreach ($files as $file) {
+							    if ($file != '.' && $file != '..') { ?>
+							       <option value="<?=$file?>"><?=$file?></option>
+							    <? }
+							}
+						?>
+					</select>
+
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">카테고리</th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="use_category" id="use_categoryY" value="Y" class="use_category" /> <label for="use_categoryY">사용</label>
+						<input type="radio" name="use_category" id="use_categoryN" value="N" class="use_category" /> <label for="use_categoryN">미사용</label>
+						<input type="radio" name="use_category" id="use_categoryI" value="I" class="use_category" /> <label for="use_categoryI">게시글에서 직접입력</label>
+					</div>
+				</td>
+			</tr>
+			<tr id="category_" <? if($row[use_category] != "Y"){ ?> style='display:none;' <? } ?>>
+				<th scope="row"><label for="category_tmp">카테고리 상세</label></th>
+				<td colspan="3" id="category_area" class="category">
+					<input type="text" name="category_tmp[]" value="<?=$category[0]?>" title="구분"/>
+					<a href="#" class="button gray" id="add_category">+ 추가</a>
+					<?
+						$count = 0;
+						foreach($category as $value){
+							if($count != 0){
+							$del_id = "#category_".$count;
+					?>
+						<div id="category_<?=$count?>">
+							<input type="text" name="category_tmp[]" value="<?=$value?>"/>
+							<a href="#" id="del_category_<?=$count?>" class="button white" onclick="$('<?=$del_id?>').remove();">- 삭제</a>
+						</div>
+					<?
+						}
+						$count++;
+					}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">코멘트</th>
+				<td>
+					<div class="designRadio">
+						<input type="radio" name="use_comment" id="use_commentY" value="Y" /> <label for="use_commentY">사용</label>
+						<input type="radio" name="use_comment" id="use_commentN" value="N" /> <label for="use_commentN">미사용</label>
+					</div>
+				</td>
+				<th scope="row">답글사용</th>
+				<td>
+					<div class="designRadio">
+						<input type="radio" name="use_reply" id="use_replyY" value="Y"/> <label for="use_replyY">사용</label>
+						<input type="radio" name="use_reply" id="use_replyN" value="N"/> <label for="use_replyN">미사용</label>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">쓰기권한</th>
+				<td>
+					<select name="auth_write">
+						<option value="10">비회원</option>
+						<option value="5">준회원</option>
+						<option value="3">정회원</option>
+						<option value="1">관리자</option>
+					</select>
+				</td>
+				<th scope="row">읽기권한</th>
+				<td>
+					<select name="auth_read">
+						<option value="10">비회원</option>
+						<option value="5">준회원</option>
+						<option value="3">정회원</option>
+						<option value="1">관리자</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">답변권한</th>
+				<td>
+					<select name="auth_reply">
+						<option value="10">비회원</option>
+						<option value="5">준회원</option>
+						<option value="3">정회원</option>
+						<option value="1">관리자</option>
+					</select>
+				</td>
+				<th scope="row">삭제권한</th>
+				<td>
+					<select name="auth_delete">
+						<option value="10">비회원</option>
+						<option value="5">준회원</option>
+						<option value="3">정회원</option>
+						<option value="1">관리자</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">코멘트작성</th>
+				<td>
+					<select name="auth_comment">
+						<option value="10">비회원</option>
+						<option value="5">준회원</option>
+						<option value="3">정회원</option>
+						<option value="1">관리자</option>
+					</select>
+				</td>
+				<th scope="row">첨부파일 갯수</th>
+				<td>
+					<select name="file_count" title="첨부파일 갯수">
+						<? for ($i = 0; $i < 11; $i++) { ?>
+							<option value="<?=$i?>"><?=$i?></option>
+						<? } ?>
+					</select> 개
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">첨부파일 용량제한</th>
+				<td><input type="text" name="file_limit_size" size="3" maxlength="3" value="<?=$row[file_limit_size]?>" title="첨부파일 용량제한" /> M</td>
+				<th scope="row">상시 비밀글 사용</th>
+				<td>
+					<div class="designCheck">
+						<input type="checkbox" name="always_secret" id="always_secretY" value="Y" /> <label for="always_secretY">상시 비밀글 사용</label>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">SMS 인증 사용 여부</th>
+				<td>
+					<div class="designRadio">
+						<input type="radio" name="sms_auth" id="sms_authY" value="Y" /> <label for="sms_authY">Y</label>
+						<input type="radio" name="sms_auth" id="sms_authN" value="N" checked="checked" /> <label for="sms_authN">N</label>						
+					</div>
+					<em class="tip">SMS secureKEY가 입력되어있어야 합니다.</em>
+				</td>
+				<th scope="row">스팸방지 사용 여부</th>
+				<td>
+					<div class="designRadio">
+						<input type="radio" name="spam_auth" id="spam_authY" value="Y" /> <label for="spam_authY">Y</label>
+						<input type="radio" name="spam_auth" id="spam_authN" value="N" checked="checked" /> <label for="spam_authN">N</label>
+					</div>
+				</td>
+			</tr>
+			<!--
+			<tr>
+				<th scope="row">주소 사용</th>
+				<td colspan="3">
+					<div class="designCheck">
+						<input type="checkbox" name="use_address" value="Y" />
+					</div>
+				</td>
+			</tr>
+			-->
+			<tr>
+				<th scope="row">
+					부서별 권한 설정 
+					<div class="designCheck" style="margin-top:1px; margin-left:3px; vertical-align:top;">
+						<input type="checkbox" name="dept_auth[]" value="" id="no_dept"/><label for="no_dept"></label>						
+					</div>
+					<p style="font-size:5px;">체크를 해제하면 전체공개 됩니다.</p>
+				</th>
+				<td colspan="3">
+					<?
+					$dept_query = "SELECT * FROM koweb_dept WHERE state = 'Y'  ORDER BY ref_group ASC, depth ASC, sort ASC, ref_no ASC";
+					$dept_result = mysql_query($dept_query);
+					while($dept_auth = mysql_fetch_array($dept_result)){
+						if($dept_auth[depth] == "1"){ ?>
+							<p>----------- <?=$dept_auth[dept]?> -----------</p>
+					<?	} else { ?>
+						<div class="designCheck">
+							<input type="checkbox" name="dept_auth[]" value="<?=$dept_auth[no]?>" id="dept_auth_<?=$dept_auth[no]?>" data-dept-list/><label for="dept_auth_<?=$dept_auth[no]?>"><?=$dept_auth[dept]?></label>
+						</div>
+						<? } ?>
+					<? } ?>
+					<? foreach($dept_auth_tmp as $val){ ?>
+						<script type="text/javascript">
+							$(":checkbox[name='dept_auth[]'][value='<?=$val?>']").prop("checked", true);
+						</script>
+					<? } ?>
+				</td>
+			</tr>
+			<!--
+			<tr>
+				<th scope="row">직급별 관리자 페이지 노출 설정</th>
+				<td colspan="3">
+					<div class="designCheck">
+						<input type="checkbox" name="level_auth[]" value="1" id="no_dept"/><label for="no_dept">관리자</label>
+						<input type="checkbox" name="level_auth[]" value="3" id="no_dept"/><label for="no_dept">팀장</label>
+						<input type="checkbox" name="level_auth[]" value="5" id="no_dept"/><label for="no_dept">팀원</label>
+					</div>
+					<? foreach($level_auth_tmp as $val){ ?>
+						<script type="text/javascript">
+							$(":checkbox[name='level_auth[]'][value='<?=$val?>']").prop("checked", true);
+						</script>
+					<? } ?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">지역업장별 관리자 페이지 노출 설정</th>
+				<td colspan="3">
+					<div class="designCheck">
+						<input type="checkbox" name="level_auth[]" value="" id="no_dept"/><label for="no_dept">전체</label>
+						<input type="checkbox" name="level_auth[]" value="" id="no_dept"/><label for="no_dept">전체</label>
+						<input type="checkbox" name="level_auth[]" value="" id="no_dept"/><label for="no_dept">전체</label>
+						<input type="checkbox" name="level_auth[]" value="" id="no_dept"/><label for="no_dept">전체</label>
+					</div>
+					<? foreach($dept_auth_tmp as $val){ ?>
+						<script type="text/javascript">
+							$(":checkbox[name='dept_auth[]'][value='<?=$val?>']").prop("checked", true);
+						</script>
+					<? } ?>
+				</td>
+			</tr>
+			-->
+			<tr>
+				<th scope="row">사용여부</th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="state" id="stateY" value="Y" checked="checked" /> <label for="stateY">Y</label>
+						<input type="radio" name="state" id="stateN" value="N" /> <label for="stateN">N</label>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn_area">
+		<input type="submit" class="button red" value="등록">
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=board">취소</a>
+	</div>
+</form>
+
+
+<!-- //버튼 -->
+<script type="text/javascript">
+	$("#add_category").click(function(){
+		var count = $("#category_area > div").size() + 1;
+		var del_id = "category_"+count;
+		$("#category_area").append("<div id='category_"+count+"'><input type='text' name='category_tmp[]'/> <a href='#' id='del_category_"+count+"' class='button white' onclick='$(\"#"+del_id+"\").remove();'><span>- 삭제</span></a></div>");
+	});
+</script>

@@ -1,0 +1,207 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+<?
+
+if (!$start) $start = 0;
+$scale = 100; 
+$page_scale	= 10; 
+
+if($keyword){
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+
+
+
+if($cate_full){
+	$WHERE .= " AND group_time_researcher != '' ";
+}
+if($cate){
+	$WHERE .= " AND group_time_researcher like '%$cate%'";
+}
+
+
+
+if($cate_part){
+	$WHERE .= " AND group_part_researcher != '' ";
+}
+if($cate2){
+	$WHERE .= " AND group_part_researcher like '%$cate2%'";
+}
+
+if($cate_alumni){
+	$WHERE .= " AND group_alumni != '' ";
+}
+if($cate3){
+	$WHERE .= " AND group_alumni like '%$cate3%'";
+}
+
+
+
+
+$total_query = "SELECT * FROM koweb_member WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+$query = "SELECT * FROM koweb_member WHERE 1=1  $WHERE ORDER BY no DESC LIMIT $start, $scale";
+//$query = "SELECT * FROM koweb_member GROUP BY category DESC";
+$result = mysql_query($query);
+
+?>
+
+<!-- member 페이지에서 sub01.html / professor 제외하고 나머지 동일 -->
+<div class="area_sub_nav lnb">
+    <div class="inr">
+        <ul class="sub_nav_tab">
+            <li class="home"><a href="http://wenslab.koweb.co.kr/"><i class="fa-solid fa-house"></i></a></li>
+            <li class="depth01">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+			
+				</ul>
+            </li>
+            <li class="depth02">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+					
+				</ul>
+            </li>
+            <li class="depth03">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+					
+				</ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<!-- member 페이지에서 sub01.html / professor 제외하고 나머지 동일 -->
+<section id="container">		
+	<div id="content">		
+        <div class="area_sub c_box">
+            <div class="inr">
+                <!-- 서브타이틀 -->
+                <div class="area_subtitle on">
+                    <h3></h3>
+                </div>
+
+                   <!-- 서브 내용 -->
+                <div class="area_conts">
+                    
+                    
+				
+					<?
+					if($cate_full or $cate){
+					?>
+					<div class="area_subTab">
+					<ul>
+						<!-- 활성화 클래스 : active -->
+						<li class="<?if($cate_on=='FULL_Post_Doc')echo'active';?>"><a href="/contents/02_members/member_list.html?cate=Post Doc.&cate_on=FULL_Post_Doc">Post Doc.</a></li>
+						<li class="<?if($cate_on=='FULL_Ph_D_Candidate')echo'active';?>"><a href="/contents/02_members/member_list.html?cate=Ph.D. Candidate&cate_on=FULL_Ph_D_Candidate" >Ph.D. Candidate</a></li>
+						<li class="<?if($cate_on=='FULL_Integrated_Candidate')echo'active';?>"><a href="/contents/02_members/member_list.html?cate=Integrated Candidate&cate_on=FULL_Integrated_Candidate" class="">Integrated Candidate</a></li>
+						<li class="<?if($cate_on=='FULL_M_S_Candidate')echo'active';?>" ><a href="/contents/02_members/member_list.html?cate=M.S. Candidate&cate_on=FULL_M_S_Candidate" >M.S. Candidate</a></li>
+					</ul>
+					</div>
+					<?}else if($cate_part or $cate2){
+					?>
+					<div class="area_subTab">
+					<ul>
+						<!-- 활성화 클래스 : active -->
+						<li  class="<?if($cate2_on=='Part_Post_Doc')echo'active';?>" ><a href="/contents/02_members/member_list.html?cate2=Part Post Doc&cate2_on=Part_Post_Doc">Post Doc.</a></li>
+						<li class="<?if($cate2_on=='Part_Ph_D_Candidate')echo'active';?>"><a href="/contents/02_members/member_list.html?cate2=Ph.D. Candidate&cate2_on=Part_Ph_D_Candidate" class="">Ph.D. Candidate</a></li>
+						
+						<li class="<?if($cate2_on=='Part_M_S_Candidate')echo'active';?>"><a href="/contents/02_members/member_list.html?cate2=M.S. Candidate&cate2_on=Part_M_S_Candidate" class="Part_M_S_Candidate" class="">M.S. Candidate</a></li>
+						
+						<li class="<?if($cate2_on=='Part_Undergraduate')echo'active';?>"><a href="/contents/02_members/member_list.html?cate2=Undergraduate&cate2_on=Part_Undergraduate" class="Part_Undergraduate" class="">Undergraduate</a></li>
+
+						
+					</ul>
+					</div>
+					<?
+					}else if($cate_alumni or $cate3){
+					?>
+					<div class="area_subTab">
+					<ul>
+						<!-- 활성화 클래스 : active -->
+
+						<li class="<?if($cate3_on=='Alumni_Post_Doc')echo'active';?>"><a href="/contents/02_members/member_list.html?cate3=Post Doc.&cate3_on=Alumni_Post_Doc" class="Alumni_Post_Doc">Post Doc.</a></li>
+						<li class="<?if($cate3_on=='Alumni_Ph_D')echo'active';?>"><a href="/contents/02_members/member_list.html?cate3=Ph.D.&cate3_on=Alumni_Ph_D" class="Alumni_Ph_D">Ph.D.</a></li>
+						<li class="<?if($cate3_on=='Alumni_M_S')echo'active';?>"><a href="/contents/02_members/member_list.html?cate3=M.S&cate3_on=Alumni_M_S" class="Alumni_M_S">M.S</a></li>
+						<li class="<?if($cate3_on=='Alumni_Tesimonials')echo'active';?>"><a href="/contents/02_members/member_list.html?cate3=Tesimonials&cate3_on=Alumni_Tesimonials" class="Alumni_Tesimonials">Tesimonials</a></li>
+
+					</ul>
+					</div>
+					<?
+					}
+					?>
+
+
+
+
+                      <!-- 등록된 계시글이 있을 경우 노출 -->
+                    <div class="area_profileList">
+                        <ul>
+                            <!-- typeA 반복 구간 -->
+							<? while($row = mysql_fetch_array($result)) { ?>
+                            <li>
+                                <div class="w_box pro_cont">
+                                    <div class="info_top">
+                                        <div class="img">
+                                            <?
+
+											if($row[file_1]){
+												echo "<img src=\"/upload/koweb_member/$row[file_1]\" alt=\"\"/>";
+											}else{
+											    echo "<img src='/images/content/img_profile.jpg' alt='noimg'>";			
+											}
+											?>
+
+                                            <!-- 프로필사진이 없을 경우 -->
+                                            <!-- <img src="/images/content/img_profile.jpg" alt="프로필 사진이 없을경우"> -->
+                                        </div>
+                                        <div class="persoanl">
+                                            <p class="name"> <?=$row[last_name]?>, <?=$row[first_name]?></p>
+                                            <a class="email" href="<?=$row[email]?>"><i class="fa-solid fa-at"></i> <?=$row[email]?></a>
+                                            <div class="contact">
+                                                <span class="office"><i class="fa-solid fa-location-dot"></i> <?=$row[office]?></span><span class="call"><i class="fa-solid fa-phone"></i><?=$row[phone]?></span>
+                                            </div>
+                                        </div>
+                                     
+                                    </div>
+                                    <div class="info_detail">
+                                        <dl>
+                                            <dt><i class="fa-solid fa-graduation-cap"></i> Education</dt>
+                                            <dd><?=$row[last_education]?></dd>
+                                        </dl>
+                                        <dl>
+                                            <dt><i class="fa-solid fa-bell"></i> Interest</dt>
+                                            <dd><?=$row[Interest]?></dd>
+                                        </dl>
+                                       
+                                    </div>
+                                </div>
+                            </li>
+							<? } ?>
+                            <!-- typeA 반복 구간  끝 -->
+                        </ul>
+
+                    </div>
+                     <!-- 등록된 계시글이 없을 경우 노출 -->
+                     <div class="empty w_box">
+                        <p>등록된 게시글이 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+
+<?include("../../inc/footer.html")?>

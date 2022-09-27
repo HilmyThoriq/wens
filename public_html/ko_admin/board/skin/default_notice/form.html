@@ -1,0 +1,191 @@
+<?
+$mode_title = "Write";
+$row[name] = $_SESSION['member_name'];
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = "Modfy";
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		if($board[is_membership] != "Y"){
+		//비밀번호가 없음
+			if($password == "" ){
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+			$password = hash("sha256", $password);
+			//비밀번호가 틀림
+			if($row[password] != $password){
+				alert("This post can only be checked by the author and manager.");
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+		} else {
+			if($_SESSION[member_id] != $row[id]){
+				error("This post can only be edited by the author and administrator.");
+				exit;
+			}
+		}
+	}
+}
+if($mode == "reply"){
+	$query = "SELECT name, comments, title FROM $board_id WHERE no='$ref_no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$comm_first_text = "<p>&nbsp;</p><hr> ".$row[name]." Posted by.<br>";
+	$comm_last_text= "<p>&nbsp;</p><hr><p></p><br />";
+	$row[comments] = $comm_first_text . $row[comments] . $comm_last_text;
+
+	$title_first_text = "This is $row[title] answer.";
+	$row[title] = $title_first_text;
+}
+?>
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="<?=$mode?>" />
+<input type="hidden" name="return_url" value="<?=$url?>" />
+<input type="hidden" name="no" value="<?=$row[no]?>" />
+<input type="hidden" name="ref_no" value="<?=$ref_no?>" />
+<input type="hidden" name="tag_type" value="<?=$tag_type?>" />
+
+<table class="bbsView">
+	<caption>Board <?=$mode_title?></caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:85%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row"><span class="marking">required</span><label for="title">Subject</label></th>
+			<td><input type="text" name="title" id="title" class="inputFull required" value="<?=$row[title]?>" title="Subject"/></td>
+		</tr>
+		<tr>
+			<th scope="row"><span class="marking">required</span><label for="name">Writer</label></th>
+			<td><input type="text" name="name" id="name" value="<?=$row[name]?>" class="required" <?=$mem_option?> title="Writer"/></td>
+		</tr>
+		<? if($board[use_category] == "Y") { ?>
+			<tr>
+				<th scope="row"><span class="marking">required</span><label for="category">Category</label></th>
+				<td>
+					<? $category = explode("|", $board[category_detail]); ?>
+					<select name="category" id="category">
+						<? for($i = 0; $i < count($category); $i++){ ?>
+							<option <?=$cate == $category[$i] ? "selected" : ""?> value="<?=$category[$i]?>"><?=$category[$i]?></option>
+						<? } ?>
+					</select>
+				</td>
+			</tr>
+		<? } ?>
+		<? if($board[use_category] == "I") { ?>
+			<tr>
+				<th scope="row"><span class="marking">required</span><label for="category">Category</label></th>
+				<td>
+					<input type="text" name="category" id="category" value="<?=$row[category]?>" class="required" title="Category"/>
+				</td>
+			</tr>
+		<? } ?>
+		<tr>
+			<th scope="row">Secret</th>
+			<td>
+				<div class="designCheck">
+					<input type="checkbox" name="secret" id="secret" value="Y" /><label for="secret">Secret</label>
+				</div>
+			</td>
+		</tr>
+		<? if($_SESSION[is_admin]){ ?>
+			<tr>
+				<th scope="row">Notice</th>
+				<td>
+					<div class="designCheck">
+						<input type="checkbox" name="notice" id="notice" value="Y" /><label for="notice">Notice</label>
+					</div>
+				</td>
+			</tr>
+		<? } ?>
+		<? if($board[sms_auth] == "Y" && $mode != "modify"){ ?>
+			<tr>
+				<th scope="row"><span class="marking">required</span>mobile number</th>
+				<td class="tel">
+					<input type="text" name="phone1" id="phone1" class="input100 required" value="<?=$phone[0]?>" maxlength="3" title="Please phone number"/> -
+					<input type="text" name="phone2" id="phone2" class="input100 required" value="<?=$phone[1]?>" maxlength="4" title="Please phone number"/> -
+					<input type="text" name="phone3" id="phone3" class="input100 required" value="<?=$phone[2]?>" maxlength="4" title="Please phone number"/>
+					<a href="#" onclick="sms_send();" class="button white">Get Verification Number</a>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><span class="marking">required</span>Certification number input</th>
+				<td>
+					<input type="text" name="sms_auth" value="" class="input200 required" id="sms_auth" title="Certification number"/>
+					<span id="auth_message"><a href="#" onclick="sms_auth();" class="button">OK</a></span>
+					<input type="hidden" name="sms_auth2" id="sms_auth2" value="" class="auth_required" />
+				</td>
+			</tr>
+		<? } ?>
+		<tr>
+			<th scope="row"><label for="smart_content">Contents</label></th>
+			<td>
+				<textarea name="comments" id="smart_content" rows="2" cols="2" style="height:412px;" class="inputFull"><?=$row[comments]?></textarea>
+			</td>
+		</tr>
+		<? if($_SESSION['auth_admin_ci'] == "koweb"){ ?>
+		<tr>
+			<th scope="row"><label for="etc">Etc.</label></th>
+			<td>
+				<textarea name="etc" id="etc" rows="1" cols="2" class="inputFull"><?=$row[etc]?></textarea>
+			</td>
+		</tr>
+		<? } ?>
+		<? if($board[file_count] != 0){ ?>
+		<tr>
+			<th scope="row">File</th>
+				<td>
+				<?
+				for($i = 1; $i <= $board[file_count]; $i++) {
+						$file_title = $row["file_".$i];
+						$del_ = "File";
+						$del_2 = "";
+						if($file_title){
+							 $del_2 = "<a href='/upload/$board_id/$file_title' target='_blank' class='button white'>File : $file_title</a>";
+							 $del_3 = "<div class='designCheck mb10' style='display:inline-block;'><input type='checkbox' value='Y' id='del_$i' name='del_$i'/><label for='del_$i'>Delete</label></div>";
+						}
+						echo "<div class='designFile'><input type='text' readonly='readonly' value=''/><input type='file' name='file_$i' id='file_$i'/><label for='file_$i' class='button white'> $del_</label> $del_2 $del_3</div>";
+				 }
+				?>
+				<em class="tip">The attachment size is <?=$board[file_limit_size]?></em>
+			</td>
+		</tr>
+		<? } ?>
+		<? if($board[spam_auth] == "Y"){ ?>
+		<? $_SESSION[rand_auth] = rand(0000,9999); ?>
+			<tr>
+				<th scope="row"><span class="marking">required</span><label for="rand_auth_">Antispam</label></th>
+				<td class="spam"><span><?=$_SESSION[rand_auth]?></span><input type="text" name="rand_auth_" placeholder="Please enter number." class="input200 required" title="Antispam"/></td>
+			</tr>
+		<? } ?>
+		<!-- <? if($board[is_membership] != "Y"){ ?>
+		<tr>
+			<th scope="row"><span class="marking">required</span><label for="pin">Password</label></th>
+			<td>
+				<input type="password" name="password" id="pin" value="" class="required" title="Password"  title="Password"/>
+				<em class="tip">※ Required when editing or deleting posts.</em>
+			</td>
+		</tr>
+		<? } ?> -->
+	</tbody>
+</table>
+<script type="text/javascript">
+	$(":checkbox[name='notice'][value='<?=$row['notice']?>']").prop("checked", true);
+	$(":checkbox[name='secret'][value='<?=$row['secret']?>']").prop("checked", true);
+</script>
+<!-- //글쓰기 -->
+<!-- 버튼 -->
+<div class="btn_area">
+	<input type="submit" onclick="msgImpletion();" class="button" value="Submit" />
+	<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=list&amp;start=<?=$start?>&cate=<?=$cate?>" class="button gray">Cancel</a>
+</div>
+</form>
+
+<!-- //버튼 -->

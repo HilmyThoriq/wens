@@ -1,0 +1,108 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 10; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+
+//리스트
+$total_query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+$query = "SELECT * FROM $board_id WHERE 1=1  $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC LIMIT $start, $scale";
+$result = mysql_query($query);
+?>
+
+	<? if($total > 0) { ?>
+		<ul class="blogList">
+			<? $f_no = $total - $start; ?>
+			<? while($row = mysql_fetch_array($result)){ ?>
+				<? 
+					$date_array = explode("-",  $row[reg_date]); 
+					if($row[notice] == "Y") { 
+						$no_title = "<em class='notice'>공지</em>";
+						$f_no--;
+					} else {
+						$no_title = $f_no--;
+					}
+					$title_reply = "";
+
+					//현재글 
+					if($no == $row[no]){ 
+						$total_txt = "<img src=\"/img/now_gul.gif\" />";
+					}
+
+					//7일 new 아이콘 
+					if ($row[reg_date] >= date("Y-m-d", strtotime("-7 day"))) {
+						 $title_reply = "<em class=\"new\">새글</em>";	
+					} else unset($title_reply);
+
+					//depth 가 1이상이면 답변 아이콘
+					if($row[depth] > 0){
+						//$padding_style = $row[depth] * 40;
+						$title_reply = "<em class='reply'>답변</em>";
+					}
+
+					$reply_query_count = "SELECT * FROM board_comment WHERE ref_board_no = '$row[no]' AND board_id = '$board_id'";
+					$reply_count_result = mysql_query($reply_query_count);
+					$reply_count = mysql_num_rows($reply_count_result);
+
+					if($reply_count > 0){
+						$reply_query = "SELECT * FROM board_comment  ref_board_no = '$row[no]' AND board_id = '$board_id ORDER BY reg_date DESC";
+						$reply_result = mysql_query($reply_query);
+					}
+
+					$review_text = strip_tags($row[comments]);
+					$review_text = str_replace("&nbsp;", " ", $review_text);
+
+				?>
+				
+					<!-- 반복 -->
+					<li>
+						<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=view&amp;no=<?=$row[no]?>&amp;cate=<?=$row[category]?>">
+							<span class="img">
+								<? if($row[file_1]){
+									$ext = end(explode(".", strtolower($row[file_1])));
+									if($ext == "jpg" || $ext == "png" || $ext == "jpeg" || $ext == "bmp"){ ?>
+										<img src="/upload/<?=$board_id?>/<?=$row[file_1]?>" alt=""/>
+									<? } else { ?>
+										<img src="/image/board/no_image.gif" alt=""/>
+								<?	} 
+								} else { ?>
+									<img src="/image/board/no_image.gif" alt=""/>
+								<? } ?>
+							</span>
+							<!-- 제목 -->
+							<em><?=$row[title]?><? if($board[use_comment] == "Y" ) { ?><i style="display:inline;"> [<?=$reply_count?>]</i><? } ?></em>
+							<p><?=mb_strimwidth($review_text,'0','260','...','utf-8')?></p>		
+							<i><?=reset(explode(" ", $row[reg_date]))?></i>
+						</a>
+					</li>
+			<? } ?>
+		</ul>
+	<? } else { ?>
+		<div class="none_data type02">등록된 글이 없습니다.</div>
+	<? } ?>
+
+	<!-- 검색 및 버튼 -->
+	<? include "search.html"; ?>
+	<!-- 검색 및 버튼 -->
+		
+	<!-- page -->
+	<? include "paging.html"; ?>
+	<!-- //page -->
+
+

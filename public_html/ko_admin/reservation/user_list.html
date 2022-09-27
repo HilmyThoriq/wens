@@ -1,0 +1,205 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 10; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+
+$input_query = "SELECT * FROM koweb_online_config WHERE id='{$reservation['online_config_id']}'";
+$input_result = mysql_query($input_query);
+$input_row = mysql_fetch_array($input_result);
+
+$temp_use = explode("|",$input_row['use_email']);
+$input_row['use_email'] = $temp_use[0];
+$use_email_r = $temp_use[1] ? $temp_use[1] : "";
+
+$temp_use = explode("|",$input_row['use_phone']);
+$input_row['use_phone'] = $temp_use[0];
+$use_phone_r = $temp_use[1] ? $temp_use[1] : "";
+
+
+$WHERE = "AND 1=2";
+if($input_row['use_email'] == "Y" && $use_email_r=="R"){
+	if(!empty($email)){
+		$_SESSION['s_email'] = $email;
+		$WHERE_arr[] = " AND B.email='$email'";
+	}else{
+		$WHERE_arr[] = " AND 1=2";
+	}
+}
+if($input_row['use_phone'] == "Y" && $use_phone_r=="R"){
+	$temp_phone = str_replace("-","",$phone);
+	if(!empty($temp_phone)){
+		$_SESSION['s_phone'] = $temp_phone;
+		$WHERE_arr[] = " AND replace(B.phone,'-','')='$temp_phone'";
+	}else{
+		$WHERE_arr[] = " AND 1=2";
+	}
+}
+if(count($WHERE_arr) > 0) $WHERE = join(" " , $WHERE_arr);
+//리스트
+$total_query =
+"SELECT
+	count(*) as cnt
+FROM
+	koweb_reservation_date as A
+	INNER JOIN {$reservation['online_config_id']} as B ON A.input_no = B.no
+WHERE
+	A.input_id='{$reservation['online_config_id']}'
+	{$WHERE}";
+$total_result = mysql_query($total_query);
+$row = mysql_fetch_array($total_result);
+$total = $row['cnt'];
+
+$query =
+"SELECT
+	*,
+	A.reg_date as reg_date,
+	A.state as state,
+	A.item_name as item_name,
+	A.no as no
+FROM
+	koweb_reservation_date as A
+	INNER JOIN {$reservation['online_config_id']} as B ON A.input_no = B.no
+	INNER JOIN koweb_reservation_item as C ON A.item_no=C.no
+WHERE
+	A.input_id='{$reservation['online_config_id']}'
+	{$WHERE}
+ORDER BY A.start_date DESC
+LIMIT $start, $scale";
+$result = mysql_query($query);
+
+
+?>
+
+<!-- 검색 및 버튼 -->
+<? if( ($input_row['use_email'] == "Y" && $use_email_r=="R") || ($input_row['use_phone'] == "Y" && $use_phone_r=="R") ){ ?>
+<form action="<?=$_SERVER['REQUEST_URL']?>" method="get" />
+	<input type="hidden" name="mode" value="user_list" />
+	<input type="hidden" name="start" value="<?=$start?>" />
+
+	<div class="bbsView dl">
+		<dl class="col02">
+			<? if($input_row['use_email'] == "Y" && $use_email_r=="R"){ ?>
+				<dt><span><label for="email">이메일</label></span></dt>
+				<dd><input type="text" id="email" name="email" value="<?=$email?>"></dd>
+			<? } ?>
+
+			<? if($input_row['use_phone'] == "Y" && $use_phone_r=="R"){ ?>
+				<dt><span><label for="phone">연락처</label></span></dt>
+				<dd><input type="text" id="phone" name="phone" value="<?=$phone?>"></dd>
+			<? } ?>
+		</dl>
+	</div>
+	<div class="btn_area">
+		<input type="submit" class="button" value="검색">
+	</div>
+</form>
+<? } ?>
+<!-- 검색 및 버튼 -->
+
+
+<? if($total > 0) { ?>
+	<table class="bbsList" style="margin-top:30px;">
+		<caption>게시판 목록</caption>
+		<colgroup>
+			<col data-table="number" style="width:7%"/>
+			<col data-table="subject"/>
+			<col data-table="write" style="width:15%"/>
+			<col data-table="date" style="width:15%"/>
+			<col data-table="date" style="width:15%"/>
+		</colgroup>
+		<thead>
+			<tr>
+				<th scope="col" data-table="number">No.</th>
+				<th scope="col" data-table="subject">상품</th>
+				<th scope="col" data-table="write">예약날짜</th>
+				<th scope="col" data-table="write">상태</th>
+				<th scope="col" data-table="date">작성일</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			<? $f_no = $total - $start; ?>
+			<? while($row = mysql_fetch_array($result)){ ?>
+				<?
+					$date_array = explode("-",  $row[reg_date]);
+					$no_title = $f_no--;
+					if($row['start_date'] != $row['end_date']){
+						$target_date = " {$row['start_month']}/{$row['start_day']} ~ {$row['end_month']}/{$row['end_day']}";
+					}else{
+						$target_date = " {$row['start_month']}/{$row['start_day']}";
+					}
+
+					switch ($row['state']) {
+						case '10': $state="<span class='txt_gray'>대기</span>"; break;
+						case '20': $state="<span class='txt_red'>미승인</span>"; break;
+						case '99': $state="<span class='txt_blue'>승인</span>"; break;
+						default : $state = ""; break;
+					}
+				?>
+				<tr>
+					<td data-table="number"><?=$no_title?></td>
+					<td data-table="subject"><a href="<?=$PHP_SELF?>?mode=user_view&amp;no=<?=$row[no]?>"><?=$row[item_name]?></a></td>
+					<td data-table="write"><?=$target_date?></td>
+					<td data-table="write"><?=$state?></td>
+					<td data-table="date"><?=reset(explode(" ", $row[reg_date]))?></td>
+				</tr>
+			<? } ?>
+
+		</tbody>
+	</table>
+
+	<!-- page -->
+	<div class="pagination">
+		<?
+
+			/*----------------------------------------------------------------------------*/
+			// 페이지 표시
+			/*----------------------------------------------------------------------------*/
+
+			if ($total == 0) $total = 1;
+
+			$page_url = $PHP_SELF."?mode=$mode&amp;email=$email&amp;phone=$phone";
+
+			// 처음
+			echo "<a href='$page_url&amp;start=0' class='btn_first'><span>맨처음</span></a>";
+
+			$page = floor($start / ($scale * $page_scale));
+
+			if ($start + $scale >  $scale * $page_scale) {
+				$pre_start = $start - $scale * $page_scale ;
+				echo "<a href='$page_url&amp;start=$pre_start' class='btn_prev'><span>이전</span></a>";
+			}
+
+			for ($vj = 0; $vj < $page_scale ; $vj++) {
+				$ln = ($page * $page_scale + $vj) * $scale;
+				$vk = $page * $page_scale + $vj + 1 ;
+				if ($ln < $total) {
+					if ($ln != $start) echo "<a href='$page_url&amp;start=$ln'>$vk</a>";
+					else echo "<span>$vk</span>";
+				}
+			}
+
+			// 마지막
+			$end_page = floor($total - $scale) + 1;
+			if ($end_page <= 0)	$end_page = 0;
+
+			if ($total > (($page + 1) * $scale * $page_scale)) {
+				$n_start = ($page + 1) * $scale * $page_scale ;
+				echo "<a href='$page_url&amp;start=$n_start' class='btn_next'><span>다음</span></a>";
+			}
+
+			$end_page = ceil($total / $scale);
+			if ($total) $end_start = ($end_page -1) * $scale;
+			else $end_start = $end_page;
+
+			echo "<a href='$page_url&amp;start=$end_start' class='btn_last'><span>맨마지막</span></a>";
+		?>
+	</div>
+	<!-- //page -->
+<? } else { ?>
+	<div class="none_data type02">
+		검색 된 결과가 없습니다.
+	</div>
+<? } ?>

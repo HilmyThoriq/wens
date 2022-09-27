@@ -1,0 +1,262 @@
+<? include("../../inc/top.html") ?>
+<? include("../../inc/header.html") ?>
+<script>
+var date = new Date();
+date.setMonth(date.getMonth() + 1);
+var max_month = date.getMonth() +1 + <?=$reservation['max_month'] ? $reservation['max_month'] : "0"?>;
+function call_calendar(year,month,no){
+	if(month >= max_month){
+		alert('<?=$reservation['max_month']?>달 이상의 달력을 미리 보실수 없습니다.');
+		return;
+	}
+	$.ajax({
+		type : "POST",
+		url : "/reservation/reservation.php",
+		data : {
+			mode:"calendar",
+			year:year,
+			month:month,
+			no:no
+		},
+		beforeSend: function () {
+			$("#calendar").html($("#div_ajax_load_image").html());
+
+		},
+		success : function(res) {
+			$("#calendar").html(res)
+			<? if($reservation['date_select_type'] == "1"){
+				echo "return fill_cal1();";
+			}else{
+				echo "return call_fun2();";
+			}?>
+		}
+	});
+}
+
+</script>
+<?
+
+	// 상품정보 가져오기
+	// 상품정보 가져오기 끝
+	$state_chk = " and state='Y'";
+	if($is_admin) $state_chk = "";
+	$item_query = "SELECT * FROM koweb_reservation_item WHERE no ='$no' {$state_chk}";
+	$item_result = mysql_query($item_query);
+	$item_row = mysql_fetch_array($item_result);
+	if(!$item_row) error("잘못된 접근입니다.");
+
+
+	$online_query = "SELECT * FROM koweb_online_config WHERE id = '{$reservation['online_config_id']}'";
+	$online_result = mysql_query($online_query);
+	$online = mysql_fetch_array($online_result);
+	$sort = explode("|",$online[sort]);
+
+	$member = get_member();
+	if(!$member) $member['auth_level'] = 10;
+	if($online['use_member']<$member['auth_level']){
+		if($member['auth_level'] == 10){ alert("로그인이 필요합니다.");url("/member/member.php"); }
+		else error("예약을 이용할수없는 회원등급입니다.");
+	}
+
+	if($member['auth_level'] < 10){
+		$phone = explode("-", $member['phone']);
+		$email = explode("@", $member['email']);
+	}
+
+?>
+<!-- 로딩 -->
+<div id="div_ajax_load_image" style="display:none">
+	<div class="area_loding">
+		<img src="/images/content/loading.gif" class="img" alt="loading">
+	</div>
+</div>
+<!-- //로딩 -->
+<form action="" method="POST">
+	<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+	<input type="hidden" name="return_url" value="<?=$url?>" />
+	<input type="hidden" name="no" value="<?=$no?>" />
+	<div class="productWrite area_calendar type02">
+
+		<div id="calendar" class="calendar">
+			<? include ("calendar.html") ?>
+		</div>
+
+		<!-- 입력폼 -->
+		<table class="bbsView">
+			<caption>예약하기</caption>
+			<colgroup>
+				<col data-write="th" style="width:15%">
+				<col data-write="td" style="width:85%">
+			</colgroup>
+			<tbody>
+				<!-- 제품명 표기 -->
+				<tr>
+					<th scope="row"><span class="marking">필수항목</span><label for="title">제품명</label></th>
+					<td><?=$item_row['item_name']?></td>
+				</tr>
+				<? if($reservation['date_select_type'] == "1"){ ?>
+				<!-- 연속이 아닌경우 -->
+				<tr>
+					<th scope="row"><span class="marking">필수항목</span>예약날짜</th>
+					<td class="days" id="reservation_dates"></td>
+				</tr>
+				<!-- //연속이 아닌경우 -->
+				<? }else if($reservation['date_select_type'] == "2"){ ?>
+				<!-- 연속허용 -->
+				<tr>
+					<th scope="row"><span class="marking">필수항목</span>예약날짜</th>
+					<td class="days">
+						<input type="text" name="" id="reservation_start" value="" readonly title="예약시작날짜"/>
+						~
+						<input type="text" name="" id="reservation_end" value="" readonly title="예약종료날짜"/>
+					</td>
+				</tr>
+				<!-- //연속허용 -->
+				<? } ?>
+				<input type='hidden' value='' name='reservation_date' id="reservation_date" title="예약날짜"/>
+				<? include ($_SERVER['DOCUMENT_ROOT']."/ko_admin/online/reservation_online.html"); ?>
+
+			</tbody>
+		</table>
+		<!-- //입력폼 -->
+
+
+	</div>
+
+	<div class="btn_area">
+		<input type="submit" class="button" value="예약완료">
+		<!-- <a href="#" class="button">예약완료</a> -->
+		<a href="<?=$_SERVER['PHP_SELF']?>" class="button">제품목록</a>
+
+	</div>
+</form>
+<? include("../../inc/footer.html") ?>
+<script>
+	$(document).ready(function() {
+		$('form').submit(function() {
+
+			var chk = true;
+
+	        if( !$("#phone1").length && !$("#phone2").length && !$("#phone3").length ){
+	            alert("필수입력이 필요한 연락처 입력이 없습니다. 관리자에게 문의하세요");
+	            chk = false;
+	            return false;
+	        }
+
+	        if($("#reservation_start").length ){
+	            if(!$("#reservation_start").val()){
+	                alert($("#reservation_start").attr('title') + "을 선택하세요.");
+	                $("#reservation_start").focus();
+	                chk = false;
+	                return false;
+	            }
+	        }
+
+	        if($("#reservation_end").length ){
+	            if(!$("#reservation_end").val()){
+	                alert($("#reservation_end").attr('title') + "을 선택하세요.");
+	                $("#reservation_end").focus();
+	                chk = false;
+	                return false;
+	            }
+	        }
+
+	        if($("#reservation_date").length ){
+	            if(!$("#reservation_date").val()){
+	                alert($("#reservation_date").attr('title') + "을 선택하세요!.");
+	                chk = false;
+	                return false;
+	            }
+	        }
+
+			//셀렉트 체크
+			$('.required_select').each(function() {
+				if (!$(this).val() || $(this).val()=="") {
+					alert($(this).attr('title') + "을 선택하세요.");
+					$(this).focus();
+					chk = false;
+					return false;
+				}
+			});
+			if (!chk) { return false; }
+
+			// 라디오 버튼 체크
+	        $('.required_radio').each(function() {
+				var temp_name = $(this).attr("name");
+				if (!$(':radio[name="'+temp_name+'"]:checked').val()) {
+					alert($(this).attr('title') + "을 선택하세요.");
+					$(this).find('input:radio').first().focus();
+					chk = false;
+					return false;
+				}
+			});
+			if (!chk) { return false; }
+
+			// 체크박스 버튼 체크
+			$('.required_checkbox').each(function() {
+
+				// 최소 한개 선택
+				if (!$(this).find('input:checkbox:checked').length) {
+					alert($(this).attr('title') + "을 선택하세요.");
+					$(this).find('input:checkbox').first().focus();
+					chk = false;
+					return false;
+				}
+
+				// 최대 선택
+				if ($(this).find('input:checkbox:checked').length > $(this).attr('limit')) {
+					alert($(this).attr('title') + "는 " + $(this).attr('limit') + "개까지 선택이 가능합니다.");
+					$(this).find('input:checkbox').first().focus();
+					chk = false;
+					return false;
+				}
+				/*
+				// 필수 선택 수 적용
+				if ($(this).find('input:checkbox:checked').length != $(this).attr('limit')) {
+					alert($(this).attr('title') + "는 " + $(this).attr('limit') + "개까지 선택하셔야 합니다.");
+					$(this).find('input:checkbox').first().focus();
+					chk = false;
+					return false;
+				}
+				*/
+
+			});
+
+			if (!chk) { return false; }
+
+			$('.required').each(function() {
+				if (!$(this).val()) {
+					alert($(this).attr('title') + "을 입력하세요.");
+					$(this).focus();
+					chk = false;
+					return false;
+				}
+			});
+
+			if (!chk) { return false; }
+
+			if( $("#sms_auth2").length ){
+				if($("#sms_auth2").val() != "Y"){
+					alert("휴대폰인증을 진행해주세요.");
+					$(this).focus();
+					chk = false;
+					return false;
+				}
+			}
+
+			if (!chk) { return false; }
+
+			if($("#agree").length && $("#noagree").length){
+	    		if($(":input:radio[name=agree]:checked").val()  != "Y"){
+	    			alert("개인정보 정보제공동의에 동의하셔야만 신청 하실 수 있습니다.");
+	    			chk = false;
+	    			return false;
+	    		}
+	        }
+
+			if (!chk) { return false; }
+
+		});
+
+	});
+</script>

@@ -1,0 +1,388 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 5; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+//리스트
+$total_query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+
+$query = "SELECT * FROM $board_id WHERE 1=1  $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC LIMIT $start, $scale";
+$result = mysql_query($query);
+?>
+
+
+<!-- 검색 및 버튼 -->
+<? include "search.html"; ?>
+<!-- 검색 및 버튼 -->
+
+<? if($_SESSION[is_admin]) { ?>
+<table class="bbsList">
+	<caption>Board List</caption>
+	<colgroup>
+		<col data-table="number" style="width:12.5%"/>
+		<col data-table="subject" style="width:12.5%"/>
+		<col data-table="write" style="width:12.5%"/>
+		<col data-table="date" style="width:12.5%"/>
+		<col data-table="date" style="width:12.5%"/>
+		<col data-table="date" style="width:12.5%"/>
+		<col data-table="date" style="width:12.5%"/>
+		<col data-table="date" style="width:12.5%"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col" data-table="number">영문타이틀</th>
+			<th scope="col" data-table="subject">국문타이틀</th>
+			<th scope="col" data-table="subject">Funding Department</th>
+			<th scope="col" data-table="subject">Project Leader</th>
+			<th scope="col" data-table="subject">Project Manager</th>
+			<th scope="col" data-table="subject">Publish Date</th>
+			<th scope="col" data-table="write">Acknowledgement</th>
+			<th scope="col" data-table="date">Role in Project</th>
+		</tr>
+	</thead>
+	<tbody>
+		<? if($total > 0) { ?>
+			<? $f_no = $total - $start; ?>
+			<? while($row = mysql_fetch_array($result)){ ?>
+				<?
+						$date_array = explode("-",  $row[reg_date]);
+						if($row[notice] == "Y") {
+							$no_title = "<em class='notice'>NOTICE</em>";
+							$f_no--;
+						} else {
+							$no_title = $f_no--;
+						}
+						$title_reply = "";
+
+						//현재글
+						if($no == $row[no]){
+							$total_txt = "<img src=\"/img/now_gul.gif\" />";
+						}
+
+						//7일 new 아이콘
+						if ($row[reg_date] >= date("Y-m-d", strtotime("-7 day"))) {
+							$title_new = "new";
+						} else unset($title_new);
+
+						//depth 가 1이상이면 답변 아이콘
+						if($row[depth] > 0){
+							//$padding_style = $row[depth] * 40;
+							$title_reply = "<em class='reply'>REPLY</em>";
+						}
+
+						$reply_query_count = "SELECT * FROM board_comment WHERE ref_board_no = '$row[no]' AND board_id = '$board_id'";
+						$reply_count_result = mysql_query($reply_query_count);
+						$reply_count = mysql_num_rows($reply_count_result);
+
+						if($reply_count > 0){
+							$reply_query = "SELECT * FROM board_comment  ref_board_no = '$row[no]' AND board_id = '$board_id ORDER BY reg_date DESC";
+							$reply_result = mysql_query($reply_query);
+							$reply_ico = "REPLY OK";
+						} else {
+							$reply_ico = "";
+						}
+
+				?>
+				<tr>
+					<!-- <td data-table="number"><?=$no_title?></td> -->
+					<td data-table="number"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=view&amp;no=<?=$row[no]?>&cate=<?=$row[category]?>" class="<?=$title_new?>"><?=$title_reply?><?=$row[title]?><? if($board[use_comment] == "Y" ) { ?><i><?=$reply_ico?></i><? } ?></a></td>
+					<td data-table="number"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=view&amp;no=<?=$row[no]?>&cate=<?=$row[category]?>" class="<?=$title_new?>"><?=$title_reply?><?=$row[kor_title]?><? if($board[use_comment] == "Y" ) { ?><i><?=$reply_ico?></i><? } ?></a></td>
+					
+					<td data-table="subject"><?=$row[fund_department]?></td>
+					<td data-table="subject"><?=$row[leader]?></td>
+					<td data-table="subject"><?=$row[manager]?></td>
+					<td data-table="subject"><?=reset(explode(" ", $row[reg_date]))?></td>
+					<? $acknowledgement_arr = explode("^", $row[contents_02]); ?>
+					<? $cnt_ack = count($acknowledgement_arr) ;?>
+					<td data-table="write">
+						<? for($i=0; $i<=$cnt_ack; $i++) {
+							echo $acknowledgement_arr[$i];
+							echo "</br>";
+						}
+						?>
+					</td>
+					<td data-table="date"><?=$row[role]?></td>
+				</tr>
+			<? } ?>
+		<? } else { ?>
+			<tr>
+				<td colspan="8" class="none">There are no registered post.</td>
+			</tr>
+		<? } ?>
+	</tbody>
+</table>
+<? } else { ?>
+<table class="bbsList">
+	<caption>일반게시판 목록</caption>
+	<colgroup>
+		<col data-table="number" style="width:7%">
+		<col data-table="subject">
+		<col data-table="end_period" style="width:15%">
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col" data-table="number">No.</th>
+			<th scope="col" data-table="subject">Title</th>
+			<th scope="col" data-table="end_period">End Period</th>
+		</tr>
+	</thead>
+	<tbody>
+	<? if($total > 0) { ?>
+	<? $f_no = $total - $start; ?>
+	<? while($row = mysql_fetch_array($result)){ ?>
+		<?
+			$date_array = explode("-",  $row[reg_date]);
+			if($row[notice] == "Y") {
+				$no_title = "<em class='notice'>NOTICE</em>";
+				$f_no--;
+			} else {
+				$no_title = $f_no--;
+			}
+			$title_reply = "";
+
+			//현재글
+			if($no == $row[no]){
+				$total_txt = "<img src=\"/img/now_gul.gif\" />";
+			}
+
+			//7일 new 아이콘
+			if ($row[reg_date] >= date("Y-m-d", strtotime("-7 day"))) {
+				$title_new = "new";
+			} else unset($title_new);
+
+			//depth 가 1이상이면 답변 아이콘
+			if($row[depth] > 0){
+				//$padding_style = $row[depth] * 40;
+				$title_reply = "<em class='reply'>REPLY</em>";
+			}
+
+			$reply_query_count = "SELECT * FROM board_comment WHERE ref_board_no = '$row[no]' AND board_id = '$board_id'";
+			$reply_count_result = mysql_query($reply_query_count);
+			$reply_count = mysql_num_rows($reply_count_result);
+
+			if($reply_count > 0){
+				$reply_query = "SELECT * FROM board_comment  ref_board_no = '$row[no]' AND board_id = '$board_id ORDER BY reg_date DESC";
+				$reply_result = mysql_query($reply_query);
+				$reply_ico = "REPLY OK";
+			} else {
+				$reply_ico = "";
+			}
+
+		?>
+		<!-- 반복 -->
+		<tr class="">
+			<td data-table="number"><?=$no_title?></td>
+			<td data-table="subject"><a href="/contents/04_projects/projects_view.html?board_id=board_projetcs&amp;mode=view&amp;no=<?=$row[no]?>&cate=<?=$row[category]?>"><!-- <em class="new">새글</em> --><?=$row[title]?><i></i></a></td>
+			<td data-table="end_period"><?=$row[end_period]?></td>
+		</tr>
+	<? } ?>
+	<? } else { ?>
+		<tr>
+			<td colspan="8" class="none">There are no registered post.</td>
+		</tr>
+	<? } ?>
+	</tbody>
+</table>
+<? } ?>
+
+<? if($auth_write){?>
+	<div class="search_bbs">
+	<!-- 버튼 -->
+		<div class="btn">
+			<a href="<?=$PHP_SELF?>?mode=write&amp;board_id=<?=$board_id?>&cate=<?=$row[category]?>" class="button">WRITE</a>
+		</div>
+	</div>
+<? } ?>
+
+
+<!-- page -->
+<? include "paging.html"; ?>
+<!-- //page -->
+
+
+
+
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+    <!-- 본문 -->
+
+            <div class="adminCont">
+                
+                <!-- Projects list -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+                <div class="area_formTop">
+                    <div class="formTab typeB">
+                        <ul>
+                            <li class="on">
+                                <a href="">전체</a>
+                            </li>
+                            <li>
+                                <a href="">Previous Project​</a>
+                            </li>
+                            <li>
+                                <a href="">Ongoing Projects​</a>
+                            </li>
+                                                    
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="area_formConts">
+                    <div class="area_btn">
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>선택삭제</button>
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>전체삭제</button>
+                    </div>
+                    
+                    <!-- 목록 -->
+                    <table class="bbsList form_prject">
+                        <caption>acknowledgement 목록</caption>
+                        <colgroup>
+                            <col data-table="check" style="width: 5%"/>
+                            <col data-table="num" style="width: 5%"/>
+                            <col data-table="information"/>
+                            <col data-table="acknowledgement​" style="width: 15%"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" data-table="num">No.</th>
+                                <th scopt="col" data-table="information">Detail</th>
+                                <th scopt="col" data-table="acknowledgement">Acknowledgement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+							<? if($total > 0) { ?>
+							<? $f_no = $total - $start; ?>
+							<? while($row = mysql_fetch_array($result)){ ?>
+								<?
+										$date_array = explode("-",  $row[reg_date]);
+										if($row[notice] == "Y") {
+											$no_title = "<em class='notice'>NOTICE</em>";
+											$f_no--;
+										} else {
+											$no_title = $f_no--;
+										}
+										$title_reply = "";
+
+										//현재글
+										if($no == $row[no]){
+											$total_txt = "<img src=\"/img/now_gul.gif\" />";
+										}
+
+										//7일 new 아이콘
+										if ($row[reg_date] >= date("Y-m-d", strtotime("-7 day"))) {
+											$title_new = "new";
+										} else unset($title_new);
+
+										//depth 가 1이상이면 답변 아이콘
+										if($row[depth] > 0){
+											//$padding_style = $row[depth] * 40;
+											$title_reply = "<em class='reply'>REPLY</em>";
+										}
+
+										$reply_query_count = "SELECT * FROM board_comment WHERE ref_board_no = '$row[no]' AND board_id = '$board_id'";
+										$reply_count_result = mysql_query($reply_query_count);
+										$reply_count = mysql_num_rows($reply_count_result);
+
+										if($reply_count > 0){
+											$reply_query = "SELECT * FROM board_comment  ref_board_no = '$row[no]' AND board_id = '$board_id ORDER BY reg_date DESC";
+											$reply_result = mysql_query($reply_query);
+											$reply_ico = "REPLY OK";
+										} else {
+											$reply_ico = "";
+										}
+
+								?>
+                            <!-- 반복구간 -->
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="num"><?=$no_title?></td>
+                             
+                                <td data-table="information">
+                                    <div class="detailBox">
+                                        <div class="deTop">
+                                            <p class="en"><?=$row[title]?></p>
+                                            <p class="kr"><?=$row[kor_title]?></p>
+                                        </div>
+                                        <div class="deBottom">
+                                            <ul>
+                                                <li>
+                                                    <span>Funding Department​</span>
+                                                    <em><?=$row[fund_department]?></em>
+                                                </li>
+                                                <li>
+                                                    <span>Project Leader</span>
+                                                    <em><?=$row[leader]?></em>
+                                                </li>
+                                               
+                                                <li>
+                                                    <span>Project Manager​</span>
+                                                    <em><?=$row[manager]?></em>
+                                                </li>
+                                                <li>
+                                                    <span>Publish Date</span>
+                                                    <em><?=reset(explode(" ", $row[reg_date]))?></em>
+                                                </li>
+                                                <li>
+                                                    <span>Role in Project​</span>
+                                                    <em><?=$row[role]?></em>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+								<? $acknowledgement_arr = explode("^", $row[contents_02]); ?>
+								<? $cnt_ack = count($acknowledgement_arr) ;?>
+                                <td data-table="acknowledgement">
+                                    <ul>
+										<? for($i=0; $i<=$cnt_ack; $i++) { ?>
+                                        <li>
+                                            <span><i><?=$i+1?></i>차</span><em><?=$acknowledgement_arr[$i]?></em>
+                                        </li>
+										<? } ?>
+                                    </ul>
+                                </td>
+                            
+                            </tr>
+							<? } ?>
+                            <!-- 반복구간 끝 -->
+							<? } else { ?>
+								<tr>
+									<td colspan="3" class="none">There are no registered post.</td>
+								</tr>
+							<? } ?>
+                            
+                        </tbody>
+                    </table>
+                    
+                </div>
+
+              
+            </div>
+
+    <!-- //본문 -->

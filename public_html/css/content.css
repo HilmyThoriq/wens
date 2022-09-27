@@ -1,0 +1,336 @@
+@charset "utf-8";
+
+/*
+ * content CSS Document
+ * KOWEB
+ */
+
+/* board */
+ul.bbsList{border-top-color:#152f53;}
+ul.bbsList li .more.active,
+ul.bbsList li .more:hover,
+ul.bbsList li .more:focus{border-color:#152f53;}
+ul.bbsList li .more em,
+ul.bbsList li .subject:hover,
+ul.bbsList li .subject:focus,
+ul.bbsList li:hover .date,
+ul.bbsList li:hover .date i{color:#152f53;}
+ul.bbsList li .notice{background:#152f53;}
+
+.faqList dt.on:before{background:#152f53;}
+
+.bbsTitle_cont > i{color:#c6a582; border-bottom-color:#c6a582;}
+
+/* 준비중 */
+.prepare,.empty {min-height: 400px; display: flex; align-items: center; justify-content: center;}
+.prepare p,.empty p{opacity: 0.6;}
+.empty{display: none;}
+
+.bbsList td[data-table="number"] .notice{font-size: 10px;}
+
+
+[class*="area_subpage"]{padding: 100px 0; box-sizing: border-box;}
+[class*="area_"] .inr{max-width: 1440px; width: 100%; margin: 0 auto;; height: 100%; position: relative; box-sizing: border-box; padding: 0 20px;}
+
+.area_subVisual{position: relative; width: 100%; height: 466px; overflow: hidden;;}
+.area_subVisual span{position: absolute; width: 100%; height: 100%; display: block; object-fit: cover; top: 0; left: 0; z-index: 0; transform: scale(1);animation: zoom 10s ease 0s forwards; }
+.area_subVisual span.bg01{background:url(/images/content/img_sub_visual01.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg02{background:url(/images/content/img_sub_visual02.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg03{background:url(/images/content/img_sub_visual03.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg04{background:url(/images/content/img_sub_visual04.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg05{background:url(/images/content/img_sub_visual05.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg06{background:url(/images/content/img_sub_visual06.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg07{background:url(/images/content/img_sub_visual07.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+.area_subVisual span.bg08{background:url(/images/content/img_sub_visual08.jpg) no-repeat; background-size:cover; background-position: 50% 50%; ;}
+
+
+.area_subVisual h2{transition: all .3s; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-20%); color:#fff; font-size:53px; font-weight: 500; text-transform: uppercase;}
+
+@keyframes zoom{
+    0%{transform:scale(1.1) rotate(.001deg);}
+	100%{transform:scale(1) rotate(.001deg);}
+}
+.area_sub_nav{background-color:#0d74c7}
+.area_sub_nav .sub_nav_tab{display: flex;}
+.area_sub_nav .sub_nav_tab > li{border-left:1px solid #2a85cf; position: relative;}
+.area_sub_nav .sub_nav_tab > li:last-child{border-right: 1px solid #2a85cf;}
+.area_sub_nav .sub_nav_tab > li.home > a{width: 60px; height: 60px; display: block; position: relative;;}
+.area_sub_nav .sub_nav_tab > li.home > a > i{font-size:16px; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); color:#fff}
+.area_sub_nav .sub_nav_tab > li[class*="depth"]{padding: 0 30px; box-sizing: border-box;  }
+.area_sub_nav .sub_nav_tab > li[class*="depth"] > a{width: 100%; height: 100%; display: flex; align-items: center; position: relative; color:#fff}
+.area_sub_nav .sub_nav_tab > li[class*="depth"] > a > i{position: absolute; right: 0; top: 50%; transform: translateY(-50%); transition: all .3s;  color:#fff}
+.area_sub_nav .sub_nav_tab > li > a > span{white-space: nowrap; word-break: break-all; text-overflow: ellipsis; overflow: hidden; display: block; width: 80%;}
+.area_sub_nav .sub_nav_tab > li.depth01,
+.area_sub_nav .sub_nav_tab > li.depth02,
+.area_sub_nav .sub_nav_tab > li.depth03{width: 230px;}
+.area_sub_nav .under_menu{position: absolute;display: none;  left: 0; top: 60px; box-sizing: border-box; padding: 16px; width: 100%; background-color: #fff; z-index: 22; border-left:1px solid #eee; border-bottom: 1px solid #eee; border-right: 1px solid #eee;}
+.area_sub_nav .under_menu li{box-sizing: border-box; padding:6px 0}
+.area_sub_nav .under_menu li a{font-size:15px; transition: all .3s;}
+.area_sub_nav .under_menu li:hover a{opacity: 0.5;}
+
+.area_subtitle{padding:80px 0; text-align: center;}
+.area_subtitle h3{font-size:34px;}
+
+.area_editPlace{min-height: 300px; box-sizing: border-box; padding:80px}
+.area_editPlace img{max-width: 100%;}
+
+.area_sub{ padding-bottom: 100px;}
+.w_box{background-color:#fff}
+.c_box{background-color: #f5f5f8;}
+
+.area_subTab{margin-bottom: 60px;}
+.area_subTab > ul{display: flex; position: relative;}
+.area_subTab > ul::before{content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background-color: #333;}
+.area_subTab > ul > li{ position: relative; flex: 1; max-width: 20%; border:1px solid #bababa; background-color:#ffff;  opacity: 0.5; border-bottom: 1px solid #333; /* border-radius: 20px 20px 0 0; */}
+.area_subTab > ul > li + li{border-left: 0;}
+.area_subTab > ul > li.active{border-color: #333; border-bottom: 1px solid #fff; border-left: 1px solid #333; opacity: 1; }
+.area_subTab > ul > li.active a{font-weight: 600;}
+.area_subTab > ul > li a{display: block; padding:20px 26px; cursor: pointer;}
+
+.c_box .area_subTab > ul > li{background-color:#f5f5f8; }
+.c_box .area_subTab > ul > li.active{border-bottom: 1px solid #f5f5f8;}
+
+
+/* research list */
+.area_researchPage01 .selectbox.trans{font-size: 12px;}
+
+/* 프로필리스트 */
+.area_profileList  * {transition: all .4s;}
+.area_profileList > ul{display: flex; flex-wrap: wrap; box-sizing: border-box; margin-left: -14px; margin-right: -14px;}
+.area_profileList > ul > li{width: 33.333%; padding: 14px; box-sizing: border-box;}
+.area_profileList > ul > li > div.pro_cont{display: block; border-radius: 14px; box-sizing: border-box; padding:26px; min-height: 100%;}
+.area_profileList .img{width: 140px; height: 140px; box-sizing: border-box; overflow: hidden; border-radius: 100%; position: relative; margin: 0 auto;}
+.area_profileList .img img{ width: 100%; height: 100%; position: absolute; left: 0; top: 0; object-fit: cover;}
+.area_profileList .info_top{text-align: center;}
+.area_profileList .persoanl{padding:14px 0}
+.area_profileList .persoanl p.name{text-align: center; font-size:18px; font-weight: 600; }
+.area_profileList .persoanl a.email{font-size:14px; opacity: 0.7; cursor: pointer; color:#0d74c7 }
+.area_profileList .contact{display: flex; align-items: center; justify-content: center; margin-top: 12px;}
+.area_profileList .contact span{display: inline-block;border-radius: 16px;background-color: #d4e7f6;padding: 4px 12px;color: #53738a; font-size:14px}
+.area_profileList .contact span + span{margin-left: 6px;}
+.area_profileList .contact span i{margin-right: 8px;}
+.area_profileList .info_detail{padding-top: 20px; margin-top: 20px; border-top: 1px dashed #eee;}
+.area_profileList .info_detail dl + dl{margin-top: 24px;}
+.area_profileList .info_detail dt{padding-bottom: 6px; color:#444; text-transform: uppercase; font-size: 14px; font-weight: 600;}
+.area_profileList .info_detail dd{font-size:14px; font-weight: 300; opacity: 0.5;}
+.area_profileList.styleB > ul > li{width: 25%;}
+
+/* 저널리스트 */
+.area_publicList{margin-top: 60px;}
+.area_publicList *{transition: all .4s;}
+.area_publicList .pub_section > ul > li{padding:8px 0;  }
+.area_publicList .pub_section > ul > li .pub_cont{border-radius: 8px; box-sizing: border-box; padding: 30px; position: relative; display: block; border:1px solid #fff;}
+.area_publicList .pub_section > em{font-weight: bold; font-size: 22px;}
+.area_publicList .pub_section + .pub_section{margin-top: 40px;}
+.area_publicList .number{position: absolute; left: 30px; top: 30px; text-align: left;}
+.area_publicList .number span{font-weight: bold; opacity: 0.3;}
+.area_publicList .info {box-sizing: border-box;  position: relative; padding:0 30px;}
+.area_publicList .info .title{font-weight: 600; font-size:22px}
+.area_publicList .info .title + p.name{margin-top: 4px;}
+.area_publicList .info p.name{font-size: 20px;}
+.area_publicList .info .detail{margin-top: 20px; font-weight: 400;}
+.area_publicList .info .detail *{font-size: 17px; font-family:'pretendard',sans-serif}
+.area_publicList .info .detail > div{display:inline-block}
+.area_publicList .info .detail span:first-child{margin-left: 0;}
+.area_publicList .info .detail span.author_name{color: #2a85cf; box-sizing: border-box; opacity: 1;}
+.area_publicList .info .detail span.author_name + span.author_name::before{content: ","; margin-right: 6px;}
+.area_publicList .info .detail span.author_name + span.author_name:nth-child(3)::before{margin-left: 0;}
+.area_publicList .info .detail span.author_name + *:not(span.author_name){padding-left: 20px; position: relative;}
+
+.area_publicList .info .detail .box_others {opacity: 0.4; /* margin-top: 18px; */ /* text-align: right; */}
+.area_publicList .info .detail .box_others span{padding:0 5px; font-size: 16px; }
+.area_publicList .info .detail .box_others span i{text-transform: uppercase; letter-spacing: -.48px;}
+
+.area_publicList .info .link{position: relative; margin-top: 12px; text-align: right; display: block; font-size:18px; right: 0; bottom: 0;}
+.area_publicList .info .link a{color:#0d74c7;  opacity: 0.3;}
+.area_publicList .info .link a + a{margin-left: 10px;}
+.area_publicList .info .link a:hover{opacity: 1;}
+.area_publicList.acceptedPart .pub_section{text-align: center;}
+.area_publicList.acceptedPart .pub_section > em{display: inline-block; margin: 0 auto 12px; text-transform: uppercase;}
+.area_publicList.acceptedPart .pub_section ul{text-align: left;}
+
+.area_publicList.yearsPart{padding-top: 80px; margin-top: 80px; border-top:1px dashed #ddd}
+.area_publicList.yearsPart .pub_section{display: flex; }
+.area_publicList.yearsPart .pub_section > em{width: 120px; padding-top:20px; color:#2a85cf}
+.area_publicList.yearsPart .pub_section ul{width: calc(100% - 120px);}
+
+/* patent */
+.area_publicList.yearsPart.patent{border-top: none ; padding-top: 0; margin-top: 0; }
+.area_publicList.yearsPart.patent .detail span{border-radius: 4px;display: inline-block; background-color: #d4e7f6; padding:6px 10px; font-size:14px;color: #53738a; box-sizing: border-box; margin: 4px; }
+.patent_number{text-align: right;}
+.patent_number em{font-size: 16px; color: #bababa; position: relative;}
+.patent_number em::before{content: "Patent Number :"; margin-right: 9px;}
+
+/* 검색 */
+.bbsSearch .input_box{position: relative; background-color: #fff;}
+.bbsSearch .designSelect .select,.designSelect .selectbox{height: 60px; border-radius: 6px; line-height: 60px;}
+.bbsSearch .designSelect .selectoption{border-color: #fff;}
+.bbsSearch .designSelect .selectbox:after {top: 26px;}
+.designSelect .selectbox.active{border:none}
+.designSelect .selectoption li {line-height:23px}
+
+.bbsSearch.pub_type form{padding:20px 0; background: #f5f5f8;}
+.bbsSearch input[type=text]{border-radius: 6px 0 0 6px; margin-right: 0; height: 60px;}
+.bbsSearch .button{border-radius: 0 6px 6px 0; height: 60px;}
+.bbsSearch.pub_type .designSelect .selectbox{border-radius: 8px; height: 60px; line-height: 60px; }
+.bbsSearch.prj_type .designSelect .select,
+.bbsSearch.pub_type .designSelect .select{width: 250px;}
+.bbsSearch.pub_type .designSelect .selectbox.active{border:1px solid #fff}
+.bbsSearch.pub_type .designSelect .selectoption{border:1px solid #fff}
+.bbsTitle{font-family: 'Poppins' ,'pretendard', '맑은 고딕', '돋움', Dotum, '굴림', Gulim, Sans-serif;}
+
+/* 게시판 */
+.area_prjView{box-sizing: border-box; padding: 60px; border-radius: 14px;}
+.area_prjView .bbsNew_container.v2 .bbsTitle{font-size:28px!important; font-weight: 400!important;} 
+
+.prjDetail .ul{display: flex; flex-wrap: wrap; margin-left: -32px; margin-right: -32px;}
+.prjDetail .ul .li{width: 50%;min-height: 120px;padding: 0 32px;margin: 24px 0px;box-sizing: border-box;}
+.prjDetail .ul .li > div{box-sizing: border-box; border-bottom: 1px solid #eee;}
+.prjDetail .ul .li:last-child > div{border-bottom: 0;}
+.prjDetail .ul .li.typeB{width: 100%;}
+
+.prjDetail .ul .li *{font-size:16px}
+.prjDetail .ul .li  strong{display: block; font-size: 15px; color:#0d74c7; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;}
+.prjDetail .ul .li p{opacity: 0.6; }
+.prjDetail .ul .li .box_cont{box-sizing: border-box;padding: 30px 0 16px;}
+.prjDetail .ul .li.title dl{display: table; width: 100%;}
+.prjDetail .ul .li.title dl + dl{margin-top: 4px;}
+.prjDetail .ul .li.title dl > *{display: table-cell; vertical-align: top; box-sizing: border-box; }
+.prjDetail .ul .li.title dl dt{font-weight: 600; width: 90px; color: #444;position: relative;}
+/* .prjDetail .ul .li.title dl dt::before{content: ""; width: 1px; height: 50%; background-color:#ddd; position: absolute; right: 0; top: 8px;} */
+.prjDetail .ul .li.title dl:nth-child(2) dt{font-weight: 500;}
+.prjDetail .ul .li.title dl dd{width: calc(100% - 90px); /* color:#666;  */padding-left: 20px; opacity: 0.6;}
+.prjDetail .ul .li.acknow li{display: flex; align-items: flex-start;}
+.prjDetail .ul .li.acknow li > * {width: 50%;}
+.prjDetail .ul .li.acknow .period{opacity: 0.6;}
+
+/* lecture */
+.comment_area.new_ver .write{box-sizing: border-box; padding:20px;}
+.comment_area.new_ver .write .input_newVer > ul > li label{font-weight: 700; display: block; font-size: 15px; letter-spacing: .1px;}
+.input_newVer > ul{display: flex; flex-wrap: wrap;}
+.input_newVer > ul > li:nth-child(1){width: 100%; margin-bottom: 12px;}
+.input_newVer > ul > li{width: 50%;}
+.download_newver a{opacity: 0.5; padding:3px 0; display: block;}
+.comment_area.new_ver .name{margin-bottom: 8px; display: block;}
+
+
+
+@media all and (max-width:1640px){
+
+}
+
+@media all and (max-width:1440px){
+    .area_subVisual{height: 400px;}
+}
+
+@media all and (max-width:1240px){
+    .area_profileList > ul > li{width: 50%;}
+    .area_publicList .info .detail > div{display:block}
+    .area_publicList .info .detail .box_others span:nth-child(1){padding-left: 0;}
+}
+
+@media all and (max-width:1024px){
+    .area_sub_nav .inr{padding: 0}
+    .area_sub_nav .sub_nav_tab li:last-child{display: none;}
+    .area_sub_nav .sub_nav_tab li.depth01{width: calc(100% - 60px);}
+    .area_subVisual h2{font-size: 43px;}
+    .area_subTab > ul > li{max-width: 25%;}
+    .area_profileList.styleB > ul > li{width: 33.33333%;}
+    
+    .bbsSearch form{padding:40px 14px; box-sizing:border-box}
+
+    .area_editPlace{padding:40px}
+}
+
+@media all and (max-width:768px){
+    .area_subVisual h3{font-size:32px}
+    .area_subVisual{height: 306px;}
+
+    .area_profileList > ul > li{width: 100%;}
+    .area_profileList.styleB > ul > li{width: 50%;}
+
+    .area_publicList.yearsPart .pub_section > em{width: 90px;}
+    .area_publicList.yearsPart .pub_section ul{width: calc(100% - 90px);}
+
+    .area_subTab > ul > li a{padding:10px 20px; box-sizing: border-box; font-size:13px}
+
+    .bbsSearch.prj_type form,
+    .bbsSearch.pub_type form{flex-wrap:wrap}
+    .bbsSearch.prj_type .designSelect .select, .bbsSearch.pub_type .designSelect .select{width:100%}
+    .bbsSearch.prj_type .designSelect,.bbsSearch.pub_type .designSelect{width:100%; margin-right:0; margin-bottom:4px}
+    .bbsSearch.prj_type  input[type=text],.bbsSearch.pub_type input[type=text]{width:calc(100% - 100px)}
+
+    .area_prjView{padding:40px}
+}
+
+@media all and (max-width:640px){
+    .area_sub{overflow: hidden;}
+    .area_subVisual h2{font-size: 33px;}
+    .area_subtitle{padding:60px 0}
+    .area_subtitle h3{font-size:26px;}
+    .area_profileList.styleB > ul > li{width: 100%;}
+ 
+    .area_publicList .info{padding:0 20px}
+    .area_publicList .info .title{font-size:20px}
+    .area_publicList .info p.name{font-size:18px}
+    .area_publicList .info .detail *{font-size: 16px;}
+    .area_publicList .info .link{right: -5px; bottom: -12px;}
+
+    .area_subTab{overflow-x: auto;}
+    .area_subTab > ul {display: table; width: 100%;}
+    .area_subTab > ul > li{display: table-cell; white-space:nowrap}
+
+    .bbsList td[data-table="end_period"],
+	.bbsList td[data-table="date_ver"]{position:relative; right:0; bottom:0; width:100%; letter-spacing:-1px; text-align:left}
+	.bbsList td[data-table="end_period"]::before{content:"End Period : "; margin-right:4px}
+	.bbsList td[data-table="date_ver"]::before{content:"Date : "; margin-right:4px;}
+
+    .prjDetail .ul .li *{font-size: 15px;}
+    .bbsNew_container.v2 .bbsPager .inr_pager .pager_list{padding: 10px ;}
+    .prjDetail .ul .li .box_cont{padding-top: 11px;}
+}
+
+@media all and (max-width:520px){
+    .area_publicList.yearsPart{padding-top: 30px; margin-top: 40px;}
+    .area_publicList.yearsPart .pub_section{flex-wrap: wrap;}
+    .area_publicList.yearsPart .pub_section > em,.area_publicList.yearsPart .pub_section ul{width: 100%;}
+    .area_publicList .pub_section > ul > li .pub_cont{padding:24px}
+    .area_publicList .info{padding-right: 0; padding-left: 0;}
+    /* .area_publicList .info .link{top: -30px; right: -0; bottom: inherit; font-size:14px} */
+
+    .area_publicList .number{position: relative; left: 0; top: 0; margin-bottom: 8px;}
+    .area_publicList .info .title{font-size: 18px;}
+    .area_publicList .info p.name{font-size: 16px;}
+    .area_publicList .info .detail span.author_name{font-size: 15px;}
+    .area_publicList .info .detail .box_others {margin-top: 8px;}
+    .area_publicList .info .detail *,.area_publicList .info .detail .box_others span{font-size: 14px;}
+
+    .area_editPlace{padding:20px}
+
+    .area_prjView{padding:28px 16px}
+    .prjDetail .ul{margin-left: -12px; margin-right: -12px;}
+    .prjDetail .ul .li{padding: 0 12px}
+    .area_prjView .bbsNew_container.v2 .bbsTitle{font-size: 22px!important;}
+   
+}
+
+@media all and (max-width:480px){
+    .area_subtitle h3{font-size:19px;}
+    .bbsSearch form{flex-wrap: wrap; position: relative; padding:16px 10px}
+	.bbsSearch.prj_type .designSelect .select, .bbsSearch.pub_type .designSelect .select{width:100%}
+    .bbsSearch .designSelect select,
+    .bbsSearch .designSelect,
+    .bbsSearch .designSelect .select, .designSelect .selectbox,
+	.bbsSearch.pub_type .designSelect .selectbox{width: 100%; box-sizing: border-box; height: 40px; line-height: 40px;}
+    .bbsSearch .designSelect .selectbox:after{top: 17px;}
+    .bbsSearch .designSelect{margin-right: 0; margin-bottom: 4px;}
+    .bbsSearch input[type=text],
+	.bbsSearch.prj_type input[type=text], .bbsSearch.pub_type input[type=text]{width: 100%; border-radius: 6px; height: 45px;}
+    .bbsSearch input[type="submit"].button{position: absolute; right: 4px; bottom: 20px;}
+
+    .area_publicList.yearsPart.patent .detail span{font-size: 12px; padding:2px 6px;}
+    .area_publicList .info .detail *,.area_publicList .info .detail .box_others span{font-size: 12px;}
+
+    .prjDetail .ul .li{width: 100%; margin:14px 0; min-height: auto;}
+ 
+}

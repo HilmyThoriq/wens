@@ -1,0 +1,72 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin ">
+            <div class="adminCont">
+                
+                <!-- Patents 양식 -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+               
+                <div class="area_formConts bbsView">
+                    <div class="form_List">
+                        <ul>
+                        
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="name​​"><span class="import">*</span>Courses Name</label>
+                                </div>
+                                <div class="inBox">
+                                     <!-- 상위 리스트 제목글 -->
+                                    <input type="text" name="name​​" id="name​​" class="inputFull" readonly>
+                                </div>
+                            </li>
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Title​</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="area_edit">
+                                        <!-- 에디터 공간 -->
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Upload File​</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                   <em class="tip">첨부파일 가능 용량은 10MB 입니다</em>
+                                </div>
+                            </li>
+                     
+                        </ul>
+                    </div>
+                
+                    <div class="btn_area">
+                        <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;start=&amp;mode=delete&amp;return_mode=list&amp;no=" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><span>삭제</span></a>
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

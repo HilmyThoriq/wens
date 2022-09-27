@@ -1,0 +1,52 @@
+@charset "utf-8";
+
+/* 
+ * main CSS Document
+ * koweb
+ */
+ 
+ header{min-width:1579px;}
+ #container{min-width:1355px;}
+.content .conts{background:transparent !important;}
+.btn_more{display:block; position:absolute; top:30px; right:30px; width:13px; height:13px; background:url(../images/common/btn_more.png) no-repeat center top; text-indent:100%; overflow:hidden; white-space:nowrap;}
+
+.log_area:after{content:''; display:block; clear:both;}
+.log_area h2{margin:0px; font-size:18px; font-weight:300;}
+.log_area > div{float:left; position:relative; width:calc(50% - 10px); height:445px; box-sizing:border-box; padding:20px; background:#fff; border:1px solid #e8e8e8;}
+.log_area > div:nth-of-type(2){float:right;}
+.log_area .chart{width:100%; margin-top:15px; text-align:center;}
+
+.board_area{margin-top:20px;}
+.board_area:after{content:''; display:block; clear:both;}
+.board_area h2{padding:20px; margin:0px; font-size:18px; font-weight:300;}
+.board_area > div{float:left; position:relative; width:calc(36% - 10px); height:355px; box-sizing:border-box; background:#fff; border:1px solid #e8e8e8;}
+.board_area > div:last-child{float:right;}
+.board_area .banner{width:calc(28% - 20px); margin-right:20px; background:transparent; border:0px; color:#fff;}
+.board_area .banner:after{content:''; display:block; clear:both;}
+.board_area .banner > div{float:left; position:relative; height:100%; box-sizing:border-box; background-repeat:no-repeat; background-position:50% 0%; background-size:cover;}
+.board_area .banner .box01{width:157px; padding:30px 25px; background-image:url(../images/main/bg_dashboard01.jpg); font-family:'Montserrat', sans-serif;}
+.board_area .banner .box01 h2{padding:0px; font-size:17px;}
+.board_area .banner .box01 span,
+.board_area .banner .box01 em{display:block; font-size:40px; font-weight:500; text-align:center; line-height:1.3em; letter-spacing:1.5px;}
+.board_area .banner .box01 span{margin-top:40px; border-bottom:1px solid rgba(255,255,255,0.3); font-size:42px;}
+.board_area .banner .box01 p{position:absolute; bottom:30px; left:25px; font-size:17px;}
+.board_area .banner .box02{width:calc(100% - 177px); padding:30px 15px; margin-left:20px; background-image:url(../images/main/bg_dashboard02.jpg);}
+.board_area .banner .box02 p{font-size:16px; font-weight:300; word-break:keep-all;}
+.board_area .banner .box02 p:nth-of-type(2){margin-top:20px;}
+.board_area .banner .box02 i,
+.board_area .banner .box02 em{display:block;}
+.board_area .banner .box02 i{margin-top:40px; font-size:20px; font-family:'Montserrat', Noto Sans KR, sans-serif;}
+.board_area .banner .box02 em{font-size:40px; font-weight:500;}
+.board_area .notice table{table-layout:fixed;}
+.board_area .notice table th{padding:15px 10px;}
+.board_area .notice table td{padding:7px 10px;}
+.board_area .notice table thead th{border-top:1px solid #e2e2e2; border-bottom:1px solid #e2e2e2; font-size:15px; font-weight:300; color:#222;}
+.board_area .notice table td{padding-left:20px; color:#666; font-size:15px;}
+.board_area .notice table td a{display:block; font-size:15px; color:#666; font-weight:300; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.board_area .notice table td a:hover{text-decoration:underline; color:#000;}
+.board_area .notice table tbody tr td:last-child{padding-left:10px; font-family:'Verdana'; color:#999; font-size:14px; text-align:center;}
+.board_area .notice table tbody tr:first-child td{padding-top:30px;}
+
+
+/* 0824 하지호 수정작업 */
+.bbsView td.conts.lang  span{display: block; font-weight: 800;}

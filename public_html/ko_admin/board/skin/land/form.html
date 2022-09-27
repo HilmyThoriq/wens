@@ -1,0 +1,523 @@
+<?
+$mode_title = "글쓰기";
+$row[name] = $_SESSION['member_name'];
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = "글수정";
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		if($board[is_membership] != "Y"){
+		//비밀번호가 없음
+			if($password == "" ){
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]");
+				exit;
+			}
+			$password = hash("sha256", $password);
+			//비밀번호가 틀림
+			if($row[password] != $password){
+				alert("해당게시물은 작성자 및 관리자만 확인 가능합니다.");
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]");
+				exit;
+			}
+		} else {
+			if($_SESSION[member_id] != $row[id]){
+				error("해당게시물은 작성자 및 관리자만 수정 가능합니다.");
+				exit;
+			}
+		}
+	}
+}
+
+$owner_phone_ = explode("-",$row['owner_phone']);
+print_r($row);
+if($mode == "reply"){
+	$query = "SELECT name, comments, title FROM $board_id WHERE no='$ref_no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$comm_first_text = "<p>&nbsp;</p><hr> ".$row[name]." 님이 작성하신 글입니다.<br>";
+	$comm_last_text= "<p>&nbsp;</p><hr><p></p><br />";
+	$row[comments] = $comm_first_text . $row[comments] . $comm_last_text;
+
+	$title_first_text = "$row[title] 의 답변입니다.";
+	$row[title] = $title_first_text;
+}
+$member = get_member();
+?>
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="<?=$mode?>" />
+<input type="hidden" name="return_url" value="<?=$url?>" />
+<input type="hidden" name="no" value="<?=$row[no]?>" />
+<input type="hidden" name="ref_no" value="<?=$ref_no?>" />
+<input type="hidden" name="tag_type" value="<?=$tag_type?>" />
+
+<h2>등록자정보</h2>
+<table class="bbsView">
+	<caption>등록자정보</caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:85%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row"><span class="marking">필수</span>성명</th>
+			<td><?=$member['name']?></td>
+		</tr>
+		<tr>
+			<th scope="row"><span class="marking">필수</span>휴대폰</th>
+			<td><?=$member['phone']?></td>
+		</tr>
+		<tr>
+			<th scope="row">상담가능시간</th>
+			<td>
+				<select name='counseling_time[]' title="시작시간선택">
+					<option value='언제나'>언제나</option>
+					<? for($i=1; $i<=24; $i++){ ?>
+					<option value='<?=$i?>시'><?=$i?>시</option>
+					<? } ?>
+				</select>
+					~
+				<select name='counseling_time[]' title="종료시간선택">
+					<option value='언제나'>언제나</option>
+					<? for($i=1; $i<=24; $i++){ ?>
+					<option value='<?=$i?>시'><?=$i?>시</option>
+					<? } ?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><span class="marking">필수</span>소유자(건물주)와의관계</th>
+			<td>
+				<div class="designRadio">
+					<input type="radio" <?=$row['owner_relation'] == "본인" ? "checked" : "" ?> name="owner_relation" id="owner_relation1" class="" value="본인"/>
+					<label for="owner_relation1">본인</label>
+					<input type="radio" <?=$row['owner_relation'] == "가족" ? "checked" : "" ?> name="owner_relation" id="owner_relation2" class="" value="가족"/>
+					<label for="owner_relation2">가족</label>
+					<input type="radio" <?=$row['owner_relation'] == "대리인" ? "checked" : "" ?> name="owner_relation" id="owner_relation3" class="" value="대리인"/>
+					<label for="owner_relation3">대리인</label>
+					<input type="radio" <?=$row['owner_relation'] == "임차인(세입자)" ? "checked" : "" ?> name="owner_relation" id="owner_relation4" class="" value="임차인(세입자)"/>
+					<label for="owner_relation4">임차인(세입자)</label>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>소유자(건물주)정보</h2>
+<span><input type='checkbox' id='owner_registry1' onchange="owner_registry(this)"><label for="owner_registry1">등록자와 동일</label></span>
+<table class="bbsView">
+	<caption>소유자(건물주)정보</caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:85%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row"><span class="marking">필수</span><label for="title">성명</label></th>
+			<td><input type="text" name="owner_name" id="owner_name" value="<?=$row['owner_name']?>" class="required" title='성명'/></td>
+		</tr>
+		<tr>
+			<th scope="row"><span class="marking">필수</span><label for="title">휴대폰</label></th>
+			<td class="tel">
+				<select name="owner_phone[]" id="owner_phone1">
+					<option <?=$owner_phone_[0]=="010" ? "selected" : ""?> value="010">010</option>
+					<option <?=$owner_phone_[0]=="011" ? "selected" : ""?> value="011">011</option>
+					<option <?=$owner_phone_[0]=="016" ? "selected" : ""?> value="016">016</option>
+					<option <?=$owner_phone_[0]=="017" ? "selected" : ""?> value="017">017</option>
+					<option <?=$owner_phone_[0]=="018" ? "selected" : ""?> value="018">018</option>
+					<option <?=$owner_phone_[0]=="019" ? "selected" : ""?> value="019">019</option>
+				</select> -
+				<input type="text"  name="owner_phone[]" id="owner_phone2" class="input100 required" value="<?=$owner_phone_[1]?>" title="연락처"> - <input type="text" name="owner_phone[]" id="owner_phone3" class="input100 required" value="<?=$owner_phone_[2]?>" title="연락처">
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>매물정보</h2>
+<table class="bbsView">
+	<caption>매물정보</caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+	</colgroup>
+	<tbody>
+		<? if($board[use_category] == "I" || $board[use_category] == "Y") { ?>
+		<tr>
+			<th scope="row"><span class="marking">필수항목</span><label for="category">매물종류</label></th>
+			<? if($board[use_category] == "I") { ?>
+			<td>
+				<input type="text" name="category" id="category" value="<?=$row[category]?>" class="required"/>
+			</td>
+			<? } ?>
+			<? if($board[use_category] == "Y") { ?>
+			<td>
+				<? $category = explode("|", $board[category_detail]); ?>
+				<select name="category">
+					<? for($i = 0; $i < count($category); $i++){ ?>
+						<option <?=$row['category'] == $category[$i] ? "selected" : "" ?> value="<?=$category[$i]?>"><?=$category[$i]?></option>
+					<? } ?>
+				</select>
+			</td>
+		<? } ?>
+			<th scope="row"><span class="marking">필수항목</span>거래종류</th>
+			<td>
+				<select name='trade_type'>
+					<option <?=$row['trade_type'] == "전세" ? "selected" : ""?> value='전세'>전세</option>
+					<option <?=$row['trade_type'] == "월세" ? "selected" : ""?> value='월세'>월세</option>
+					<option <?=$row['trade_type'] == "매매" ? "selected" : ""?> value='매매'>매매</option>
+				</select>
+			</td>
+		</tr>
+		<? }else{ ?>
+		</tr>
+			<th scope="row"><span class="marking">필수항목</span>거래종류</th>
+			<td colspan="3">
+				<select name='trade_type'>
+					<option <?=$row['trade_type'] == "전세" ? "selected" : ""?> value='전세'>전세</option>
+					<option <?=$row['trade_type'] == "월세" ? "selected" : ""?> value='월세'>월세</option>
+					<option <?=$row['trade_type'] == "매매" ? "selected" : ""?> value='매매'>매매</option>
+				</select>
+			</td>
+		</tr>
+		<? } ?>
+		<tr>
+			<th scope="row"><span class="marking">필수항목</span><label for="title">건물명</label></th>
+			<td colspan="3"><input type="text" name="title" id="title" class="inputFull required" value="<?=$row['title']?>" title='건물명'/></td>
+		</tr>
+		<tr>
+		<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+		<script type="text/javascript">
+			function execDaumPostcode()
+			{
+				new daum.Postcode(
+				{
+					oncomplete: function(data)
+					{
+						// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+						// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+						// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+						var fullAddr  = "";					// 최종 주소 변수
+						var extraAddr = "";					// 조합형 주소 변수
+
+						// 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+						if (data.userSelectedType === "R")
+						{
+							// 사용자가 도로명 주소를 선택했을 경우
+							fullAddr = data.roadAddress;
+						}
+						else
+						{
+							// 사용자가 지번 주소를 선택했을 경우(J)
+							fullAddr = data.jibunAddress;
+						}
+
+						// 사용자가 선택한 주소가 도로명 타입일때 조합한다.
+						if (data.userSelectedType === "R")
+						{
+							// 법정동명이 있을 경우 추가한다.
+							if (data.bname !== "")
+							{
+								extraAddr += data.bname;
+							}
+
+							// 건물명이 있을 경우 추가한다.
+							if (data.buildingName !== "")
+							{
+								extraAddr += (extraAddr !== "" ? ", " + data.buildingName : data.buildingName);
+							}
+
+							// 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+							fullAddr += (extraAddr !== "" ? " (" + extraAddr + ")" : "");
+						}
+
+						// 우편번호와 주소 정보를 해당 필드에 넣는다.
+						document.getElementById("zip").value      = data.zonecode;			// 5자리 새우편번호 사용
+						document.getElementById("address1").value = fullAddr;
+
+						// 커서를 상세주소 필드로 이동한다.
+						document.getElementById("address2").focus();
+					}
+				}).open();
+			}
+			</script>
+			<th scope="row" rowspan="3"><span class="marking">필수항목</span><label for="phone">매물주소</label></th>
+			<td class="address" colspan="3">
+				<input type="text" class="input200"  name="zip" id="zip" value="<?=$row[zip]?>" />
+				<a href="javascript:execDaumPostcode()" class="button white">우편번호검색</a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<input type="text" class="inputFull" name="address1" id="address1" value="<?=$row[address1]?>" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<input type="text" class="inputFull" name="address2" id="address2" value="<?=$row[address2]?>"/>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">상세설명</th>
+			<td colspan="3">
+				<textarea name="comments" id="smart_content" rows="2" cols="2" style="width:100%; ; height:412px;" class="inputFull"><?=$row[comments]?></textarea>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">추가정보</th>
+			<? $item_add_ = explode("|",$row['item_add']); ?>
+			<td colspan="3">
+				<input <?=in_array("전철역",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add1" class="" value="전철역" title="추가정보"/>
+				<label for="item_add1">전철역</label>
+				<input <?=in_array("기차역",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add2" class="" value="기차역" title="추가정보"/>
+				<label for="item_add2">기차역</label>
+				<input <?=in_array("버스터미널",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add3" class="" value="버스터미널" title="추가정보"/>
+				<label for="item_add3">버스터미널</label>
+				<input <?=in_array("대학가",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add4" class="" value="대학가" title="추가정보"/>
+				<label for="item_add4">대학가</label>
+				<input <?=in_array("초등학교",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add5" class="" value="초등학교" title="추가정보"/>
+				<label for="item_add5">초등학교</label>
+				<input <?=in_array("대형할인마트",$item_add_) ? "checked" : ""?> type="checkbox" name="item_add[]" id="item_add6" class="" value="대형할인마트" title="추가정보"/>
+				<label for="item_add6">대형할인마트</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">옵션항목</th>
+			<? $item_option_ = explode("|",$row['item_option']); ?>
+			<td colspan="3">
+				<input <?=in_array("에어컨",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option1" class="" value="에어컨" title="옵션항목"/>
+				<label for="item_option1">에어컨</label>
+				<input <?=in_array("세탁기",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option2" class="" value="세탁기" title="옵션항목"/>
+				<label for="item_option2">세탁기</label>
+				<input <?=in_array("냉장고",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option3" class="" value="냉장고" title="옵션항목"/>
+				<label for="item_option3">냉장고</label>
+				<input <?=in_array("침대",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option4" class="" value="침대" title="옵션항목"/>
+				<label for="item_option4">침대</label>
+				<input <?=in_array("TV",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option5" class="" value="TV" title="옵션항목"/>
+				<label for="item_option5">TV</label>
+				<input <?=in_array("옷장",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option6" class="" value="옷장" title="옵션항목"/>
+				<label for="item_option6">옷장</label>
+				<input <?=in_array("가스레인지",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option7" class="" value="가스레인지" title="옵션항목"/>
+				<label for="item_option7">가스레인지</label>
+				<input <?=in_array("인덕션",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option8" class="" value="인덕션" title="옵션항목"/>
+				<label for="item_option8">인덕션</label>
+				<input <?=in_array("인터넷",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option9" class="" value="인터넷" title="옵션항목"/>
+				<label for="item_option9">인터넷</label>
+				<input <?=in_array("전자레인지",$item_option_) ? "checked" : ""?> type="checkbox" name="item_option[]" id="item_option10" class="" value="전자레인지" title="옵션항목"/>
+				<label for="item_option10">전자레인지</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><span class="marking">필수항목</span>분양면적</th>
+			<td><input name='sell_area' value='<?=$row['sell_area']?>' class='input100' />㎡</td>
+			<th scope="row"><span class="marking">필수항목</span>(전용)면적</th>
+			<td><input name='use_area' value='<?=$row['use_area']?>' class='input100' />㎡</td>
+		</tr>
+		<tr>
+			<? $floor_ = explode("|",$row['floor']); ?>
+			<th scope="row">해당층/총층수</th>
+			<td>
+				<select name='floor[]'>
+					<? for($i = 1;$i<=60;$i++){ ?>
+					<option <?=$floor_[0]==$i ? "selected" : ""?> value='<?=$i?>'><?=$i?></option>
+					<? } ?>
+				</select>
+				/
+				<select name='floor[]'>
+					<? for($i = 1;$i<=60;$i++){ ?>
+					<option <?=$floor_[1]==$i ? "selected" : ""?> value='<?=$i?>'><?=$i?></option>
+					<? } ?>
+				</select>
+			</td>
+			<th scope="row">관리비</th>
+			<td>
+				<input <?=!empty($row['management_cost']) ? "checked" : ""?> type='radio' onclick="changeInputDisable('Y','management_cost')" name='management_chk' id='management_chkY'><label for='management_chkY'>있음</label>(<input name='management_cost' value='<?=$row['management_cost']?>' id='management_cost' class='input50' <?=!empty($row['management_cost']) ? "" : "disabled"?> >만원)
+				<input <?=empty($row['management_cost']) ? "checked" : ""?> type='radio' onclick="changeInputDisable('N','management_cost')" name='management_chk' id='management_chkN'><label for='management_chkN'>없음</label>
+			</td>
+		</tr>
+		<tr>
+			<? $room_ = explode("|",$row['room']); ?>
+			<th scope="row">방수/욕실수</th>
+			<td>
+				<select name='room[]'>
+					<? for($i = 1;$i<=5;$i++){ ?>
+					<option <?=$room_[0]==$i ? "selected" : ""?> value='<?=$i?>'><?=$i?></option>
+					<? } ?>
+				</select>
+				/
+				<select name='room[]'>
+					<? for($i = 1;$i<=5;$i++){ ?>
+					<option <?=$room_[1]==$i ? "selected" : ""?> value='<?=$i?>'><?=$i?></option>
+					<? } ?>
+				</select>
+			</td>
+			<th scope="row">난방시설</th>
+			<td>
+				<select name='heating'>
+					<option <?=$row['heating'] == "개별" ? "selected" : ""?> value='개별'>개별</option>
+					<option <?=$row['heating'] == "중앙" ? "selected" : ""?> value='중앙'>중앙</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">방향</th>
+			<td><input name='direction' value='<?=$row['direction']?>' class='input150' /></td>
+			<th scope="row">주차</th>
+			<td>
+				<input <?=!empty($row['parking_cost']) ? "checked" : ""?> type='radio' onclick="changeInputDisable('Y','parking_cost')" name='parking_chk' id='parking_chkY'><label for='parking_chkY'>있음</label>(<input name='parking_cost' id='parking_cost' value='<?=$row['parking_cost']?>' class='input50' <?=!empty($row['parking_cost']) ? "" : "disabled"?>>만원)
+				<input <?=empty($row['parking_cost']) ? "checked" : ""?> type='radio' onclick="changeInputDisable('N','parking_cost')" name='parking_chk' id='parking_chkN'><label for='parking_chkN'>불가능</label>
+			</td>
+		</tr>
+		<tr>
+			<? $in_day_ = explode("|",$row['in_day']); ?>
+			<th scope="row">입주가능일</th>
+			<td colspan="3">
+				<input type='radio' <?=$in_day_[0] == "즉시입주" ? "checked" : "" ?> onclick="changeInputDisable('N','date_in_day')" name='in_day[]' value='즉시입주' id='in_day1'><label for='in_day1'>즉시입주</label>
+				<input type='radio' <?=$in_day_[0] == "날짜협의" ? "checked" : "" ?> onclick="changeInputDisable('N','date_in_day')" name='in_day[]' value='날짜협의' id='in_day2'><label for='in_day2'>날짜협의</label>
+				<input type='radio' <?=$in_day_[0] == "날짜선택" ? "checked" : "" ?> onclick="changeInputDisable('Y','date_in_day')" name='in_day[]' value='날짜선택' id='in_day3'><label for='in_day3'>날짜선택<input type='text' name='in_day[]' id='date_in_day' value='<?=$in_day_[1]?>' class='datepicker input100' <?=$in_day_[0]=="날짜선택" ? "" : "disabled"?>/></label>
+
+			</td>
+		</tr>
+		<tr>
+			<th scope="row">등기부 등본</th>
+			<td colspan="3">
+				<? if($row['certificate']){
+					$del_2 = "<a href='/upload/$board_id/{$row['certificate']}' target='_blank' class='button white'>기존 첨부파일 : {$row['certificate']}</a>";
+				} ?>
+				<div class='designFile'><input type='text' readonly='readonly' value=''/><input type='file' name='certificate' id='certificate'/><label for='certificate' class='button white'> 파일선택</label> <?=$del_2?> </div>
+			</td>
+		</tr>
+
+
+	</tbody>
+</table>
+
+
+<h2>금액 정보</h2>
+<table class="bbsView">
+	<caption>금액 정보</caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row"><span class="marking">필수</span><label for="title">매매금액</label></th>
+			<td><input type="text" value='<?=$row['sell_price']?>' name="sell_price" id="sell_price" class="required" title='매매금액'/>만원</td>
+			<th scope="row"><label for="title">현세입자 임대차보증금</label></th>
+			<td><input type="text" value='<?=$row['deposit_price']?>' name="deposit_price" id="deposit_price" class=""/>만원</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="title">월세</label></th>
+			<td><input type="text" value='<?=$row['rent_price']?>' name="rent_price" id="rent_price" class="inp60p"/>만원</td>
+			<th scope="row"><label for="title">보증금(전세)</label></th>
+			<td><input type="text" value='<?=$row['deposit_price2']?>' name="deposit_price2" id="deposit_price2" class="inp60p"/>만원</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="title">대출금액</label></th>
+			<td><input type="text" value='<?=$row['loan_price']?>' name="loan_price" id="loan_price" class=""/>만원</td>
+			<th scope="row"><label for="title">기타</label></th>
+			<td><input type="text" value='<?=$row['etc_price']?>' name="etc_price" id="etc_price" class=""/>만원</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>사진 정보</h2>
+<table class="bbsView">
+	<caption>사진 정보</caption>
+	<colgroup>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+		<col data-write="th" style="width:15%"/>
+		<col data-write="td" style="width:35%"/>
+	</colgroup>
+	<tbody>
+		<? if($board[file_count] != 0){ ?>
+		<tr>
+			<th scope="row">첨부파일</th>
+				<td colspan="3">
+				<?
+					for($i = 1; $i <= $board[file_count]; $i++) {
+							$file_title = $row["file_".$i];
+							$del_ = "파일선택";
+							$del_2 = "";
+							if($file_title){
+								 $del_2 = "<label for='file_$i' class='button white'><span>기존 첨부파일 : <a href='/upload/$board_id/$file_title' target='_blank'>$file_title</a></label>";
+							}
+							echo "<div class='designFile'><input type='text' readonly='readonly' value=''/><input type='file' name='file_$i' id='file_$i'/><label for='file_$i' class='button white'> $del_</label> $del_2 </div>";
+					 }
+				?>
+				<span>첨부파일 가능 용량은 <?=$board[file_limit_size]?>MB 입니다</span>
+			</td>
+		</tr>
+		<? } ?>
+		<? if($board[is_membership] != "Y"){ ?>
+		<tr>
+			<th scope="row"><span class="marking">필수항목</span><label for="pin">비밀번호</label></th>
+			<td  colspan="3">
+				<input type="password" name="password" id="pin" value="" class="required" title="비밀번호"  />
+				<em>※ 글 수정, 삭제시 필요합니다.</em>
+			</td>
+		</tr>
+		<? } ?>
+		<? if($board[spam_auth] == "Y"){ ?>
+		<? $_SESSION[rand_auth] = rand(0000,9999); ?>
+			<tr>
+				<th scope="row"><span class="marking">필수항목</span><label for="state">스팸방지</label></th>
+				<td colspan="3" class="spam"><span style="display: inline-block; padding:5px 10px; margin-right:10px; background: #222; color:#fff; letter-spacing:3px;"><?=$_SESSION[rand_auth]?></span><input type="text" name="rand_auth_" placeholder="좌측 번호를 입력해주세요." class="input200 required" title="스팸방지문자" /></td>
+			</tr>
+		<? } ?>
+	</tbody>
+</table>
+
+<!-- //글쓰기 -->
+<!-- 버튼 -->
+<div class="btn_area">
+	<input type="submit" onclick="msgImpletion();" class="button" value="저장" />
+	<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=list&amp;start=<?=$start?>" class="button gray">취소</a>
+</div>
+</form>
+
+<!-- //버튼 -->
+<script>
+function owner_registry(obj){
+	if(document.getElementById("owner_relation1").checked === true){
+		if(obj.checked===true){
+			document.getElementById("owner_name").value="<?=$member['name']?>";
+			<?
+			$owner_phone = explode("-",$member['phone']);
+			?>
+			document.getElementById("owner_phone1").value="<?=$owner_phone[0]?>";
+			document.getElementById("owner_phone2").value="<?=$owner_phone[1]?>";
+			document.getElementById("owner_phone3").value="<?=$owner_phone[2]?>";
+		}else{
+			document.getElementById("owner_name").value="";
+			<?
+			$owner_phone = explode("-",$member['phone']);
+			?>
+			document.getElementById("owner_phone1").value="010";
+			document.getElementById("owner_phone2").value="";
+			document.getElementById("owner_phone3").value="";
+		}
+	}else{
+		alert("소유자와의 관계가 본인이어야 가능합니다.");
+		obj.checked=false;
+	}
+}
+
+function changeInputDisable(Flag,Id){
+	if(Flag == "Y"){
+		document.querySelector("input#"+Id+"").disabled = false;
+	}else{
+		document.querySelector("input#"+Id+"").disabled = true;
+		document.querySelector("input#"+Id+"").value = "";
+	}
+}
+</script>

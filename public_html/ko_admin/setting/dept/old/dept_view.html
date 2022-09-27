@@ -1,0 +1,97 @@
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php"; ?>
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php"; ?>
+<?
+
+$query = "SELECT * FROM koweb_member WHERE no='$no'";
+$result = mysql_query($query);
+$row = mysql_fetch_array($result);
+$email = explode("@",$row[email]);
+$birthday = explode("-",$row[birthday]);
+$phone = explode("-", $row[phone]);
+
+?>
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="apply_proc" />
+<input type="hidden" name="manager_type" value="member" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+<input type="hidden" name="check_apply[]" value="<?=$row[no]?>" />
+	<h2 class="mt0">회원관리 - <?=$row[id]?></h2>
+	<table class="bbsView">
+		<colgroup>
+			<col style="width:15%;"/>
+			<col/>
+			<col style="width:15%;"/>
+			<col style="width:35%"/>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row">아이디</th>
+				<td colspan="3"><?=$row[id]?></td>			
+			</tr>
+			<tr>
+				<th scope="row">이름</th>
+				<td><?=$row[name]?></td>
+				<th scope="row">부서</th>
+				<td><?=$row[dept]?></td>
+			</tr>
+			<tr>
+				<th scope="row">성별</th>
+				<td><?=$row[gender]?></td>			
+				<th scope="row">회원등급</th>
+				<td>
+					<? 
+						switch($row[auth_level]){
+							case "1" : 
+								echo "관리자";
+								break;
+
+							case "3" : 
+								echo "정회원";
+								break;
+
+							case "5" : 
+								echo "준회원";
+								break;
+
+							case "99" : 
+								echo "승인대기";
+								break;
+						}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><!-- <span class="marking">필수항목</span> --><label for="phone1">연락처</label></th>
+				<td colspan="3"><?=$row[phone]?></td>
+			</tr>
+			<tr>
+				<th scope="row">E-Mail</th>
+				<td colspan="3" class="email"><?=$row[email]?></td>
+			</tr>
+			<tr>
+				<th>주소</th>
+				<td colspan="3" class="address">
+					<span>
+						<?=$row[zip]?>	
+					</span>
+					<?=$row[address1]?>
+					<?=$row[address2]?>							
+				</td>
+			</tr>
+			<tr>
+				<th>생년월일</th>
+				<td colspan="3" class="date">
+					<?=$row[birthday]?>		
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn_area tac">
+	<? if($site[use_member_okey] == "Y"){ ?>
+		<input class="button red" type="submit" value="승인">
+	<? } ?>
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=member">돌아가기</a>
+	</div>
+</form>

@@ -1,0 +1,49 @@
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php";  ?>
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>로그인 | 홈페이지 통합관리자</title>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/login.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/js/jquery.scrollbar.css"/>
+		<script type="text/javascript" src="/ko_admin/js/jquery-1.12.2.min.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/custom.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/jquery.scrollbar.js"></script>
+		<script>
+			//login
+			$(window).load(function(){
+				if($(".login_area").length > 0){
+					setTimeout(function(){
+						$('.login_area h1').addClass('active');
+					}, 500);
+				}
+			});
+		</script>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/ko_admin/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/ko_admin/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/ko_admin/images/favicon/favicon-16x16.png">
+		<link rel="manifest" href="/ko_admin/images/favicon/site.webmanifest">
+		<link rel="mask-icon" href="/ko_admin/images/favicon/safari-pinned-tab.svg" color="#e0125a">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="theme-color" content="#ffffff">
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="login_area">
+				<div class="box">
+					<h1>홈페이지 통합관리자</h1>
+					<form action="./login_proc.php" method="post">
+						<input type="text" name="admin_id" id="id" title="아이디입력" placeholder="ID"/>
+						<input type="password" name="admin_password" id="password" title="비밀번호입력" placeholder="Password"/>
+						<input type="submit" class="btn_submit" value="Login"/>
+					</form>
+				</div>
+				<span>ⓒ <?=$site[og_title]?>. ALL RIGHTS RESERVED. <?=$_SESSION['auth_admin_ci']?></span>
+			</div>
+		</div>
+	</body>
+</html>

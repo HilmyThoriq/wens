@@ -1,0 +1,48 @@
+<div class="pagination">
+	<?
+		/*----------------------------------------------------------------------------*/
+		// 페이지 표시
+		/*----------------------------------------------------------------------------*/
+
+		if ($total == 0) $total = 1;
+
+		$page_url = $PHP_SELF."?board_id=$board_id&amp;search_key=$search_key&amp;keyword=$keyword&amp;cate=$cate";
+
+		// 처음
+		echo "<div class='page_control_prev'><a href='$page_url&amp;start=0' class='btn_end first'>맨처음</a>";
+
+		$page = floor($start / ($scale * $page_scale));
+
+		if ($start + $scale >  $scale * $page_scale) {
+			$pre_start = $start - $scale * $page_scale ;
+			echo "<a href='$page_url&amp;start=$pre_start' class='btn_pager prev'>이전</a>";
+		}
+		echo "</div>";
+		echo "<ol>";
+		for ($vj = 0; $vj < $page_scale ; $vj++) {
+			$ln = ($page * $page_scale + $vj) * $scale;
+			$vk = $page * $page_scale + $vj + 1 ;
+
+			if ($ln < $total) {
+				if ($ln != $start) echo "<li><a href='$page_url&amp;start=$ln'>$vk</a></li>";
+				else echo "<li class='on'><a href=''>$vk</a></li>";
+			}
+		}
+		echo "</ol>";
+		echo "<div class='page_control_next'>";
+		// 마지막
+		$end_page = floor($total - $scale) + 1;
+		if ($end_page <= 0)	$end_page = 0;
+
+		if ($total > (($page + 1) * $scale * $page_scale)) {
+			$n_start = ($page + 1) * $scale * $page_scale ;
+			echo "<a href='$page_url&amp;start=$n_start' class='btn_pager next'>다음</a>";
+		}
+
+		$end_page = ceil($total / $scale);
+		if ($total) $end_start = ($end_page -1) * $scale;
+		else $end_start = $end_page;
+
+		echo "<a href='$page_url&amp;start=$end_start' class='btn_end last'>맨마지막</a></div>";
+	?>
+</div>

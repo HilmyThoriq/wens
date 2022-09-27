@@ -1,0 +1,223 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+<?
+$board_id="board_publication";
+
+$board_query = "SELECT * FROM koweb_board_config WHERE id = '$board_id'";
+$board_result = mysql_query($board_query);
+$board = mysql_fetch_array($board_result);
+
+
+
+
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 200; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	$WHERE .= " AND ( paper_title LIKE '%$keyword%'  or  title LIKE '%$keyword%'   or  f_author LIKE '%$keyword%'   or  c_author LIKE '%$keyword%' or  co_author LIKE '%$keyword%')";
+}
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+
+$total_query = "SELECT * FROM board_publication WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+//$query = "SELECT * FROM board_publication WHERE 1=1  $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC LIMIT $start, $scale";
+$query = "SELECT * FROM board_publication WHERE 1=1 $WHERE AND notice!='Y' GROUP BY publ_date_Y DESC";
+$result = mysql_query($query);
+
+?>
+
+
+<section id="container">
+	<div id="content">
+        <div class="area_sub c_box">
+            <div class="inr">
+                <!-- 서브타이틀 -->
+                <div class="area_subtitle on">
+                    <h3></h3>
+                </div>
+                <!-- 서브 내용 -->
+                <div class="area_conts">
+                    <div class="bbsSearch pub_type">
+						<!-- 검색기능 다시 확인해봐야함 220819 -->
+						<form action="<?=$PHP_SELF?>" method="get">
+						<input type="hidden" name="cate_on" value="<?=$cate_on?>" />
+						<input type="hidden" name="cate" value="<?=$cate?>" />
+					
+
+					
+							<input type="text" id="keyword" name="keyword" value="<?=$keyword?>">
+							<input type="submit" class="button" value="검색">
+						</form>
+						<!-- //검색기능 다시 확인해봐야함 220819 -->
+					</div>
+                    <div class="area_publicList acceptedPart">
+						<!-- 등록된 게시글이 있을 경우 -->
+
+
+						<div class="pub_section">
+							<em>Accpted</em>
+							<ul>
+								<!-- 리스트 반복구간 -->
+								<!-- Under Review = secret 으로 만들었음. -->
+								<? $Accept_query = "SELECT * FROM board_publication WHERE 1=1 AND notice = 'Y' $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC"; ?>
+								<? $Accept_query_result = mysql_query($Accept_query); ?>
+								<? while($row3=mysql_fetch_array($Accept_query_result)) { ?>
+									<li>
+										<div class="pub_cont w_box">
+											<div class="number">
+												<!-- <span><?=$row3[no]?></span> -->
+											</div>
+											<div class="info">
+												<div class="title">
+                                                    <!-- 페이퍼타이틀 -->
+													"<em><?=$row3[paper_title]?></em>"
+												</div>
+												<p class="name">
+                                                     <!-- 저널네임 -->
+                                                     <?=$row3[title]?>
+                                                </p>
+												<div class="detail">
+                                                    <div class="box_author">
+                                                        <span class="first author_name"><?=$row3[f_author]?></span>
+                                                        <span class="corporate author_name"><?=$row3[c_author]?></span>
+                                                        <span class="correspond author_name"><?=$row3[co_author]?></span>
+                                                    </div>
+                                                    <div class="box_others">
+                                                        <span class="page"><i>Page:</i> <?=$row3[s_page]?> ~ </i> <?=$row3[e_page]?></span>,
+                                                        <!-- <span class="funding">No. 5</span> -->
+                                                        <span class="if"><i>If: </i> <?=$row3[impact_factor]?></span>,
+                                                        <span class="acknowledge"><i>Acknoledge:</i> <?=$row3[filled_ack]?></span>,
+                                                        <span class="pul_date"><i>Public date:</i> <?=$row3[publ_date]?></span>
+                                                    </div>
+													
+												</div>
+                                               
+												<span class="link">
+                                                    <!-- 링크 또는 다운로드파일이 없을경우 a태그 비노출 -->
+                                                    <!-- 파일 다운로드 -->
+
+				
+												
+													<?if($row3[file_1]){?>
+                                                    <a href="/board/download.php?board_id=<?=$board_id?>&file=<?=$row3[file_1]?>" download>
+                                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                                    </a>
+													<?}?>
+                                                    <!-- 링크 새창 -->
+													
+													<?if($row3[url_link]){?>
+													<a href="<?=$row3[url_link]?>" target="_blank">
+                                                        <i class="fa-solid fa-link"></i>
+                                                    </a>
+													<?}?>
+
+
+												</span>
+
+
+
+											</div>
+										</div>
+									</li>
+								<? } ?>
+								<!-- 리스트 반복구간 끝 -->
+							</ul>
+						</div>
+
+						
+						<div class="area_publicList yearsPart">
+							<!-- 등록된 게시글이 있을 경우 -->
+                            <!-- 년도 반복구간 -->
+                            <? while($row = mysql_fetch_array($result)) { ?>
+							<div class="pub_section">
+								<em><?=$row[publ_date_Y]?></em>
+								<ul>
+									<? $detail_query = "SELECT * FROM board_publication WHERE publ_date_Y = '$row[publ_date_Y]' AND notice!='Y' ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC"; ?>
+									<? $result_detail_query = mysql_query($detail_query); ?>
+									<? while($row2 = mysql_fetch_array($result_detail_query)) { ?>
+									<li>
+										<div href="" class="pub_cont w_box">
+											<div class="number">
+												<!-- <span><?=$row2[no]?></span> -->
+											</div>
+											<div class="info">
+												<div class="title">
+													"<em><?=$row2[paper_title]?></em>"
+												</div>
+												
+												<p class="name">
+                                                    <?=$row2[title]?></p>
+												</p>
+												<div class="detail">
+                                                    <div class="box_author">
+                                                        <span class="first author_name"><?=$row2[f_author]?></span>
+                                                        <span class="corporate author_name"><?=$row2[c_author]?></span>
+                                                        <span class="correspond author_name"><?=$row2[co_author]?></span>
+                                                    </div>
+                                                    <div class="box_others">
+                                                        <span class="page"><i>Page: </i> <?=$row2[s_page]?> ~ </i> <?=$row2[e_page]?></span>,
+                                                        <!-- <span class="funding">No. 5</span> -->
+                                                        <span class="if"><i>If: </i> <?=$row2[impact_factor]?></span>,
+                                                        <span class="acknowledge"><i>Acknoledge:</i> <?=$row2[filled_ack]?> (<?=$row2[publ_date]?>)</span>,
+                                                        <span class="pul_date"><i>Public date:</i> <?=$row2[publ_date]?></span>
+                                                    </div>
+													
+												</div>
+												<span class="link">
+                                                    <!-- 링크 또는 다운로드파일이 없을경우 a태그 비노출 -->
+                                                    <!-- 파일 다운로드 -->
+                                                   
+													<?if($row2[file_1]){?>
+                                                    <a href="/board/download.php?board_id=<?=$board_id?>&file=<?=$row2[file_1]?>" download>
+                                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                                    </a>
+													<?}?>
+                                                    <!-- 링크 새창 -->
+
+													<?if($row2[url_link]){?>
+													<a href="<?=$row2[url_link]?>" target="_blank">
+                                                        <i class="fa-solid fa-link"></i>
+                                                    </a>
+													<?}?>
+
+                                                 
+												</span>
+											</div>
+										</div>
+									</li>
+									<? } ?>
+								</ul>
+							</div>
+                            <!-- 년도 반복구간 끝 -->
+                            <? } ?>
+						</div>
+
+
+                        <!-- 등록된 계시글이 없을 경우 노출 -->
+                        <div class="empty w_box">
+                            <p>등록된 게시글이 없습니다.</p>
+                        </div>
+                    </div>
+				
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+<?include("../../inc/footer.html")?>
+
+
+
+

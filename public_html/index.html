@@ -1,0 +1,624 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("inc/top.html")?>
+<?include("inc/header.html")?>
+
+<!-- visual -->
+<div class="area_visual">
+    <span class="bg"></span>
+    <div class="inr">
+        <div class="title">
+            <h2>
+                Welcome to Wireless &
+                <br/>
+                Emerging Network System
+                <br/>
+                Laboratory
+            </h2>
+            <p>in Kumoh National Institute of Technology, Republic of Korea.</p>
+        </div>
+
+    </div>
+</div>
+<!-- //visual -->
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <article class="area_linkbutton">
+            <div class="inr">
+                <ul class="con_tab">
+                    <li class="sec01">
+                        <a>
+                            <p>Future wireless
+                                <br/>communication for
+                                <br/>B5G/6G</p>
+                            <span>6G</span>
+                        </a>
+                    </li>
+                    <!-- <li class="sec02 wireless">
+                        <a>
+                            <p>AI for wireless
+                                <br/>communication</p>
+                            <span>
+                                <i class="wifi"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                    <li class="sec06">
+                        <a>
+                            <p>Artificial Intelligence,
+                                <br/>
+                                Deep/Machine
+                                <br/>
+                                Learning for
+                                <br/>
+                                signal processing</p>
+                            <span>AI</span>
+                        </a>
+                    </li>
+                    <li class="sec03">
+                        <a>
+                            <p>Unmanned
+                                <br/>Any vehicle</p>
+                            <span>UxV</span>
+                        </a>
+                    </li>
+                    <li class="sec04">
+                        <a>
+                            <p>Virtual Reality
+                                <br/>Augmented Reality
+                                <br/>Mixed Reality</p>
+                            <span>MR</span>
+                        </a>
+                    </li>
+                    <li class="sec05">
+                        <a>
+                            <p>Embedded System &
+                                <br/>Internet of Things</p>
+                            <span>IoT</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+
+        </article>
+        <article class="area_notice">
+            <div class="inr">
+                <h3>Notice</h3>
+                <div class="wrap_notice">
+                    <div class="con_board">
+                        <div class="link_top">
+                            <ul class="tab">
+                                <li class="on" rel="tab1">
+                                   NEWS
+                                </li>
+                                <!-- <li rel="tab2">
+                                    <button>Publications</button>
+                                </li> -->
+                            </ul>
+                            <a class="btn" href="/contents/07_notice/notice.html?board_id=board_notice_jsh"><img src="/images/common/icon_plus.svg" alt="플러스아이콘"></a>
+                        </div>
+                        <div class="notice_list">
+                            <!-- 최근 뉴스 게시물 3건 표출 -->
+							<? $news_query = "SELECT * FROM board_notice_jsh ORDER BY notice DESC, no DESC LIMIT 3"; ?>
+							<? $news_result = mysql_query($news_query); ?>
+                            <ul class="news_list tab_content tab1">
+							<? while($news_row = mysql_fetch_array($news_result)) { ?>
+                                <li>
+                                    <a href="/contents/07_notice/notice.html?board_id=board_notice_jsh&mode=view&no=<?=$news_row[no]?>&cate=">
+                                        <em class="tt"><?=$news_row[title]?></em>
+                                        <div class="con"><?=$news_row[comments]?></div>
+
+                                        <span class="date"><?=$news_row[reg_date]?></span>
+                                    </a>
+                                </li>
+								<? } ?>
+                            </ul>
+                            <!-- 최근 퍼블리케이션 3건 표출 -->
+                            <!-- 시안이랑 달라져 우선 주석처리합니다 -->
+                            <!-- <ul class="news_list tab_content tab2">
+                                <li>
+                                    <a>
+                                        <em>Wens Won New Project Grant "research On Integration Wens Won New Project</em>
+                                        <p>We won new research grant from IITP, w.r.t, next generation 202 We won new
+                                            research grant from IITP, w.r.t, next generation 202</p>
+
+                                        <span>22.02.29</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <em>Wens Won New Project Grant "research On Integration Wens Won New Project</em>
+                                        <p>We won new research grant from IITP, w.r.t, next generation 202 We won new
+                                            research grant from IITP, w.r.t, next generation 202</p>
+
+                                        <span>22.02.29</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <em>Wens Won New Project Grant "research On Integration Wens Won New Project</em>
+                                        <p>We won new research grant from IITP, w.r.t, next generation 202 We won new
+                                            research grant from IITP, w.r.t, next generation 202</p>
+
+                                        <span>22.02.29</span>
+                                    </a>
+                                </li>
+                            </ul> -->
+                        </div>
+                    </div>
+                    <div class="con_gallery">
+                        <span class="bg">
+                            <i></i>
+                        </span>
+                        <div class="link_top">
+							<? $gal_query = "SELECT * FROM board_Wens_gallery ORDER BY notice DESC, no DESC LIMIT 4"; ?>
+							<? $gal_result = mysql_query($gal_query); ?>
+                            <h4>Gallery</h4>
+                            <div class="box_button">
+                                <div class="nav">
+                                    <a class="arr_prev"><img src="/images/common/icon_prev.svg"></a>
+                                    <a class="arr_next"><img src="/images/common/icon_next.svg"></a>
+                                </div>
+                                <a class="btn" href="/contents/07_notice/gallery.html?board_id=board_Wens_gallery"><img src="/images/common/icon_plus_w.svg" alt="플러스아이콘"></a>
+                            </div>
+
+                        </div>
+                        <ul class="list">
+							<?  while($gal_row = mysql_fetch_array($gal_result)) { ?>
+                            <li>
+                                <span>
+                                    <a href="/contents/07_notice/gallery.html?board_id=board_Wens_gallery&mode=view&no=<?=$gal_row[no]?>&cate="><img src="/upload/board_Wens_gallery/<?=rawurlencode($gal_row[file_1])?>"></a>
+                                </span>
+                            </li>
+							<? } ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </article>
+		<? $research_result_query = "SELECT * FROM board_main_result"; ?>
+		<? $research_result_result = mysql_query($research_result_query); ?>
+		<? $research_result_row = mysql_fetch_array($research_result_result); ?>
+        <article class="area_research">
+            <div class="inr">
+                <h3>Research Results</h3>
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="3" class="yrs">Years</th>
+                                <th colspan="3">Publications</th>
+                                <th colspan="4">Patents</th>
+                                <th colspan="2">Conferences</th>
+                                <th colspan="2">Alumni</th>
+                            </tr>
+                            <tr>
+                                <th colspan="3">Major Author (First Author & Corresponding Author​)</th>
+                                <th colspan="2">Domestic</th>
+                                <th colspan="2">International</th>
+                                <th rowspan="2" class="two">Domestic</th>
+                                <th rowspan="2" class="two">International</th>
+                                <th rowspan="2" class="two">MS</th>
+                                <th rowspan="2" class="two">PhD</th>
+                            </tr>
+                            <tr>
+                                <th class="long">SCI</th>
+                                <th class="long">Non-SCI</th>
+                                <th class="long">Sum of IF</th>
+                                <th>Application</th>
+                                <th>Registeration</th>
+                                <th>Application</th>
+                                <th class="last">Registeration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+								<td class="yrs">Within 5 YR</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+										$result = mysql_query($query);
+										$total_sci = mysql_num_rows($result);
+									?>
+										<?=$total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND (type_publ = 'Non-SCI/SCIE')";
+										$result = mysql_query($query);
+										$total_non_sci = mysql_num_rows($result);
+									?>
+										<?=$total_non_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+										<?=$total_non_sci + $total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "Domestic Conference";
+										$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "International Conference";
+										$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_inter = mysql_num_rows($result);
+									?>
+										<?=$total_inter ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "M.S";
+										$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ms = mysql_num_rows($result);
+									?>
+										<?=$total_ms ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "Ph.D";
+										$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ph_d = mysql_num_rows($result);
+									?>
+										<?=$total_ph_d ?>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td class="yrs">Within 3 YR</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+										$result = mysql_query($query);
+										$total_sci = mysql_num_rows($result);
+									?>
+										<?=$total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND (type_publ = 'Non-SCI/SCIE')";
+										$result = mysql_query($query);
+										$total_non_sci = mysql_num_rows($result);
+									?>
+										<?=$total_non_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+										<?=$total_non_sci + $total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "Domestic Conference";
+										$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "International Conference";
+										$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_inter = mysql_num_rows($result);
+									?>
+										<?=$total_inter ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "M.S";
+										$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ms = mysql_num_rows($result);
+									?>
+										<?=$total_ms ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "Ph.D";
+										$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ph_d = mysql_num_rows($result);
+									?>
+										<?=$total_ph_d ?>
+									</span>
+								</td>
+							<tr>
+								<td class="yrs">Total</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+										$result = mysql_query($query);
+										$total_sci = mysql_num_rows($result);
+									?>
+										<?=$total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$query = "SELECT * FROM board_publication WHERE (type_publ = 'Non-SCI/SCIE')";
+										$result = mysql_query($query);
+										$total_non_sci = mysql_num_rows($result);
+									?>
+										<?=$total_non_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+										<?=$total_non_sci + $total_sci ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "Domestic";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Filed";
+										$compare_date = "filing_date";
+										$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_appli = mysql_num_rows($result);
+									?>
+										<?=$total_appli ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$cate_inter_dome = "International";
+										$stat_cate = "Registered";
+										$compare_date = "regi_date";
+										$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "Domestic Conference";
+										$query = "SELECT * FROM board_publication WHERE (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_dome = mysql_num_rows($result);
+									?>
+										<?=$total_dome ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$publ_cate = "International Conference";
+										$query = "SELECT * FROM board_publication WHERE (category = '$publ_cate')";
+										$result = mysql_query($query);
+										$total_inter = mysql_num_rows($result);
+									?>
+										<?=$total_inter ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "M.S";
+										$query = "SELECT * FROM koweb_member WHERE (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ms = mysql_num_rows($result);
+									?>
+										<?=$total_ms ?>
+									</span>
+								</td>
+								<td style="text-align: center;">
+									<span>
+									<?
+										$g_alumni = "Ph.D";
+										$query = "SELECT * FROM koweb_member WHERE (group_alumni LIKE '%$g_alumni%')";
+										$result = mysql_query($query);
+										$total_ph_d = mysql_num_rows($result);
+									?>
+										<?=$total_ph_d ?>
+									</span>
+								</td>
+							</tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+        <article class="area_banner">
+            <ul>
+                <li>
+                    <a href=""><img src="/images/main/img_banner01.jpg"></a>
+                </li>
+                <li>
+                    <a href=""><img src="/images/main/img_banner02.jpg"></a>
+                </li>
+                <li>
+                    <a href=""><img src="/images/main/img_banner03.jpg"></a>
+                </li>
+                <li>
+                    <a href=""><img src="/images/main/img_banner04.jpg"></a>
+                </li>
+            </ul>
+        </article>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

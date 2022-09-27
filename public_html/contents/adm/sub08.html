@@ -1,0 +1,193 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin">
+            <div class="adminCont">
+                
+                <!-- Projects list -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+                <div class="area_formTop">
+                    <div class="formTab typeB">
+                        <ul>
+                            <li class="on">
+                                <a href="">전체</a>
+                            </li>
+                            <li>
+                                <a href="">Previous Project​</a>
+                            </li>
+                            <li>
+                                <a href="">Ongoing Projects​</a>
+                            </li>
+                                                    
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="area_formConts">
+                    <div class="area_btn">
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>선택삭제</button>
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>전체삭제</button>
+                    </div>
+                    
+                    <!-- 목록 -->
+                    <table class="bbsList form_prject">
+                        <caption>acknowledgement 목록</caption>
+                        <colgroup>
+                            <col data-table="check" style="width: 5%"/>
+                            <col data-table="num" style="width: 5%"/>
+                            <col data-table="information"/>
+                            <col data-table="acknowledgement​" style="width: 15%"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" data-table="num">No.</th>
+                                <th scopt="col" data-table="information">Detail</th>
+                                <th scopt="col" data-table="acknowledgement">Acknowledgement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <!-- 반복구간 -->
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="num">09</td>
+                             
+                                <td data-table="information">
+                                    <div class="detailBox">
+                                        <div class="deTop">
+                                            <p class="en">Professional Human Resource Training Project for Glocal ICT Convergence Technology</p>
+                                            <p class="kr">Professional Human Resource Training Project for Glocal ICT Convergence Technology</p>
+                                        </div>
+                                        <div class="deBottom">
+                                            <ul>
+                                                <li>
+                                                    <span>Funding Department​</span>
+                                                    <em>IEEE Wireless Communications Letters</em>
+                                                </li>
+                                                <li>
+                                                    <span>Project Leader</span>
+                                                    <em>Volume 11</em>
+                                                </li>
+                                               
+                                                <li>
+                                                    <span>Project Manager​</span>
+                                                    <em>pp 972-976</em>
+                                                </li>
+                                                <li>
+                                                    <span>Publish Date</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Role in Project​</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td data-table="acknowledgement">
+                                    <ul>
+                                        <li>
+                                            <span><i>1</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                        <li>
+                                            <span><i>2</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                        <li>
+                                            <span><i>3</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                    </ul>
+                                </td>
+                            
+                            </tr>
+                            <!-- 반복구간 끝 -->
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="num">09</td>
+                             
+                                <td data-table="information">
+                                    <div class="detailBox">
+                                        <div class="deTop">
+                                            <p class="en">Professional Human Resource Training Project for Glocal ICT Convergence Technology</p>
+                                            <p class="kr">Professional Human Resource Training Project for Glocal ICT Convergence Technology</p>
+                                        </div>
+                                        <div class="deBottom">
+                                            <ul>
+                                                <li>
+                                                    <span>Funding Department​</span>
+                                                    <em>IEEE Wireless Communications Letters</em>
+                                                </li>
+                                                <li>
+                                                    <span>Project Leader</span>
+                                                    <em>Volume 11</em>
+                                                </li>
+                                               
+                                                <li>
+                                                    <span>Project Manager​</span>
+                                                    <em>pp 972-976</em>
+                                                </li>
+                                                <li>
+                                                    <span>Publish Date</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Role in Project​</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td data-table="acknowledgement">
+                                    <ul>
+                                        <li>
+                                            <span><i>1</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                        <li>
+                                            <span><i>2</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                        <li>
+                                            <span><i>3</i>차</span><em>날짜 없이 네임만..</em>
+                                        </li>
+                                    </ul>
+                                </td>
+                            
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="none">등록된 글이 없습니다.</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    
+                </div>
+
+              
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

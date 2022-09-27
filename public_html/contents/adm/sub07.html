@@ -1,0 +1,251 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin ">
+            <div class="adminCont">
+                
+                <!-- Publication 양식 -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+               
+                <div class="area_formConts bbsView">
+                    <div class="form_List">
+
+                        <!-- 
+                        
+                        해당하는 카테고리별 class를 ul에 넣으시면 구분마다 입력항목이 달리보여집니다
+                        아래 두카테고리를 제외하면 나머지는 동일
+                        International Conference : category02
+                        Domestic Conference : category04 -->
+
+                        <ul class="category04">
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="journalName​">Journal Name</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="journalName​" id="journalName​" class="inputFull" >
+                                </div>
+                            </li>
+                           
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="paperTitle​">Paper Title</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="paperTitle​​" id="paperTitle​​" class="inputFull" >
+                                </div>
+                            </li>
+                            <li class="typeA">
+                                <div class="tit">
+                                    <label for="category​">Category​</label>
+                                </div>
+                                <div class="inBox">
+                                    <select class="selectFull">
+                                        <option selected="selected">선택하기</option>
+                                        <option value="International Journal">International Journal</option>
+                                        <option value="International Conference">International Conference</option>
+                                        <option value="Domestic Journal​">Domestic Journal​​</option>
+                                        <option value="Domestic Conference​">Domestic Conference</option>
+                                        <option value="PhD Thesis​">PhD Thesis</option>
+                                        <option value="Master Thesis​">Master Thesis​</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="typeB">
+                                <ul class="check_list">
+                                    <li>
+                                        <div class="designCheck">
+                                            <input type="checkbox" name="accepted" id="accepted" value="Y"><label for="accepted">Accepted​</label>
+                                        </div>
+                                        <p class="small">State if the paper is already accepted.</p>
+                                    </li>
+                                    <li>
+                                        <div class="designCheck">
+                                            <input type="checkbox" name="under" id="under" value="Y"><label for="under">Under Review</label>
+                                        </div>
+                                        <p class="small">State if the paper still under review due to comments from reviewer. Please open Reviews tab for reviewers' comments</p>
+                                    </li>
+                                  
+                                </ul>
+                            </li>
+                            <li class="cate04">
+                                <div class="tit">
+                                    <label for="isbn">ISBN</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="isbn" id="isbn" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="fisrtAuthor"><span class="import">*</span>First Author</label>
+                                </div>
+                                <div class="inBox">
+                                    <!-- AUTO검색  custom.js에 있습니다. data를 불러오는 거라 예시 단어만 넣어두었습니다.  -->
+                                    <div class="auto_search">
+                                        <input type="text" name="fisrtAuthor" id="fisrtAuthor" class="inputFull autoSearch">
+                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="corresponding"><span class="import">*</span>Corresponding Author​</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="auto_search">
+                                        <input type="text"  name="corresponding" id="corresponding" class="inputFull autoSearch">
+                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                            </li>
+                          
+                            <li>
+                                <div class="tit">
+                                    <label for="cooperative">Cooperative Authors</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="cooperative" id="cooperative" class="inputFull" >
+                                </div>
+                            </li>
+                            <li class="cate02 cate04">
+                                <div class="tit">
+                                    <label for="phone">Volume</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="phone" id="phone" class="inputFull" >
+                                </div>
+                            </li>
+                            <li class="cate02 cate04">
+                                <div class="tit">
+                                    <label for="type">Type</label>
+                                </div>
+                                <div class="inBox">
+                                    <select class="selectFull">
+                                        <option selected="selected">선택하기</option>
+                                        <option value="EMPTY">EMPTY</option>
+                                        <option value="SCI/SCIE Q1">SCI/SCIE Q1</option>
+                                        <option value="SCI/SCIE Q">SCI/SCIE Q​</option>
+                                        <option value="SCI/SCIE Q">SCI/SCIE Q​</option>
+                                        <option value="SCI/SCIE Q">SCI/SCIE Q​</option>
+                                        <option value="Scopus">Scopus</option>
+                                    </select>
+                                </div>
+                            </li>
+
+                            <li class="cate02 cate04">
+                                <div class="tit">
+                                    <label for="number">Number</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="number" id="number" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="start">Start Page</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="start" id="start" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="end">End Page</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="end" id="end" class="inputFull" >
+                                </div>
+                            </li>
+                          
+                            <li class="cate02">
+                                <div class="tit">
+                                    <label for="impact">Impact factor</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="impact" id="impact" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="iacknowledgement"><span class="import">*</span>Acknowledgement</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="auto_search">
+                                        <input type="text" name="iacknowledgement" id="acknowledgement"  class="inputFull autoSearch">
+                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="tit">
+                                    <label for="url"><span class="import">*</span>Publish Date</label>
+                                </div>
+                                <div class="inBox">
+                                    
+                                    <div class="dateBox ">
+                                        <!-- 달력아이콘 클릭시 달력선택지 노출 -->
+                                        <span><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" placeholder="start">
+                                    </div>
+                                   
+                                </div>
+                            </li>
+                            
+                            <li>
+                                <div class="tit">
+                                    <label for="upload"><span class="import">*</span>Paper file Upload</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="inBox">
+                                  
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                             <!-- 클릭시 첨부된 파일 삭제  -->
+                                            <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                       <em class="tip">첨부파일 가능 용량은 10MB 입니다</em>
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                           
+                            <li>
+                                <div class="tit">
+                                    <label for="url"><span class="import">*</span>Paper URL</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="url" id="url" class="inputFull" >
+                                </div>
+                            </li>
+                      
+                          
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="btn_area">
+                        <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;start=&amp;mode=delete&amp;return_mode=list&amp;no=" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><span>삭제</span></a>
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

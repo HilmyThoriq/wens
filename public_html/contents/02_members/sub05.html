@@ -1,0 +1,91 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+<!-- member 페이지에서 sub01.html / professor 제외하고 나머지 동일 -->
+<div class="area_sub_nav lnb">
+    <div class="inr">
+        <ul class="sub_nav_tab">
+            <li class="home"><a href="http://wenslab.koweb.co.kr/"><i class="fa-solid fa-house"></i></a></li>
+            <li class="depth01">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+			
+				</ul>
+            </li>
+            <li class="depth02">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+					
+				</ul>
+            </li>
+            <li class="depth03">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+					
+				</ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- member 페이지에서 sub01.html / professor 제외하고 나머지 동일 -->
+
+
+<section id="container">		
+	<div id="content">		
+        <div class="area_sub c_box">
+            <div class="inr">
+                <!-- 서브타이틀 -->
+                <div class="area_subtitle on">
+                    <h3></h3>
+                </div>
+
+                <!-- 서브 내용 -->
+                <div class="area_conts">
+                    
+                    <?include("../../inc/snb.html")?>
+
+                    <!-- 등록된 게시글이 있을 경우 노출 -->
+                    <div class="area_profileList styleB">
+                        <ul>
+                              <!-- type D  반복 구간 -->
+                            <li>
+                                <div class="w_box pro_cont">
+                                    <div class="info_top">
+                                        <div class="img">
+                                            <img src="/images/content/img_profile.jpg" alt="프로필사진">
+                                        </div>
+                                        <div class="persoanl">
+                                            <p class="name">Jaehan Park</p>
+                                            <a class="email" href="mailto:sample@gmail.com"><i class="fa-solid fa-at"></i> sample@gmail.com</a>
+                                        </div>
+                                    </div>
+                                    <div class="info_detail">
+                                        <dl>
+                                            <dt><i class="fa-solid fa-building"></i> Company</dt>
+                                            <dd>Kingston University, United Kindom</dd>
+                                        </dl>
+                                        <dl>
+                                            <dt><i class="fa-solid fa-briefcase"></i> Job</dt>
+                                            <dd>Postdoctoral Research Fellow</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- type D 반복 구간 끝 -->
+                        </ul>
+                    </div>
+
+                    <!-- 등록된 계시글이 없을 경우 노출 -->
+                    <div class="empty w_box">
+                        <p>등록된 게시글이 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+
+<?include("../../inc/footer.html")?>

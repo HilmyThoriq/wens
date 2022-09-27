@@ -1,0 +1,65 @@
+<div class="bbsSearch">
+
+
+
+
+	<form action="<?=$_SERVER['REQUEST_URL']?>" method="get">
+		<input type="hidden" name="board_id" value="<?=$board_id?>" />
+		<input type="hidden" name="start" value="0" />
+		<!-- <? if($board[use_category] == "Y"){ ?>
+			<div class="designSelect">
+				<select name="cate" id="searchType_">
+				<option value="">ALL</option>
+					<? 
+					$cate_detail = explode("|", $board[category_detail]);
+					foreach($cate_detail as $v){ 
+						echo "<option value='$v'>$v</option>";
+					} ?>
+				</select>
+			</div>
+		<? } ?> -->
+		<? if($board[use_category] == "I"){ ?>
+			<div class="designSelect">
+				<select name="cate" id="searchType_">
+				<option value="">ALL</option>
+				<? 
+					$cat_q = "SELECT * FROM $board_id GROUP BY category";
+					$cat_ = mysql_query($cat_q);
+					while($cat_row = mysqli_fetch_array($cat_)){
+						echo "<option value='$cat_row[category]'>$cat_row[category]</option>";
+					}
+				?>
+				</select>
+			</div>
+		<? } ?>	
+		<div class="designSelect">
+			<select name="search_key" id="searchType">
+				<option value="">ALL</option>
+				<option value="title"> Journal Name</option>
+				<option value="f_author">First Author</option>
+				<option value="c_author">Corresponding Author</option>
+			</select>
+		</div>
+
+		<input type="text" id="keyword" name="keyword" value="">
+		<input type="submit" class="button" value="SEARCH">	
+
+	</form>
+	
+	
+
+</div>
+
+
+
+
+
+
+<? if($board[use_category] == "I" || $board[use_category] == "Y"){ ?>
+<script type="text/javascript">
+	$("#searchType_ option[value='"+"<?=$cate?>"+"']").prop("selected", true);
+</script>
+<? } ?>
+<script type="text/javascript">
+	$("#searchType option[value='"+"<?=$search_key?>"+"']").prop("selected", true);
+</script>

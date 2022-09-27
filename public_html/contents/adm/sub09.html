@@ -1,0 +1,275 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin ">
+            <div class="adminCont">
+                
+                <!-- Projects 양식 -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+               
+                <div class="area_formConts bbsView">
+                    <div class="form_List">
+                        <ul>
+                        
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="engTitle​​"><span class="import">*</span>Eng Title​</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="engTitle​​" id="engTitle​​" class="inputFull" >
+                                </div>
+                            </li>
+                           
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="korTitle​​"><span class="import">*</span>Kor Title</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="korTitle​​​" id="korTitle​​​" class="inputFull" >
+                                </div>
+                            </li>
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="acknowledgement​"><span class="import">*</span>Acknowledgement</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="projectList">
+                                        <ul>
+                                            <li>
+                                                <div class="ack_list">
+                                                    <span class="nPlus"><i>1</i>차</span>
+                                                    <div class="select_date">
+                                                        <div class="dateBox">
+                                                            <!-- 달력아이콘 클릭시 달력선택지 노출 -->
+                                                            <span><i class="fa-solid fa-calendar-days"></i></span>
+                                                            <input type="text" placeholder="start">
+                                                        </div>
+                                                        <div class="dateBox">
+                                                            <span><i class="fa-solid fa-calendar-days"></i></span>
+                                                            <input type="text" placeholder="end">
+                                                        </div>
+                                                    </div>
+                                                    <div class="auto_search">
+                                                        <input type="text" name="fisrtAuthor" id="fisrtAuthor" class="inputFull autoSearch">
+                                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                                    </div>
+                                               
+                                                </div>
+                                            </li>
+                                            <!-- 반복구간 -->
+                                            <li>
+                                                <div class="ack_list">
+                                                    <span class="nPlus"><i>1</i>차</span>
+                                                    <div class="select_date">
+                                                        <div class="dateBox">
+                                                            <!-- 달력아이콘 클릭시 달력선택지 노출 -->
+                                                            <span><i class="fa-solid fa-calendar-days"></i></span>
+                                                            <input type="text" placeholder="start">
+                                                        </div>
+                                                        <div class="dateBox">
+                                                            <span><i class="fa-solid fa-calendar-days"></i></span>
+                                                            <input type="text" placeholder="end">
+                                                        </div>
+                                                    </div>
+                                                     <!-- AUTO검색  custom.js에 있습니다. data를 불러오는 거라 예시 단어만 넣어두었습니다. / 스토리보드엔 디아썬 검색과 같은 기능요청이었습니다. -->
+                                                    <div class="auto_search">
+                                                        <input type="text" name="fisrtAuthor" id="fisrtAuthor" class="inputFull autoSearch">
+                                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                                    </div>
+                                                    <!-- 2차부터 -->
+                                                    <button class="plus"><i class="fa-solid fa-circle-plus"></i></button>
+                                                    <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                                </div>
+                                            </li>
+                                            <!-- 반복구간 끝-->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                          
+                            <li class="typeA">
+                                <div class="tit">
+                                    <label for="funding">Funding Department​</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="funding" id="funding" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="begin">Begin Period</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="dateBox">
+                                        <!-- 달력아이콘 클릭시 달력선택지 노출 -->
+                                        <span><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" placeholder="start">
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="end">End Period​</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="dateBox">
+                                        <!-- 달력아이콘 클릭시 달력선택지 노출 -->
+                                        <span><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" placeholder="start">
+                                    </div>
+                                </div>
+                            </li>
+                          
+                            <li>
+                                <div class="tit">
+                                    <label for="project">Project Leader</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="project" id="project" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="project">Project Manager​</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="project" id="project" class="inputFull" >
+                                </div>
+                            </li>
+                          
+
+                            <li>
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Role in Project</label>
+                                </div>
+                                <div class="inBox">
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="leader" id="leader" value="Y"><label for="leader">Leader​</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="participant" id="participant" value="Y"><label for="participant">Participant​</label>
+                                            </div>
+                                        </li>
+                                </div>
+                            </li>
+                            <li class="typeB">
+                                <ul class="check_list">
+                                    <li>
+                                        <div class="designCheck">
+                                            <input type="checkbox" name="going" id="going" value="Y"><label for="going">On going project​​</label>
+                                        </div>
+                                        <p class="small">State if the project is on going or finished.</p>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="start">Start Page</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="start" id="start" class="inputFull" >
+                                </div>
+                            </li>
+                           
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="upload">Summary</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="inBox">
+                                  
+                                       <!-- 에디터 넣어주세요 -->
+                                        <div class="area_edit">
+
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="upload"><span class="import">*</span>Paper file Upload</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="inBox">
+                                  
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                             <!-- 클릭시 첨부된 파일 삭제  -->
+                                             <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                            <!-- 클릭시 첨부된 파일 삭제  -->
+                                            <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                            <!-- 클릭시 첨부된 파일 삭제  -->
+                                            <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                            <!-- 클릭시 첨부된 파일 삭제  -->
+                                            <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                        <div class="designFile">
+                                            <input type="text" readonly="readonly" value="">
+                                            <input type="file" name="file_1" id="file_1">
+                                            <label for="file_1" class="button white">
+                                                <span> 파일선택</span>
+                                            </label>  
+                                            <!-- 클릭시 첨부된 파일 삭제  -->
+                                            <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                        </div>
+                                       <em class="tip">첨부파일 가능 용량은 10MB 입니다</em>
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                      
+                          
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="btn_area">
+                        <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;start=&amp;mode=delete&amp;return_mode=list&amp;no=" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><span>삭제</span></a>
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

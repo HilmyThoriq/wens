@@ -1,0 +1,191 @@
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php"; ?>
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php"; ?>
+<?
+
+$query = "SELECT * FROM koweb_member WHERE no='$no'";
+$result = mysql_query($query);
+$row = mysql_fetch_array($result);
+$email = explode("@",$row[email]);
+$birthday = explode("-",$row[birthday]);
+$phone = explode("-", $row[phone]);
+if(!$row[0]){
+	error("비정상적인 접근입니다.");
+	exit;
+}
+setHistory("관리자 회원관리", $row[id], "$row[id] 회원정보 열람");
+
+
+$tmpdept = mysql_fetch_array(mysql_query("SELECT * FROM koweb_dept WHERE no='$_SESSION[member_dept]'"));
+$dept = $tmpdept[dept];
+
+?>
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="apply_proc" />
+<input type="hidden" name="manager_type" value="member" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+<input type="hidden" name="check_apply[]" value="<?=$row[no]?>" />
+	<h2 class="mt0">member : <?=$row[id]?></h2>
+	<table class="bbsView">
+		<colgroup>
+			<col style="width:15%;"/>
+			<col/>
+			<col style="width:15%;"/>
+			<col style="width:35%"/>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row">ID</th>
+				<td colspan="3"><?=$row[id]?></td>
+			</tr>
+			<tr>
+				<th scope="row">First Name</th>
+				<td><?=$row[first_name]?></td>
+				<th scope="row">Last Name</th>
+				<td><?=$row[last_name]?></td>
+			</tr>
+			<tr>
+				<th scope="row">Management Level</th>
+				<td colspan="3">
+					<?
+						switch($row[auth_level]){
+							case "1" :
+								echo "Manager";
+								break;
+
+							case "3" :
+								echo "Member";
+								break;
+
+							case "5" :
+								echo "Alumni";
+								break;
+
+							case "99" :
+								echo "Pending Approval";
+								break;
+						}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><!-- <span class="marking">필수항목</span> --><label for="phone1">Phone</label></th>
+				<td colspan="3"><?=$row[phone]?></td>
+			</tr>
+			<tr>
+				<th scope="row">E-Mail</th>
+				<td colspan="3" class="email"><?=$row[email]?></td>
+			</tr>
+			<tr>
+				<th scope="row">Rol</th>
+				<td colspan="3"><?=$row[Rol]?></td>
+			</tr>
+
+			<tr>
+				<th scope="row">Group</th>
+				<td colspan="3">
+					<? if($row[group_professor]) { ?>
+						<h4>Professor</h4>
+						<p>----------------------------------</p>
+					<? } ?>
+
+					<? if($row[group_time_researcher]) { ?>
+						<h4>Full time Researcher</h4>
+						<? $GTresearcher_arr = explode("^", $row[group_time_researcher]); ?>
+						<? for($a=0; $a < count($GTresearcher_arr); $a++){ ?>
+							<p>· <?=$GTresearcher_arr[$a]?></p>
+						<? } ?>
+						<p>----------------------------------</p>
+					<? } ?>
+
+					<? if($row[group_part_researcher]) { ?>
+						<h4>Part time Reseacher</h4>
+						<? $GPresearcher_arr = explode("^", $row[group_part_researcher]); ?>
+						<? for($a=0; $a<count($GPresearcher_arr); $a++) { ?>
+						<p>· <?=$GPresearcher_arr[$a]?></p>
+						<? } ?>
+						<p>----------------------------------</p>
+					<? } ?>
+
+					<? if($row[group_alumni]) { ?>
+						<h4>Alumni</h4>
+						<? $row[group_alumni] = substr($row[group_alumni], 0, -1); ?>
+						<? $GA_arr = explode("^", $row[group_alumni]); ?>
+						<? for($a=0; $a<count($GA_arr); $a++) { ?>
+						<p>· <?=$GA_arr[$a]?></p>
+						<? } ?>
+					<? } ?>
+				</td>
+			</tr>
+			<? if($row[group_professor]) { ?>
+			<tr>
+				<th scope="row">Professor textarea</th>
+				<td colspan="3"><?=$row[comments]?></td>
+			</tr>
+			<? } ?>
+			<tr>
+				<th scope="row">Office</th>
+				<td><?=$row[office]?></td>
+				<th scope="row">Last company</th>
+				<td><?=$row[last_company]?></td>
+			</tr>
+			<tr>
+				<th scope="row">Graduate Date</th>
+				<td><?=$row[graduate_date]?></td>
+				<th scope="row">Interest</th>
+				<td><?=$row[Interest]?></td>
+			</tr>
+			<tr>
+				<th scope="row">Last Education</th>
+				<td><?=$row[last_education]?></td>
+				<th scope="row">Last Job</th>
+				<td><?=$row[last_job]?></td>
+			</tr>
+			<tr>
+				<th scope="row">Avatar</th>
+				<td colspan="3">
+					<? 
+						$file_title = $row["file_1"];
+						if($file_title){ 
+							$ext = end(explode(".", strtolower($file_title)));
+							if($ext == "jpg" || $ext == "png" || $ext == "jpeg" || $ext == "bmp"){ 
+								echo "<li><img src=\"/upload/koweb_member/$file_title\" alt=\"\"/></li>";
+							}
+						}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Join Date</th>
+				<td colspan="3"><?=$row[join_date]?></td>
+			</tr>
+			<!-- <tr>
+				<th>주소</th>
+				<td colspan="3" class="address">
+					<span>
+						<?=$row[zip]?>
+					</span>
+					<?=$row[address1]?>
+					<?=$row[address2]?>
+				</td>
+			</tr>
+			<tr>
+				<th>생년월일</th>
+				<td colspan="3" class="date">
+					<?=$row[birthday]?>
+				</td>
+			</tr> -->
+		</tbody>
+	</table>
+
+	<div class="btn_area tac">
+	<? if($site[use_member_okey] == "Y"){ ?>
+		<input class="button red" type="submit" value="Approve">
+	<? } ?>
+	<? if($return_no == "") { ?>
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=member">Back</a>
+	<? } else { ?>
+		<a class="button" href="?type=setting&core_id=setting&core=manager_setting&manager_type=dept&mode=view&no=<?=$return_no?>">Back</a>
+	<? } ?>
+	</div>
+</form>

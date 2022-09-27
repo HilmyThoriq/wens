@@ -1,0 +1,88 @@
+<?
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php";
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php";
+
+	//board_id 가 있다면 type은 board
+	//경로 : /koadmin/board/manager_board.php
+	if($board_id) {
+		$type = "board";
+		$core = "manager_board";
+	}
+	if($lecture_id) {
+		$type = "board";
+		$core = "manager_board";
+	}
+	//program_id 가 있으면 type은 program
+	//경로 : /koadmin/program/manager_program.php
+	if($program_id) {
+		$type = "program";
+		$core = "manager_program";
+	}
+	
+	if($etc_id) {
+		$type = "etc";
+		$core = "manager_etc";
+	}
+
+
+	if($site_id) {
+		$type = "site";
+		$core = "manager_site";
+	}
+
+
+	if($online_id) {
+		$type = "online";
+		$core = "manager_online";
+	}
+
+	if(!$type || !$core) {
+		$type = "dashboard";
+		$core = "dashboard";
+	}
+
+
+
+?>
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>홈페이지 통합관리자</title>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/layout.css"/>
+		<link rel="stylesheet" type="text/css" href="/js/jquery-ui.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/board.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/content2.css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<? if ((!$type && !$core) || ($type == "dashboard" && $core == "dashboard")) { ?>
+			<link rel="stylesheet" type="text/css" href="/ko_admin/css/main.css"/>
+		<? } ?>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/js/jquery.scrollbar.css"/>
+		<script type="text/javascript" src="/js/jquery-1.12.2.min.js"></script>
+		<script type="text/javascript" src="/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="/js/jquery.bxslider.js"></script>
+		<script type="text/javascript" src="/js/sort.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/jquery.scrollbar.js"></script>
+		<script type="text/javascript" src="/js/base.js"></script>
+		<script type="text/javascript" src="/js/module.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/custom.js"></script>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/ko_admin/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/ko_admin/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/ko_admin/images/favicon/favicon-16x16.png">
+		<link rel="manifest" href="/ko_admin/images/favicon/site.webmanifest">
+		<link rel="mask-icon" href="/ko_admin/images/favicon/safari-pinned-tab.svg" color="#e0125a">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="theme-color" content="#ffffff">
+	</head>
+
+	<body>
+		<div id="wrap">
+			<?include("inc/header.html")?>
+				<? $include_url = $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/$type/$core.php"; ?>
+				<? include_once "$include_url"; ?>
+			<?include("inc/footer.html")?>

@@ -1,0 +1,95 @@
+<?
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php";
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php";
+?>
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>메일발송</title>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/layout.css"/>
+		<link rel="stylesheet" type="text/css" href="/js/jquery-ui.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/board.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/js/jquery.scrollbar.css"/>
+		<script type="text/javascript" src="/js/jquery-1.12.2.min.js"></script>
+		<script type="text/javascript" src="/js/jquery-ui.js"></script>
+		<script type="text/javascript" src="/js/jquery.bxslider.js"></script>
+		<script type="text/javascript" src="/js/sort.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/jquery.scrollbar.js"></script>
+		<script type="text/javascript" src="/js/base.js"></script>
+		<script type="text/javascript" src="/js/module.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/custom.js"></script>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/ko_admin/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/ko_admin/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/ko_admin/images/favicon/favicon-16x16.png">
+		<link rel="manifest" href="/ko_admin/images/favicon/site.webmanifest">
+		<link rel="mask-icon" href="/ko_admin/images/favicon/safari-pinned-tab.svg" color="#e0125a">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="theme-color" content="#ffffff">
+
+	</head>
+
+	<body>
+		<div id="wrap">
+		<?
+		include_once $_SERVER['DOCUMENT_ROOT'] . "/js/smarteditor.js";
+		$mode_title = $site[title]." 등록";
+
+		if($mode == "modify"){ 
+			$query = "SELECT * FROM $program_table WHERE no='$no'";
+			$result = mysql_query($query);
+			$row = mysql_fetch_array($result);
+			$mode_title = $site[title]." 수정";
+		} 
+		?>
+		<div class="area_pop">
+			<form action="/ko_admin/program/koweb_mail/proc.php" method="post" name="form" enctype="multipart/form-data">
+				<input type="hidden" name="no" value="<?=$row[no]?>" />
+
+				<table class="bbsView">
+					<caption><?=$mode_title?></caption>
+					<colgroup>
+						<col data-write="th" style="width:15%"/>
+						<col data-write="td" />
+					</colgroup>
+					<tbody>
+						<tr>
+							<th scope="row"><span class="marking">필수항목</span><label for="title">발송자</label></th>
+							<td>
+								<div class="designCheck">
+								<?	
+									$select_member = "SELECT * FROM koweb_member WHERE state = 'Y' AND email != '@' ORDER BY no ASC";
+									$member_result = mysql_query($select_member);
+									while($member = mysql_fetch_array($member_result)){
+										echo "<input type='checkbox' name='recive[]' value='$member[id]' id='$member[no]'/><label for='$member[no]'>".$member[id]."</label>";
+									}
+								?>
+								</div>
+							</td>			
+						</tr>
+						<tr>
+							<th scope="row"><span class="marking">필수항목</span><label for="title">제목</label></th>
+							<td><input type="text" name="title" id="title" class="inputFull required" value="<?=$row[title]?>" title="제목" />
+							</td>			
+						</tr>
+						<tr>
+							<th scope="row"><span class="marking">필수항목</span><label for="smart_content">내용</label></th>
+							<td>
+								<textarea id="smart_content" name="contents"></textarea>
+							</td>			
+						</tr>
+					</tbody>
+				</table>
+				<!-- 버튼 -->
+				<div class="btn_area">
+					<input type="submit" class="button" value="발송" />
+					<a href="#" class="button white" onclick="javascript:self.close();">취소</a>
+				</div>
+			</form>
+		</div>
+	<?include("inc/footer.html")?>
+

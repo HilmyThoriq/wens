@@ -1,0 +1,105 @@
+<?
+	$query = "SELECT * FROM $table_name WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	if($row['item_option'] != "^")
+	$option = explode("|" , $row['item_option']);
+?>
+<!-- 이미지 view단표시 -->
+<!-- //이미지 view단표시 -->
+<div class="productView">
+	<!-- 이미지 -->
+	<div class="img">
+		<? $file_count = 0; ?>
+		<span><img src="/upload/reservation/<?=$serve_name?>/<?=$row[title_img]?>" alt=""/></span>
+		<ul>
+			<li><a href='javascript:void(0)'><img src="/upload/reservation/<?=$serve_name?>/<?=$row[title_img]?>" alt=""/></a></li>
+		<? for ($i = 1; $i <= 4; $i++){
+				$file_title =  $row["file_".$i];
+				if($file_title){ ?>
+					<li><a href='javascript:void(0)'><img src="/upload/reservation/<?=$serve_name?>/<?=$file_title?>" alt=""/></a></li>
+				<? $file_count++;
+				}
+			}
+		?>
+		</ul>
+	</div>
+
+	<div class="title">
+		<!-- 제품명 -->
+		<h3><?=$row['item_name']?></h3>
+		<!-- 옵션 -->
+		<ul class="option">
+			<? if($board['price_use'] == 1){ ?>
+				<li><em>금액</em><?=number_format($row['item_price'])?> 원</li>
+			<? } ?>
+			<!-- em title / 내용 -->
+			<? foreach ($option as $key => $value) {
+				$temp = explode("^",$value);
+				$value1 = $temp[0];
+				$value2 = $temp[1];
+				?>
+			<li><em><?=$value1?></em><?=$value2?></li>
+			<? } ?>
+		</ul>
+		<div class="btn">
+			<a href="/reservation/test_reservation.html?mode=write&no=<?=$row[no]?>" class="button lg <?=$row['item_state'] == "Y" ? "blue" : "black"?>"><?=$row['item_state'] == "Y" ? "예약하기" : "예약불가"?></a>
+			<!-- <a href="#" class="button lg gray">문의하기</a> -->
+		</div>
+	</div>
+
+	<!-- 상세정보 -->
+	<div class="info">
+		<h4>상세정보</h4>
+
+		<!-- 에디터내용 삽입 -->
+		<div class="conts">
+			<?=$row['item_content']?>
+		</div>
+	</div>
+</div>
+
+<!-- 이전/다음 -->
+<? if($type_view == "view") $add_queryStr = "&amp;type_view=view"; ?>
+<?
+	// 다음글, 이전글
+	$temp_next = mysql_fetch_array(mysql_query("SELECT no, item_name FROM $table_name WHERE  sort_value>'{$row['sort_value']}' ORDER BY  sort_value ,no ASC LIMIT 1"));
+	if ($temp_next) $next = "$common_url&amp;mode=view&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;no={$temp_next['no']}".$add_queryStr;
+	else $next = "#";
+	// 이전글
+	$temp_prev = mysql_fetch_array(mysql_query("SELECT no, item_name FROM $table_name WHERE sort_value<'{$row['sort_value']}' ORDER BY sort_value DESC ,no DESC LIMIT 1"));
+	if ($temp_prev) $prev = "$common_url&amp;mode=view&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;no={$temp_prev['no']}".$add_queryStr;
+	else $prev = "#";
+?>
+<table class="bbsView page">
+	<caption>이전 다음 상품</caption>
+	<colgroup>
+		<col data-view="th" style="width:15%"/>
+		<col data-view="td" style="width:85%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row">이전 상품</th>
+			<td><a href="<?=$prev?>"><?=$temp_prev['item_name']?></a></td>
+		</tr>
+		<tr>
+			<th scope="row">다음 상품</th>
+			<td><a href="<?=$next?>"><?=$temp_next['item_name']?></a></td>
+		</tr>
+	</tbody>
+</table>
+<!-- //이전/다음 -->
+
+<!-- 버튼 -->
+<div class="btn_area">
+	<? if($_SESSION[is_admin]){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button">수정</a>
+	<? } ?>
+	<? if($_SESSION[is_admin]){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=delete&amp;return_mode=list&amp;no=<?=$row[no]?>" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');">삭제</a>
+	<? } else if($auth_delete){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=check&amp;return_mode=delete&amp;no=<?=$row[no]?>" class="button">삭제</a>
+	<? } ?>
+	<a href="<?=$common_url?>&amp;start=<?=$start?><?=$add_queryStr?>" class="button">목록</a>
+</div>
+<!-- //버튼 -->

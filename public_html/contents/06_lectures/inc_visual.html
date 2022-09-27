@@ -1,0 +1,53 @@
+<!-- area_subVisual -->
+<div class="area_subVisual">
+    <span class="bg08"></span>
+    <h2></h2>
+</div>
+<div class="area_sub_nav lnb">
+    <div class="inr">
+        <ul class="sub_nav_tab">
+            <li class="home"><a href="http://wenslab.koweb.co.kr/"><i class="fa-solid fa-house"></i></a></li>
+            <li class="depth01">
+                <a class="now"><span></span> <i class="fa-solid fa-caret-down"></i></a>
+                <ul class="under_menu">
+			
+				</ul>
+            </li>
+          
+        </ul>
+    </div>
+</div>
+
+
+
+<!-- //area_subVisual -->
+
+
+<?
+$basename = basename($_SERVER['PHP_SELF']);
+$file_ = explode(".", $basename);	
+$common_ = substr($file_[0], 0, 5);
+?>
+<script type="text/javascript">
+	$(".gnb > li > a").removeClass("on");
+	$(".lectures").addClass("on");
+	$(".lectures_"+"<?=$file_[0]?>").addClass("on");
+	$(".lectures_"+"<?=$common_?>").addClass("on");
+	$(".lectures_"+"<?=$common_?>").parent('li').addClass("active");
+
+	if("<?=$board_id?>"){
+	//게시판일경우
+		$("."+"<?=$board_id?>").addClass("on");
+		$("."+"<?=$board_id?>").parent('li').addClass("active");
+	}else{
+		$(".lectures_"+"<?=$common_?>").addClass("on");
+	}
+
+	if("<?=$online_id?>"){
+	//게시판일경우
+		$("."+"<?=$online_id?>").addClass("on");
+		$("."+"<?=$online_id?>").parent('li').addClass("active");
+	}else{
+		$(".lectures_"+"<?=$common_?>").addClass("on");
+	}
+</script>

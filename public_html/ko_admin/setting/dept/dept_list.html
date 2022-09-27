@@ -1,0 +1,76 @@
+<h2 class="mt0">부서 관리</h2>
+<!-- 프로그램설정 -->	
+
+	<table class="bbsList">
+		<caption><?=$program[title]?></caption>
+		<colgroup>
+			<col />
+			<col style="width:12%"/>
+			<col style="width:15%"/>
+		</colgroup>
+		<thead>
+			<tr>
+				<th scope="col" class="tac">부서명</th>
+				<th scope="col">정렬</th>
+				<th scope="col">관리</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?
+			function print_category($ref_group, $ref_no, $depth = 1){
+				$query = "SELECT * FROM koweb_dept WHERE state = 'Y' AND depth = '$depth' AND ref_group='$ref_group' AND ref_no='$ref_no' AND state='Y' ORDER BY sort ASC";
+				$result = mysql_query($query);
+				while($data = mysql_fetch_array($result)){
+					$position = "style='padding-left:" . ($data[depth]-1) * 105 . "px;'";
+					$position2 = "";
+					if($data[depth] != "1"){
+						//$position2 = "<strong>└</strong> ";
+					} else {
+						$position = "style='font-weight:bold'";
+					}
+
+					$count_query = "SELECT * FROM koweb_dept WHERE depth_history LIKE '%$data[no]%'";
+					$count_result = mysql_query($count_query);
+					$member_count = 0;
+					while($count = mysql_fetch_array($count_result)){
+						$member_query = "SELECT count(*) as CNT FROM koweb_member WHERE dept='$count[no]'";
+						$tmp_member_count = mysql_fetch_array(mysql_query($member_query));
+						$member_count += number_format($tmp_member_count[CNT]);
+					}
+					$add_button = "(".number_format($member_count).")";
+
+				?>
+					<tr class="<?=$folding?>">
+						<td  <?=$position?>><a href="?type=setting&core_id=setting&core=manager_setting&manager_type=dept&mode=view&no=<?=$data[no]?>"><?=$position2?><?=$data[dept]?>
+							<?=$add_button?></a>						
+						</td>
+						<td class="tac">
+							<a href="?type=setting&core_id=setting&core=manager_setting&manager_type=dept&mode=sort&no=<?=$data[no]?>&sort_mode=up" class="sm button white"/>△</a>
+							<a href="?type=setting&core_id=setting&core=manager_setting&manager_type=dept&mode=sort&no=<?=$data[no]?>&sort_mode=down" class="sm button"/>▽<a/>
+						</td>
+						<td class="tac">
+							<a href="?type=setting&manager_type=dept&mode=modify&core=manager_setting&no=<?=$data[no]?>" class="sm button gray"/>수정</a>
+							<a href="?type=setting&manager_type=dept&mode=delete&core=manager_setting&no=<?=$data[no]?>" class="sm button white"/>삭제</a>
+						</td>
+					</tr>
+				<?
+					$sub = mysql_result(mysql_query("SELECT COUNT(*) FROM koweb_dept WHERE ref_no='$data[no]'"), 0);
+					if($sub){
+						$depth = $data[depth] + 1;
+						print_category($data[ref_group], $data[no], $depth);
+					}
+				}
+			}
+
+			$query = "SELECT * FROM koweb_dept WHERE state = 'Y' AND depth = '1' ORDER BY sort ASC, ref_group ASC, depth ASC, ref_no ASC";
+			$result = mysql_query($query);
+			while($data = mysql_fetch_array($result)){
+				print_category($data[ref_group], $data[ref_no]);
+			}
+			?>
+		</tbody>
+	</table>
+
+	<div class="btn_area tar">
+		<a href="<?=$request_uri?>&mode=write" class="button"/>등록</a>
+	</div>

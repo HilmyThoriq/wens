@@ -1,0 +1,91 @@
+<?
+include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php";
+
+$query = "SELECT * FROM koweb_reservation_config limit 0,1";
+$result = mysql_query($query);
+$row = mysql_fetch_array($result);
+$phone_arr = explode("-",$row['receive_phone_number']);
+$receive_phone_number1 = $phone_arr['0'];
+$receive_phone_number2 = $phone_arr['1'];
+$receive_phone_number3 = $phone_arr['2'];
+
+$online_query = "SELECT * FROM koweb_online_config";
+$online_result = mysql_query($online_query);
+?>
+
+<form action="/ko_admin/index.html" method="post">
+	<input type="hidden" name="mode" value="modify_proc" />
+	<input type="hidden" name="core" value="manager_setting" />
+	<input type="hidden" name="manager_type" value="reservation" />
+	<input type="hidden" name="type" value="setting" />
+	<input type="hidden" name="detail" value="setting" />
+	<input type="hidden" name="start" value="<?=$start?>" />
+
+	<h2>설정관리</h2>
+	<span style='color:red;'>온라인신청 설정연결을 수정하실때는 필히 개발자에게 요청하여 데이터 옮긴뒤 진행하여주시기 바랍니다.</span>
+	<br />
+	<br />
+	<table class="bbsView">
+		<caption>설정관리</caption>
+		<colgroup>
+			<col style="width:15%;">
+			<col>
+			<col style="width:15%;">
+			<col style="width:30%">
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row">타이틀</th>
+				<td><input type="text" name="title" class="input200" value="<?=$row['title']?>"></td>
+				<th scope="row">온라인신청 설정 연결</th>
+				<td>
+					<select name="id">
+						<option value="">선택해주세요</option>
+						<? while($online_row = mysql_fetch_array($online_result)){ ?>
+							<option <?=$online_row['no'] == $row['online_config_no'] ? "selected" : ""?> value='<?=$online_row['no']?>|<?=$online_row['id']?>'><?=$online_row['id']?>(<?=$online_row['title']?>)</option>
+						<? } ?>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<th scope="row">최대 연속예약 기간</th>
+				<td><input type="text" name="max_days" class="input50" value="<?=$row['max_days']?>"> 일</td>
+				<th scope="row">미리 볼수있는 예약 달</th>
+				<td><input type="text" name="max_month" class="input50" value="<?=$row['max_month']?>"> 달</td>
+			</tr>
+
+			<tr>
+				<th scope="row">예약가능최소일자</th>
+				<td><input type="text" name="min_before_days" class="input50" value="<?=$row['min_before_days']?>"> 일</td>
+				<th scope="row">금액 사용</th>
+				<td>
+					<div class="designRadio">
+						<input <?=$row['price_use'] == "1" ? "checked" : ""?> id='price_use_1' type='radio' value='1' class="required" name='price_use' />
+						<label for='price_use_1'>사용</label>
+						<input <?=$row['price_use'] == "2" ? "checked" : ""?> id='price_use_2' type='radio' value='2' class="required" name='price_use' />
+						<label for='price_use_2'>미사용</label>
+					</div>
+				</td>
+
+			</tr>
+			<tr>
+				<th scope="row">날짜 선택</th>
+				<td>
+					<div class="designRadio">
+						<input <?=$row['date_select_type'] == "1" ? "checked" : ""?> id='date_select_type_1' type='radio' value='1' class="required" name='date_select_type' />
+						<label for='date_select_type_1'>선택형</label>
+						<input <?=$row['date_select_type'] == "2" ? "checked" : ""?> id='date_select_type_2' type='radio' value='2' class="required" name='date_select_type' />
+						<label for='date_select_type_2'>연속형</label>
+					</div>
+				</td>
+				<th scope="row">예약신청완료 수신번호</th>
+				<td><input type="text" name="receive_phone_number1" class="input50" value="<?=$receive_phone_number1?>">-<input type="text" name="receive_phone_number2" class="input50" value="<?=$receive_phone_number2?>">-<input type="text" name="receive_phone_number3" class="input50" value="<?=$receive_phone_number3?>"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn_area">
+		<input type="submit" class="button" value="설정">
+	</div>
+</form>

@@ -1,0 +1,48 @@
+<h2 class="mt0">메인슬라이드 설정</h2>
+<!-- 프로그램설정 -->	
+<p style="font-weight:bold; margin-top:10px; margin-bottom:10px; color:red;" > * 정렬순서설정은 드래그를 사용하세요</p>
+<table class="bbsList">
+	<caption>메인슬라이드 설정</caption>
+	<colgroup>
+		<col style="width:15%">
+		<col />
+		<col style="width:35%"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col">정렬순서</th>
+			<th scope="col">메인슬라이드 이미지</th>
+			<th scope="col">관리</th>
+		</tr>
+	</thead>
+	<tbody data-drag-sort="<?=$program_id?>">
+		<?
+			$query = "SELECT * FROM $program_table ORDER BY sort ASC";
+			$result = mysql_query($query);
+			$total = mysql_num_rows($result);
+			 while($row = mysql_fetch_array($result)){ 
+		?>
+		<tr data-unique-no="<?=$row[no]?>">
+			<td>
+				<?=$row[sort]?>
+			</td>
+			<td>
+				<? if($row[main_img]){ ?>
+					<img src="/upload/program/<?=$program[id]?>/<?=$row[main_img]?>" style="width:50%; margin:0px 0px 5px 0px; max-height:20%;"/>
+				<? } ?>
+			</td>
+			<td>
+			<!--<a href="<?=$request_uri?>&amp;mode=sort&amp;sort_mode=up&amp;no=<?=$row[no]?>" class="button sm white">△</a> 
+			<a href="<?=$request_uri?>&amp;mode=sort&amp;sort_mode=down&amp;no=<?=$row[no]?>" class="button sm white">▽</a> 
+			-->
+			<a href="<?=$request_uri?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button sm gray">수정</a> 
+			<a href="<?=$request_uri?>&amp;mode=delete&amp;no=<?=$row[no]?>" class="button sm red">삭제</a> 
+			</td>
+		</tr>
+	<? } ?>
+	</tbody>
+</table>
+
+<div class="btn_area tar">
+	<a href="<?=$request_uri?>&mode=write" class="button"/>등록</a>
+</div>

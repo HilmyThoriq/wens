@@ -1,0 +1,36 @@
+<div class="search_bbs" style="margin-bottom:20px; margin-top:0">
+	<form action="<?=$_SERVER['REQUEST_URL']?>" method="get">
+		<input type="hidden" name="board_id" value="<?=$board_id?>" />
+		<input type="hidden" name="start" value="0" />
+		
+		<div class="search">
+			
+			<select name="search_key" id="searchType">
+				<option value="">Total</option>
+				<option value="title"> Course Name</option>
+			</select>
+
+		<input type="text" id="keyword" name="keyword" value="<?=$keyword?>">
+		<input type="submit" class="button" value="SEARCH">	
+
+		</div>
+
+	</form>
+
+	<? if($auth_write){?>
+		<div class="btn">
+			<a href="<?=$PHP_SELF?>?mode=write&amp;board_id=<?=$board_id?>&cate=<?=$row[category]?>" class="button"><span>Create</span></a>
+		</div>
+	<? } ?>
+</div>
+
+<? if($board[use_category] == "I" || $board[use_category] == "Y"){ ?>
+<script type="text/javascript">
+	$("#searchType_ option[value='"+"<?=$cate?>"+"']").prop("selected", true);
+</script>
+<? } ?>
+<script type="text/javascript">
+	$("#searchType option[value='"+"<?=$search_key?>"+"']").prop("selected", true);
+</script>
+
+

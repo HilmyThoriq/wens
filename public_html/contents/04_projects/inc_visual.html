@@ -1,0 +1,41 @@
+<!-- area_subVisual -->
+<div class="area_subVisual">
+    <span class="bg04"></span>
+    <h2></h2>
+</div>
+<?include("../../inc/lnb.html")?>
+
+<!-- //area_subVisual -->
+
+
+<?
+$basename = basename($_SERVER['PHP_SELF']);
+$file_ = explode(".", $basename);	
+$common_ = substr($file_[0], 0, 5);
+?>
+<script type="text/javascript">
+	$(".gnb > li > a").removeClass("on");
+	$(".projects").addClass("on");
+	$(".projects_"+"<?=$file_[0]?>").addClass("on");
+	$(".projects_"+"<?=$common_?>").addClass("on");
+	$(".projects_"+"<?=$common_?>").parent('li').addClass("active");
+
+	if("<?=$board_id?>"){
+	//게시판일경우
+		$("."+"<?=$board_id?>_<?=$cate_on?>").addClass("on");
+		$("."+"<?=$board_id?>_<?=$cate_on?>").parent('li').addClass("active");
+
+		$("."+"notice_<?=$cate?>").addClass("on");
+		$("."+"notice_<?=$cate?>").parent('li').addClass("active");
+	}else{
+		$(".projects_"+"<?=$common_?>").addClass("on");
+	}
+
+	if("<?=$online_id?>"){
+	//게시판일경우
+		$("."+"<?=$online_id?>").addClass("on");
+		$("."+"<?=$online_id?>").parent('li').addClass("active");
+	}else{
+		$(".projects_"+"<?=$common_?>").addClass("on");
+	}
+</script>

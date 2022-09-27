@@ -1,0 +1,90 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 5; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+//리스트
+$total_query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+$query = "SELECT * FROM $board_id WHERE 1=1 ORDER BY no DESC ";
+$result = mysql_query($query);
+?>
+
+<!-- Research -->
+<!-- 아래 내용부터 본 내용입니다.  -->
+<div class="area_formTop">
+	<div class="formTab">
+		<ul>
+			<? while($row = mysql_fetch_array($result)){ ?>
+			<li <?if($row[no]==$no){?>class="on"<?}?> >
+				<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&no=<?=$row[no]?>" class="<?=$title_new?>"><?=$row[title]?></a>
+			</li>
+			<? } ?>
+		</ul>
+	</div>
+</div>
+
+<? if($no){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+?>
+
+
+
+<script src="/ko_editor/ckeditor.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		//Replace the <textarea id="smart_content"> with a CKEditor
+		//instance, using default configuration.
+		if($("#smart_content").length > 0) {
+			CKEDITOR.replace( 'smart_content' );
+		}
+		if($("#smart_content2").length > 0) {
+			CKEDITOR.replace( 'smart_content2' );
+		}
+	});
+</script>
+
+
+
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="modify" />
+<input type="hidden" name="no" value="<?=$no?>" />
+
+	<div class="area_formConts" style="border:1px solid #eee">
+		<!-- 에디터 넣어주세요 -->
+		<div class="area_edit">
+
+		<textarea name="comments" id="smart_content" rows="2" cols="2" style="height:412px;" class="inputFull"><?=$row[comments]?></textarea>
+
+		</div>
+	</div>
+
+	<div class="btn_area">
+		<input type="submit" onclick="msgImpletion();" class="button" value="저장">
+	</div>
+<? } ?>
+ </form>
+
+
+
+ 
+    <!-- //본문 -->
+
+

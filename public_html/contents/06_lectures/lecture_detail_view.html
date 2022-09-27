@@ -1,0 +1,84 @@
+<?
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; 
+
+?>
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>KOMASTER | 사이트 검색</title>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="/ko_admin/css/layout.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/board.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/content2.css"/>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="/ko_admin/js/jquery.scrollbar.css"/>
+		<script type="text/javascript" src="/ko_admin/js/jquery-1.12.2.min.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/jquery.scrollbar.js"></script>
+		<script type="text/javascript" src="/ko_admin/js/custom.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+		<script type="text/javascript">
+		$(function(){
+			$("#search").focus();
+		});
+		function send_data(title){
+
+			//console.log($("input[name=sitecode][value='"+no+"']", opener.document).length);
+
+			/*if( $("input[name=sitecode][value='"+no+"']", opener.document).length) {
+				alert("동일한 사이트로 업무내역이 존재합니다.");
+				return false;
+			}*/
+		
+
+			$("#filled_ack",opener.document).val(title); 
+
+
+			self.close();
+		}
+		</script>
+
+	</head>
+	<body>
+		<div id="wrap" class="pop new">
+			<div class="conts  new_ver">
+					<!-- 사이트검색 pop -->
+					<h3 class="mt0">Detail View</h3>
+					
+					<?
+						$query = "SELECT * FROM board_comment WHERE 1=1 AND no=$no"; 
+						$result = mysql_query($query);
+						$row = mysql_fetch_array($result);
+					?>
+						<!-- 목록 검색을 해야지만 나옴 -->
+						<table class="bbsList mt20">
+							<caption>Detail View</caption>
+							<colgroup>
+								<col style="width:100%;"/>
+							</colgroup>
+							<!-- <thead>
+								<tr>
+									<th scope="col">Detail View</th>
+								</tr>
+							</thead> -->
+							<tbody>
+									<tr>
+										<td><?=$row[comments]?></td>
+									</tr>
+							</tbody>
+						</table>
+
+					<!-- 검색결과 없을때 -->
+					<!-- //검색결과 없을때 -->
+
+					<!-- //사이트검색 pop -->
+
+	
+				<!-- //내용 -->
+			</div>
+		</div>
+	</body>
+</html>

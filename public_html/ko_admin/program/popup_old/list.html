@@ -1,0 +1,44 @@
+<h2 class="mt0">팝업 설정</h2>
+<!-- 프로그램설정 -->	
+<table class="bbsList">
+	<caption>팝업 설정</caption>
+	<colgroup>
+		<col style="width:7%"/>
+		<col style="width:20%" />
+		<col />
+		<col style="width:8%"/>
+		<col style="width:15%"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col">No.</th>
+			<th scope="col">일자</th>
+			<th scope="col">연결URL</th>
+			<th scope="col">상태</th>
+			<th scope="col">설정변경</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?
+			$query = "SELECT * FROM $program_table ORDER BY no DESC";
+			$result = mysql_query($query);
+			$total = mysql_num_rows($result);
+			 while($row = mysql_fetch_array($result)){ 
+		?>
+		<tr>
+			<td><?=$total--?></td>
+			<td><?=$row[start_date]?> ~ <?=$row[end_date]?></td>
+			<td><?=$row[link_url]?></td>
+			<td><?=$row[state]?></td>
+			<td>
+				<a href="<?=$request_uri?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button sm gray">수정</a> 
+				<a href="<?=$request_uri?>&amp;mode=delete&amp;no=<?=$row[no]?>" class="button sm white">삭제</a>
+			</td>
+		</tr>
+	<? } ?>
+	</tbody>
+</table>
+
+<div class="btn_area tar">
+	<a href="<?=$request_uri?>&mode=write" class="button"/>팝업 등록</a>
+</div>

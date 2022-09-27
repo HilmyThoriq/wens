@@ -1,0 +1,158 @@
+.area_admin{min-width: 1500px; background-color: #f0f4f5; width: calc(100% - 225px); margin-left: 225px;padding: 15px; box-sizing: border-box;}
+.area_admin .adminCont{min-height: 850px; padding:15px; background-color:#fff;}
+
+.area_formTop{background-color:#f5f5f5; padding:54px 40px; box-sizing: border-box;}
+.area_formTop h3{font-size:22px; margin-bottom: 12px; text-transform: uppercase;}
+[class^="formList_type"]{display: flex; }
+[class^="formList_type"] span.tt{font-size: 14px; margin-bottom: 8px; display: block;}
+[class^="formList_type"] select{padding: 10px 20px; box-sizing: border-box; width: 100%; font-size:14px; line-height: 33px;font-weight: 300; color:#666; background-color: #fff!important;background-color: white; background-image: none; -webkit-appearance: none; outline:none; cursor: pointer; text-indent: 0.01px;
+    text-overflow: ellipsis; height: 50px; margin: 0; border:1px solid #eee; background: url(../images/board/select_arrow.svg) no-repeat calc(100% - 20px) 50%;}
+
+.formList_type{max-width: 25%;}
+
+.formTab > ul{display: flex;}
+.formTab > ul > li{padding:14px; border:1px solid #ddd; flex: 1;}
+.formTab > ul > li:first-child{border-radius: 10px 0 0 10px;}
+.formTab > ul > li:last-child{border-radius: 0 10px 10px 0;}
+.formTab > ul > li + li{border-left: 0;}
+.formTab > ul > li > a{display: block; width: 100%; height: 100%; font-size:14px; opacity: 0.4;}
+.formTab > ul > li.on{background: #fff;}
+.formTab > ul > li.on > a{opacity: 1;}
+.formTab.typeB > ul > li{ max-width: 200px;}
+
+.area_formConts{padding:20px; box-sizing: border-box; margin-top: 40px; min-height: 200px;}
+
+.inputW50{width: 50%;}
+.selectFull{width: 100%;}
+
+.groupMenu{display: flex; margin-left: -14px; margin-right: -14px;}
+.groupMenu > li{padding:0 14px; box-sizing: border-box; }
+.groupMenu > li{width: 20%;}
+.groupMenu > li .box{background-color: #fff; box-sizing: border-box; padding: 24px; border-radius: 14px;}
+.groupMenu > li .box strong{display: block; font-size:15px; margin-bottom: 8px;}
+
+.form_List{max-width: 960px; width: 100%;/*  margin: 0 auto */;}
+.form_List > ul{display: flex; flex-wrap: wrap; margin-left: -20px; margin-right: -20px;}
+.form_List > ul > li{width: 50%; box-sizing: border-box; padding:20px}
+.form_List > ul > li.typeA{width: 100%; padding-right: 52%;}
+.form_List > ul > li.typeB{width: 100%;}
+.form_List > ul > li .tit label{font-size:13px; display: block; margin-bottom: 6px;}
+.form_List > ul > li .tit label .import{color:#c51917; font-size: 14px; margin-right: 4px; }
+.form_List > ul > li .tit label span.sm{font-size: 11px; opacity: 0.5;}
+
+.form_List > ul.category02 li.cate02{display: none;}
+.form_List > ul.category04 li.cate04{display: none;}
+
+
+/* 자동검색 */
+.auto_search{display: flex;}
+.auto_search > button{width: 40px; height: 40px; background-color: #333 !important; box-sizing: border-box ; margin: 2px 0;}
+.auto_search > button i{color:#fff!important}
+
+/* .auto_search */
+.ui-checkboxradio-label .ui-icon-background {
+	border-radius: 0px!important;
+}
+.ui-checkboxradio-radio-label .ui-icon-background {
+	width: 16px;
+	height: 16px;
+	border-radius: 0px!important;
+	overflow: visible;
+	border: none;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+	border: 1px solid #ddd!important;
+	background: #ddd!important;
+	font-weight: normal;
+    border-radius: 0!important;
+	color: #666!important;
+}
+.ui-icon-background,
+.ui-state-active .ui-icon-background {
+	border: #ddd!important;
+	background-color: #ffffff;
+}
+
+
+.designFile *{box-sizing: border-box;}
+.designFile button.del{opacity: 0.5; transition: all .3s; cursor: pointer; background-color: transparent;}
+.designFile button.del:hover{color: #c51917; opacity: 1;}
+
+.check_list{display: flex; align-items: flex-start;}
+.check_list li + li{margin-left: 20px;}
+.check_list li p.small{font-size:12px; opacity: 0.5;}
+
+.form_bbsList tbody tr:nth-child(odd){ background-color: #f0f4f5;}
+.form_bbsList tbody tr:nth-child(even){ background-color: #fff;}
+.form_bbsList a.linkBtn{background-color: tomato; color: #fff; font-size:12px; padding:8px 12px; border-radius: 4px;}
+.form_bbsList a.linkBtn i{margin-left: 6px; font-size:10px;}
+.form_bbsList span.viewbtn{font-size: 12px; color: #3991ff; border:1px solid #3991ff; background:transparent; border-radius: 40px; padding:3px 12px;}
+
+.bbsList td[data-table="information"]{text-align: left; padding:25px 10px 25px 25px}
+
+.area_formConts .bbsList thead th{font-size:14px}
+
+.form_public.bbsList .designCheck input[type="checkbox"] + label{margin-right: 0; padding-left: 0;}
+.form_public.bbsList td[data-table="category"]{word-break: keep-all;}
+.form_public.bbsList td{font-size:14px}
+
+/* .detailBox *{font-weight: 300;} */
+.detailBox .deTop{padding-bottom: 20px;}
+.detailBox .deTop p{position: relative; color:#333; font-size: 15px;}
+.detailBox .deTop p + p{margin-top: 8px;}
+.detailBox .deTop p::before{/* position: absolute; left: 0; top: 0; */opacity: 0.4;text-transform: uppercase;margin-right: 14px;display: block;font-size: 12px;font-weight: 600;}
+.detailBox .deTop p.p_title::before{content: "Title"; }
+.detailBox .deTop p.j_nam::before{content: "Journal Name"; }
+.detailBox .deTop p.en::before{content: "영문제목"; }
+.detailBox .deTop p.kr::before{content: "국문제목"; }
+
+
+.deBottom{border-top: 1px dashed #ddd; padding-top: 20px;}
+.deBottom *{box-sizing: border-box;}
+.deBottom > ul {margin-left:-12px; margin-right: -12px;}
+.deBottom > ul > li{padding:8px 12px; display: inline-block;}
+.deBottom > ul > li *{}
+.deBottom > ul > li span{ /* display: block;  */ padding:5px 10px; background-color: #eee;  border-radius: 4px; font-weight: 400; font-size:12px; opacity: 0.5;}
+.deBottom > ul > li em{font-size: 13px; color:#666}
+
+.area_btn{text-align: right; margin-bottom: 12px;}
+.area_btn button {background-color: #fff; color:#999; transition: all .3s;}
+.area_btn button:hover{color:#c51917}
+.area_btn button + button{margin-left: 12px;}
+
+/* project */
+td[data-table="acknowledgement"] > ul > li span{color:#333; margin-right: 8px;}
+.select_date{display: flex; align-items: center;}
+.select_date > * + *{margin-left: 12px;}
+.dateBox span{cursor: pointer;}
+.dateBox span i{font-size:20px; opacity: 0.4; line-height: 45px;}
+
+.projectList > ul > li{padding-left: 20px; position: relative;}
+.projectList > ul > li::before{content: ""; width: 3px; height: 3px; border-radius: 10px; background-color: #333; position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+.projectList > ul > li + li{margin-top: 8px;}
+
+.ack_list{display: flex; align-items: center;}
+.ack_list > * + *{margin-left: 20px;}
+.ack_list button{background-color: #fff;}
+.ack_list button i{color:#999; transition: all .3s;  font-size:20px; line-height: 45px;}
+.ack_list button.plus:hover i{color: #3991ff;}
+.ack_list button.del:hover i{color: #c51917;}
+
+
+/* popup */
+.conts.new_ver{padding:40px; box-sizing: border-box; height: 100vh;}
+.conts.new_ver h3{font-size: 18px; font-weight: 700;}
+
+.mainresultTable table{border-top: 2px solid #4c4c4c ;}
+.mainresultTable table th{background-color: #f5f5f5;}
+.mainresultTable table th,
+.mainresultTable table td{border-bottom: 1px solid #ddd; box-sizing: border-box; padding:8px 12px;border-right: 1px solid #ddd;}
+.mainresultTable table th:last-child,
+.mainresultTable table td:last-child{border-right: none;}
+.mainresultTable table td input[type="text"]{max-width: 80px;}

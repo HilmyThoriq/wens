@@ -1,0 +1,97 @@
+<?
+include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php";
+include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php";
+?>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/ko_admin/js/billboard.css"/>
+<script type="text/javascript" src="/ko_admin/js/billboard.js"></script>
+<!-- Markup -->
+<h2 class="mt0">현재날짜 <?=date("Y-m-d")?></h2>
+<div id="DonutChart" height:"150"></div>
+<?
+$date_ = date("Y-m-d");
+$site_domain = "http://koweb.daeguweb.gethompy.com";
+
+$site_fullurl = array();
+$site_url = array();
+
+//전체 쿼리
+$query = "SELECT * FROM koweb_statistics_refer WHERE r_date LIKE '$date_%'";
+$result = mysql_query($query);
+while($row = mysql_fetch_array($result)){
+
+}
+
+//사이트별 쿼리 - 도메인
+$site_query = "SELECT DISTINCT(r_url_domain) FROM koweb_statistics_refer WHERE r_date LIKE '$date_%'";
+$site_result = mysql_query($site_query);
+
+$site_count = 0;
+while($site_row = mysql_fetch_array($site_result)){
+	$array_push = 1;
+	$site_url[$site_count][0] = $site_row[r_url_domain]; 
+	
+	array_push($site_url[$site_count][0], $site_row[r_url_domain]);
+	
+	$draw_query = "SELECT r_idx FROM koweb_statistics_refer WHERE r_url LIKE '%$site_row[r_url_domain]%'";
+	$draw_result = mysql_query($draw_query);
+
+	while($draw_row = mysql_fetch_array($draw_result)){
+		$site_url[$site_count][$array_push] = $draw_row[r_idx]; 
+		$array_push++;
+	}
+	$site_count++;
+}
+
+//2차 배열로 출력됨
+//$site[0][내용];
+
+//2차 배열로 출력출력.
+
+$chart_array = array();
+$chart_count = 0;
+
+//echo $site_url[0][0];
+
+foreach($site_url as $value){
+	$chart_tmp = "";
+	$chart_tmp_ = "";
+	for($i = 0 ; $i < count($value); $i++){
+		$chart_tmp_ .= "'".$value[$i]."',";
+		$chart_tmp = substr($chart_tmp_, 0, -1);
+	}
+
+	$chart_array[$chart_count] = $chart_tmp;
+	$chart_count++;
+}
+?>
+
+<script type="text/javascript">
+// Script
+var chart = bb.generate({
+  data: {
+    columns: [
+    ],
+    type: "donut",
+    onclick: function(d, i) {
+	console.log("onclick", d, i);
+
+		//	alert(i.name);	
+
+   }
+  },
+  donut: {
+    title: "referer"
+  },
+  bindto: "#DonutChart"
+});
+
+setTimeout(function() {
+	chart.load({
+		columns: [
+			<? foreach($chart_array as $value) { echo "[".$value."],"; } ?>
+		]
+	});
+}, 1500);
+
+</script>

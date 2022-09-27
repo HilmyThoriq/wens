@@ -1,0 +1,452 @@
+<?
+$mode_title = "Write";
+$row[name] = $_SESSION['member_name'];
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = "Modfy";
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		if($board[is_membership] != "Y"){
+		//비밀번호가 없음
+			if($password == "" ){
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+			$password = hash("sha256", $password);
+			//비밀번호가 틀림
+			if($row[password] != $password){
+				alert("This post can only be checked by the author and manager.");
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+		} else {
+			if($_SESSION[member_id] != $row[id]){
+				error("This post can only be edited by the author and administrator.");
+				exit;
+			}
+		}
+	}
+}
+if($mode == "reply"){
+	$query = "SELECT name, comments, title FROM $board_id WHERE no='$ref_no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$comm_first_text = "<p>&nbsp;</p><hr> ".$row[name]." Posted by.<br>";
+	$comm_last_text= "<p>&nbsp;</p><hr><p></p><br />";
+	$row[comments] = $comm_first_text . $row[comments] . $comm_last_text;
+
+	$title_first_text = "This is $row[title] answer.";
+	$row[title] = $title_first_text;
+}
+?>
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form_publication" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="<?=$mode?>" />
+<input type="hidden" name="return_url" value="<?=$url?>" />
+<input type="hidden" name="no" value="<?=$row[no]?>" />
+<input type="hidden" name="ref_no" value="<?=$ref_no?>" />
+<input type="hidden" name="tag_type" value="<?=$tag_type?>" />
+
+<div class="adminCont">
+                
+	<!-- Publication 양식 -->
+	<!-- 아래 내용부터 본 내용입니다.  -->
+   
+	<div class="area_formConts bbsView">
+		<div class="form_List">
+
+			<!-- 
+			
+			해당하는 카테고리별 class를 ul에 넣으시면 구분마다 입력항목이 달리보여집니다
+			아래 두카테고리를 제외하면 나머지는 동일
+			International Conference : category02
+			Domestic Conference : category04 -->
+
+			<ul class="" id="chk_showORnot">
+				<li class="typeB">
+					<div class="tit">
+						<label for="journalName​"><span class="import">*</span>Journal Name</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="title" id="title" class="inputFull" value="<?=$row[title]?>">
+						<!-- <input type="text" name="journalName​" id="journalName​" class="inputFull" > -->
+					</div>
+				</li>
+			   
+				<li class="typeB">
+					<div class="tit">
+						<label for="paperTitle​"><span class="import">*</span>Paper Title</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="paper_title" id="paper_title" class="inputFull" value="<?=$row[paper_title]?>" >
+						<!-- <input type="text" name="paperTitle​​" id="paperTitle​​" class="inputFull" > -->
+					</div>
+				</li>
+				<? if($board[use_category] == "Y") { ?>
+				<li class="typeA">
+					<div class="tit">
+						<label for="category​"><span class="marking">required</span>Category​</label>
+					</div>
+					<div class="inBox">
+						<? $category = explode("|", $board[category_detail]); ?>
+					   <select name="category" id="category" class="selectFull" onchange="CHK_show(this.value)">
+							<? for($i = 0; $i < count($category); $i++){ ?>
+								<option <?=$cate == $category[$i] ? "selected" : ""?> value="<?=$category[$i]?>"><?=$category[$i]?></option>
+							<? } ?>
+						</select>
+					</div>
+				</li>
+				<? } ?>
+				<script>
+					function CHK_show(cate){
+						if(cate == "International Conference"){
+							document.getElementById('chk_showORnot').className = 'category02';
+						} else if(cate == "Domestic Conference") {
+							document.getElementById('chk_showORnot').className = 'category04';
+						} else if(cate == "International Journal" || cate == "Domestic Journal" || cate == "PhD Thesis" || cate == "Master Thesis") {
+							document.getElementById('chk_showORnot').className = '';
+						}
+					}
+				</script>
+				<li class="typeB">
+					<ul class="check_list">
+						<li>
+							<div class="designCheck">
+								<input type="checkbox" name="notice" id="notice" value="Y"><label for="notice">Accepted​</label>
+								<!-- <input type="checkbox" name="accepted" id="accepted" value="Y"><label for="accepted">Accepted​</label> -->
+							</div>
+							<p class="small">State if the paper is already accepted.</p>
+						</li>
+						<li>
+							<div class="designCheck">
+								<input type="checkbox" name="secret" id="under" value="Y"><label for="under">Under Review</label>
+								<!-- <input type="checkbox" name="under" id="under" value="Y"><label for="under">Under Review</label> -->
+							</div>
+							<p class="small">State if the paper still under review due to comments from reviewer. Please open Reviews tab for reviewers' comments</p>
+						</li>
+					</ul>
+				</li>
+				<!-- <li class="cate04">
+					<div class="tit">
+						<label for="isbn">ISBN</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="ISBN" id="ISBN" class="inputFull" value="<?=$row[ISBN]?>">
+					</div>
+				</li> -->
+				<li>
+					<div class="tit">
+						<label for="fisrtAuthor"><span class="import">*</span>Author</label>
+					</div>
+					<div class="inBox">
+						<!-- AUTO검색  custom.js에 있습니다. data를 불러오는 거라 예시 단어만 넣어두었습니다.  -->
+						<div class="auto_search">
+							<input type="text" name="f_author" id="FA" class="inputFull required" value="<?=$row[f_author]?>" style="width:300px;"/>
+						</div>
+						<!-- <div class="auto_search">
+							<input type="text" name="f_author" id="FA" placeholder="Search Name to find Author" class="inputFull required" onclick="ack_search2()" value="<?=$row[f_author]?>" data-control-button="search" readOnly style="width:300px;"/>
+							<a href="#" class="button gray" onclick="delete_info2()"style="min-width:50px;" data-control-button="del">DELETE</a>
+						</div> -->
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="corresponding"><span class="import">*</span>Corresponding Author​</label>
+					</div>
+					<div class="inBox">
+						<div class="auto_search">
+							<input type="text" name="c_author" id="CA" class="inputFull required" style="width:300px;" value="<?=$row[c_author]?>"/>
+						</div>
+						<!-- <div class="auto_search">
+							<input type="text" name="c_author" id="CA" placeholder="Search Name to find Corresponding Author" class="inputFull required" onclick="ack_search3()" value="<?=$row[f_author]?>" data-control-button="search" readOnly style="width:300px;"/>
+							<a href="#" class="button gray" onclick="delete_info3()"style="min-width:50px;" data-control-button="del">DELETE</a>
+						</div> -->
+					</div>
+				</li>
+			  
+				<!-- <li>
+					<div class="tit">
+						<label for="cooperative">Cooperative Authors</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="co_author" id="co_author" class="inputFull" value="<?=$row[co_author]?>">
+					</div>
+				</li> -->
+				<li class="cate02 cate04">
+					<div class="tit">
+						<label for="phone">Volume</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="volume" id="volume" class="inputFull" value="<?=$row[volume]?>">
+						<!-- <input type="text" name="phone" id="phone" class="inputFull" > -->
+					</div>
+				</li>
+				<li class="cate02 cate04">
+					<div class="tit">
+						<label for="type">Type</label>
+					</div>
+					<div class="inBox">
+						<select name="type_publ" id="category">
+							<option value="">Empty</option>
+							<option <?if($row[type_publ] == "SCI/SCIE Q1") echo "selected";?> value="SCI/SCIE Q1">SCI/SCIE Q1</option>
+							<option <?if($row[type_publ] == "SCI/SCIE Q2") echo "selected";?> value="SCI/SCIE Q2">SCI/SCIE Q2</option>
+							<option <?if($row[type_publ] == "SCI/SCIE Q3") echo "selected";?> value="SCI/SCIE Q3">SCI/SCIE Q3</option>
+							<option <?if($row[type_publ] == "SCI/SCIE Q4") echo "selected";?> value="SCI/SCIE Q4">SCI/SCIE Q4</option>
+							<option <?if($row[type_publ] == "Scopus") echo "selected";?> value="Scopus">Scopus</option>
+							<option <?if($row[type_publ] == "Non-SCI/SCIE") echo "selected";?> value="Non-SCI/SCIE">Non-SCI/SCIE</option>
+						</select>
+					</div>
+				</li>
+
+				<li class="cate02 cate04">
+					<div class="tit">
+						<label for="number">Number</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="number_publ" id="number_publ" class="inputFull" value="<?=$row[number_publ]?>">
+						<!-- <input type="text" name="number" id="number" class="inputFull" > -->
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="s_page">Start Page</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="s_page" id="s_page" class="inputFull" onKeyup="onlyNumber(this)" value="<?=$row[s_page]?>" >
+						<!-- <input type="text" name="start" id="start" class="inputFull" > -->
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="e_page">End Page</label>
+					</div>
+					<div class="inBox">
+						<input type="text" onKeyup="onlyNumber(this)" name="e_page" id="e_page" class="inputFull" value="<?=$row[e_page]?>" >
+						<!-- <input type="text" name="end" id="end" class="inputFull" > -->
+					</div>
+				</li>
+				<li class="cate02">
+					<div class="tit">
+						<label for="impact_factor">Impact factor</label>
+					</div>
+					<div class="inBox">
+						<input type="number" name="impact_factor" id="impact_factor" class="inputFull" value="<?=$row[impact_factor]?>" >
+						<!-- <input type="text" name="impact" id="impact" class="inputFull" > -->
+					</div>
+				</li>
+				<!-- <li>
+					<div class="tit">
+						<label for="iacknowledgement"><span class="import">*</span>Acknowledgement</label>
+					</div>
+					<div class="inBox">
+						<div class="auto_search">
+							<input type="text" name="iacknowledgement" id="acknowledgement"  class="inputFull autoSearch">
+							<button><i class="fa-solid fa-magnifying-glass"></i></button>
+						</div>
+					</div>
+				</li> -->
+				 <!-- <li>
+					<div class="tit">
+						<label for="iacknowledgement"><span class="import">*</span>Acknowledgement</label>
+					</div>
+					<div class="inBox">
+						<div class="auto_search">
+							<input type="text" name="filled_ack" id="filled_ack" placeholder="Search Acknowledgement" class="required" onclick="ack_search()" value="<?=$row[filled_ack]?>" data-control-button="search" readOnly style="width:300px;"/>
+							<a href="#" class="button gray" onclick="delete_info()"style="min-width:50px;" data-control-button="del">DELETE</a>
+						</div>
+					</div>
+				</li> -->
+
+				<? $filled_ack_arr = explode("^", $row[filled_ack]); ?>
+				<li id="category_">
+					<div class="tit">
+						<label for="iacknowledgement"><span class="import">*</span>Acknowledgement</label>
+					</div>
+					<div id="category_area" class="career">
+						<input type="text" name="filled_ack[]" id="filled_ack_0" value="<?=$filled_ack_arr[0]?>" class="input300" onclick="ack_search(0)" readonly placeholder="Search Acknowledgement"/>
+						<a href="#" class="button gray" id="add_category2">+ Add</a>
+						<?
+							$count = 0;
+							foreach($chart_category_arr as $value){
+								if($count != 0){
+								$del_id = "#category_".$count;
+								$certificate_second_item = $certificate_second[$count];
+						?>
+							<div id="category_<?=$count?>">
+								<input type="text" name="filled_ack[]" id="filled_ack_<?=$count?>"  value="<?=$filled_ack_arr[$count]?>" class="input300"/>
+								<a href="#" id="del_category_<?=$count?>" class="button white" onclick="$('<?=$del_id?>').remove();">- Delete</a>
+							</div>
+						<?
+							}
+							$count++;
+						}
+						?>
+					</div>
+				</li>
+
+
+				<li>
+					<div class="tit">
+						<label for="url"><span class="import">*</span>Publish Date</label>
+					</div>
+					<div class="inBox">
+						
+						<div class="dateBox ">
+							<!-- 달력아이콘 클릭시 달력선택지 노출 -->
+							<input type="text" name="publ_date" id="publ_date" class="datepicker"  placeholder="start" readonly value="<?=$row[publ_date]?>">
+							<!-- <input type="text" placeholder="start"> -->
+						</div>
+					   
+					</div>
+				</li>
+				
+				<li>
+					<div class="tit">
+						<label for="upload"><span class="import">*</span>Paper file Upload</label>
+					</div>
+					<div class="inBox">
+						<div class="inBox">
+							<?
+								for($i = 1; $i <= $board[file_count]; $i++) {
+									$file_title = $row["file_".$i];
+									$del_ = "File";
+									$del_2 = "";
+									if($file_title){
+										 $del_2 = "<a href='/upload/$board_id/$file_title' target='_blank' class='button white'>File : $file_title</a>";
+										 $del_3 = "<div class='designCheck mb10' style='display:inline-block;'><input type='checkbox' value='Y' id='del_$i' name='del_$i'/><label for='del_$i'>Delete</label></div>";
+									}
+									echo "<div class='designFile'><input type='text' readonly='readonly' value='$row[file_1]'/><input type='file' name='file_$i' id='file_$i'/><label for='file_$i' class='button white'> $del_</label> $del_2 $del_3</div>";
+								 }
+							?>
+							<em class="tip">The attachment size is <?=$board[file_limit_size]?></em>
+						</div>
+					</div>
+				</li>
+			   
+				<li>
+					<div class="tit">
+						<label for="url_link">Paper URL</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="url_link" id="url_link" class="inputFull" placeholder="http://www.naver.com" value="<?=$row[url_link]?>" >
+						<!-- <input type="text" name="url" id="url" class="inputFull" > -->
+					</div>
+				</li>
+				
+				<!-- <? if($board[is_membership] != "Y"){ ?>
+				<li>
+					<div class="tit">
+						<label for="pin"><span class="import">*</span>Password</label>
+					</div>
+					<div class="inBox">
+						<input type="password" name="password" id="pin" value="" class="required" title="Password"  title="Password"/>
+						<em class="tip">※ Required when editing or deleting posts.</em>
+					</div>
+				</li>
+				<? } ?> -->
+			  
+				
+			</ul>
+		</div>
+
+	</div>
+
+</div>
+<script type="text/javascript">
+	$(":checkbox[name='notice'][value='<?=$row['notice']?>']").prop("checked", true);
+	$(":checkbox[name='secret'][value='<?=$row['secret']?>']").prop("checked", true);
+
+	function onlyNumber(obj) {
+		obj.value = obj.value.replace(/[^0-9]/g, "");
+	}
+
+	function ack_search(cnt){
+		var popupX = (window.screen.width / 2) - (800 / 2);
+		var popupY= (window.screen.height /2) - (1200 / 2);
+		var get_id = $(this).parents("[data-control=data]").attr("id");
+		var new_window = window.open("/ko_admin/board/skin/default_publication/ack_search.html?cnt="+cnt+"&wrap_id="+get_id, "thi", "width=800,height=600,top="+popupY+",left="+popupX+",scrollbars");
+		new_window.focus();
+	}
+	function delete_info(){
+		$('#filled_ack').val('');
+	}
+
+	function ack_search2(){
+		var popupX = (window.screen.width / 2) - (800 / 2);
+		var popupY= (window.screen.height /2) - (1200 / 2);
+		var get_id = $(this).parents("[data-control=data]").attr("id");
+		var new_window = window.open("/ko_admin/board/skin/default_publication/ack_search2.html?wrap_id="+get_id, "thi", "width=800,height=600,top="+popupY+",left="+popupX+",scrollbars");
+		new_window.focus();
+	}
+	function delete_info2(){
+		$('#FA').val('');
+	}
+
+	function ack_search3(){
+		var popupX = (window.screen.width / 2) - (800 / 2);
+		var popupY= (window.screen.height /2) - (1200 / 2);
+		var get_id = $(this).parents("[data-control=data]").attr("id");
+		var new_window = window.open("/ko_admin/board/skin/default_publication/ack_search3.html?wrap_id="+get_id, "thi", "width=800,height=600,top="+popupY+",left="+popupX+",scrollbars");
+		new_window.focus();
+	}
+	function delete_info3(){
+		$('#CA').val('');
+	}
+
+	$("#add_category2").click(function(){
+		var count = $("#category_area > div").size() + 1;
+		var del_id2 = "category_"+count;
+		$("#category_area").append("<div id='category_"+count+"'> <input type='text' name='filled_ack[]' id='filled_ack_"+count+"' readonly onclick='ack_search("+count+")' placeholder='Search Acknowledgement' class='input300'/> <a href='#' id='del_category_"+count+"' class='button white' onclick='$(\"#"+del_id2+"\").remove();'><span>- Delete</span></a></div>");
+	});
+
+	function submit_publication(){
+		
+		var form_publication=document.form_publication;
+		if(!form_publication.title.value){
+			alert('Insert Journal Name');
+			return;
+		}
+		if(!form_publication.paper_title.value){
+			alert('Insert Paper Title');
+			return;
+		}
+		if(!form_publication.f_author.value){
+			alert('Insert First Author');
+			return;
+		}
+		if(!form_publication.c_author.value){
+			alert('Insert Corresponding Author');
+			return;
+		}
+		if(!document.getElementById('filled_ack_0').value){
+			alert("Insert Acknowledge");
+			return;
+		}
+		
+		var mode = "<?=$mode ?>";
+		if(mode == "modify") {
+			if("<?=!$row[file_1]?>" && !form_publication.file_1.value){
+				alert('Insert Attachment');
+				return;
+			}
+		} else {
+			if(!form_publication.file_1.value){
+				alert('Insert Attachment');
+				return;
+			}
+		}
+		document.form_publication.submit();
+	}
+
+</script>
+<!-- //글쓰기 -->
+
+	<div class="btn_area">
+		<a href="#" class="button" onclick="submit_publication()">Submit</a>
+		<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=list&amp;start=<?=$start?>&cate=<?=$cate?>" class="button gray">Cancel</a>
+	</div>
+</form>

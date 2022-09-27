@@ -1,0 +1,53 @@
+
+<div id="find_id">
+	<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+	<input type="hidden" name="mode" value="find_proc" />
+	<input type="hidden" name="return_mode" value="find_id" />
+		<div class="join_area">
+			<h2><i>아이디 찾기</i></h2>
+			<p>회원가입시 입력한 정보를 입력해주세요.</p>
+			
+			<div class="box find">
+				<table class="bbsView">
+					<caption>아이디 찾기를 이름, 이메일 항목을 입력을 제공하는 표</caption>
+					<colgroup>
+						<col data-member-form="th" style="width:30%;"/>
+						<col data-member-form="td" style="width:70%;"/>
+					</colgroup>
+					<tbody>
+						<tr>
+							<th scope="row"><label for="find_name">이름</label></th>
+							<td data-member-form="name">
+								<input type="text" id="find_name" name="find_name"  class="inputFull required" title="이름">
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">연락처</th>
+							<td data-member-form="phone">
+								<input type="text" id="find_phone1" name="find_phone1" class="input100 required" title="연락처 첫번째 자릿수"/> - 
+								<input type="text" id="find_phone2" name="find_phone2" class="input100 required" title="연락처 두번째 자릿수"/> - 
+								<input type="text" id="find_phone3" name="find_phone3" class="input100 required" title="연락처 세번째 자릿수" /> 
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="find_email">이메일</label></th>
+							<td data-member-form="email"><input type="text" id="find_email" name="find_email" class="inputFull required" title="이메일"/></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="find_birth">생년월일</label></th>
+							<td data-member-form="find_birth"><input type="text" id="find_birth" name="find_birth" class="input100 datepicker required" title="생년월일"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="btn_area">
+					<input type="submit" class="button black" value="아이디 찾기" />
+					<a href="<?=$PHP_SELF?>?mode=find_pw" class="button white" id="">비밀번호 찾기</a>
+				</div>
+				<p>이름, 이메일을 입력하고 아이디 찾기 버튼을누르세요.</p>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+			

@@ -1,0 +1,86 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin ">
+            <div class="adminCont">
+                
+                <!-- Course 양식 -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+               
+                <div class="area_formConts bbsView">
+                    <div class="form_List">
+                        <ul>
+                        
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="name​​"><span class="import">*</span>Courses Name</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="name​​" id="name​​" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Degree​</label>
+                                </div>
+                                <div class="inBox">
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="undergraduate" id="undergraduate" value="U"><label for="undergraduate">Undergraduate​</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="gradutae" id="gradutae" value="G"><label for="gradutae">Graduate</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="role">Active</label>
+                                </div>
+                                <div class="inBox">
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="on" id="on" value="Y"><label for="on">On​</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="off" id="off" value="Y"><label for="off">Off</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                           
+                           
+                          
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="btn_area">
+                        <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;start=&amp;mode=delete&amp;return_mode=list&amp;no=" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><span>삭제</span></a>
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

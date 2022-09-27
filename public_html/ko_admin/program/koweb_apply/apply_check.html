@@ -1,0 +1,49 @@
+
+	<h3>신청확인</h3>
+	<p>참가신청 시 작성하셨던 신청자 성명과 핸드폰번호를 입력하여 주세요.</p>
+
+	<div class="area_searchApply">
+		<form>
+			<ul class="designValue">
+				<li data-room-result="user">
+					<label for="name">신청자성명</label><input class="inputFull" type="text" name="name" id="name"/>
+				</li>
+				<li data-room-result="tel">
+					<label for="phone1">연락처</label>
+					<input type="text" name="phone1" id="phone1" title="연락처 앞번호"/>  
+					<input type="text" name="phone2" id="phone2" title="연락처 중간번호"/>  
+					<input type="text" name="phone3" id="phone3" title="연락처 마지막번호"/>
+				</li>
+			</ul>
+			<input class="btn_submit trigger" type="submit" value="SEARCH" title="확인하기" data-ajax-go/>
+		</form>
+	</div>
+
+	<div class="auth_tables"></div>
+
+<script type="text/javascript">
+$(function(){
+	$("[data-ajax-go]").click(function(){
+		var name = $("#name").val();
+		var phone1 = $("#phone1").val();
+		var phone2 = $("#phone2").val();
+		var phone3 = $("#phone3").val();
+
+		$.ajax({
+			type : "POST",
+			url : "/ko_admin/program/koweb_event_info/apply_check_ajax.php",
+			data : {
+				name : name,
+				phone1 : phone1,
+				phone2 : phone2,
+				phone3 : phone3
+			},
+			success : function(args) {
+				$(".auth_tables").html(args);
+			}
+		});
+	});
+});
+
+$("#apply_check").addClass("active");
+</script>

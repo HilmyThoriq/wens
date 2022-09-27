@@ -1,0 +1,152 @@
+<?
+//페이징 변수
+if (empty($start)) $start = 0;
+if (empty($search_key)) $search_key = '';
+if (empty($keyword)) $keyword = '';
+$scale = 8; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+$WHERE= "";
+if(!empty($keyword)){
+	if($search_key == "all"){
+		$WHERE .= " AND (item_name = '$keyword') OR (item_option LIKE '%$keyword%')";
+	} else {
+		$WHERE .= " AND $search_key LIKE '%$keyword%'";
+	}
+}
+
+//리스트
+$total_query = "SELECT * FROM $table_name WHERE 1=1 $WHERE ORDER BY no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+$query = "SELECT * FROM $table_name WHERE 1=1 $WHERE ORDER BY sort_value , no ASC LIMIT $start, $scale";
+
+$result = mysql_query($query);
+?>
+
+
+	<? if($total > 0) { ?>
+		<!-- 목록 8개 표시 -->
+		<ul class="productList">
+			<!-- 반복 -->
+			<? $f_no = $total - $start; ?>
+			<? while($row = mysql_fetch_array($result)){
+				$option = str_replace(array("|","^"),array("<br />"," : "),$row['item_option']);
+				$option = $option==" : " ? "" : $option?>
+				<li>
+					<div>
+						<span class="img">
+							<? if($row[title_img]){
+									$ext = end(explode(".", strtolower($row[title_img])));
+									if($ext == "jpg" || $ext == "png" || $ext == "jpeg" || $ext == "bmp"){ ?>
+										<i style="background-image:url(/upload/reservation/<?=$serve_name?>/thumb_<?=$row[title_img]?>)"></i>
+									<? }
+							} ?>
+						</span>
+						<!-- 상태값 type01 ~ 04 -->
+						<?
+						$class = $row['item_state'] == "Y" ? "type01"  : "type02";
+						$text  = $row['item_state'] == "Y" ? "예약가능" : "예약불가";
+						?>
+						<i class="<?=$class?>"><?=$text?></i>
+						<!-- 제품명 -->
+						<em><?=$row['item_name']?><?=$row['state'] == "Y" ? "" : " <span class='state_txt'>(노출 X)</span>"?></em>
+						<!-- 상태값 -->
+						<span class="btn">
+							<a href="<?=$request_uri?>&amp;mode=view&amp;no=<?=$row[no]?>">상세보기</a>
+							<a href="/reservation/test_reservation.html?mode=write&no=<?=$row[no]?>">예약하기</a>
+						</span>
+					</div>
+				</li>
+				<!-- <tr>
+					<td data-table="number"><?=number_format($f_no)?></td>
+					<td data-table="name">
+						<a href="<?=$request_uri?>&amp;mode=view&amp;no=<?=$row[no]?>" >
+							<?=$row['item_name']?>
+						</a>
+					</td>
+					<td data-table="option" class="tac"><?=$option?></td>
+					<td data-table="state" class="tal"><?=strtoupper($row['item_state'])?></td>
+					<td data-table="date"><?=reset(explode(" ", $row['reg_date']))?></td>
+				</tr> -->
+			<? $f_no--; } ?>
+		</ul>
+		<!-- //목록 -->
+	<? } else { ?>
+		<div class="none_data type02">등록된 글이 없습니다.</div>
+	<? } ?>
+
+
+	<form action="<?=$_SERVER['REQUEST_URI']?>" method="get" >
+		<input type="hidden" name="core" value="manager_setting" />
+		<input type="hidden" name="manager_type" value="reservation" />
+		<input type="hidden" name="type" value="setting" />
+		<input type="hidden" name="detail" value="item" />
+		<input type="hidden" name="start" value="<?=$start?>" />
+		<div class="search_bbs">
+			<!-- 검색 -->
+			<div class="search">
+				<select name="search_key" id="searchType">
+					<option value="all">전체</option>
+					<option value="item_name" <?=$search_key == "item_name" ? "selected" : ""?> >상품명</option>
+					<option value="item_option" <?=$search_key == "item_option" ? "selected" : ""?>>상품옵션</option>
+				</select>
+				<input type="text" id="keyword" name="keyword" value="<?=$keyword?>">
+				<input type="submit" class="button" value="검색">
+			</div>
+			<!-- //검색 -->
+
+			<!-- 버튼 -->
+			<div class="btn">
+				<a href="<?=$common_url?>&amp;mode=write" class="button">글쓰기</a>
+			</div>
+		</div>
+	</form>
+	<div class="pagination">
+		<?
+
+			/*----------------------------------------------------------------------------*/
+			// 페이지 표시
+			/*----------------------------------------------------------------------------*/
+
+			if ($total == 0) $total = 1;
+
+			$page_url = $common_url."&amp;search_key=$search_key&amp;keyword=$keyword";
+
+			// 처음
+			echo "<a href='$page_url&amp;start=0' class='btn_first'><span>맨처음</span></a>";
+
+			$page = floor($start / ($scale * $page_scale));
+
+			if ($start + $scale >  $scale * $page_scale) {
+				$pre_start = $start - $scale * $page_scale ;
+				echo "<a href='$page_url&amp;start=$pre_start' class='btn_prev'><span>이전</span></a>";
+			}
+
+			for ($vj = 0; $vj < $page_scale ; $vj++) {
+				$ln = ($page * $page_scale + $vj) * $scale;
+				$vk = $page * $page_scale + $vj + 1 ;
+				if ($ln < $total) {
+					if ($ln != $start) echo "<a href='$page_url&amp;start=$ln'>$vk</a>";
+					else echo "<span>$vk</span>";
+				}
+			}
+
+			// 마지막
+			$end_page = floor($total - $scale) + 1;
+			if ($end_page <= 0)	$end_page = 0;
+
+			if ($total > (($page + 1) * $scale * $page_scale)) {
+				$n_start = ($page + 1) * $scale * $page_scale ;
+				echo "<a href='$page_url&amp;start=$n_start' class='btn_next'><span>다음</span></a>";
+			}
+
+			$end_page = ceil($total / $scale);
+			if ($total) $end_start = ($end_page -1) * $scale;
+			else $end_start = $end_page;
+
+			echo "<a href='$page_url&amp;start=$end_start' class='btn_last'><span>맨마지막</span></a>";
+		?>
+	</div>

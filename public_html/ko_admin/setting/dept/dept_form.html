@@ -1,0 +1,160 @@
+<script type="text/javascript">
+
+	function action_ajax(ref_no, depth){
+			//var ref_no = $(this).val();
+			//alert(ref_no);
+			var target_depth = parseInt(depth);
+
+			if(ref_no != "new"){
+				$.ajax({
+					type : "POST",
+					url : "/ko_admin/setting/dept/dept_ajax.php",
+					data : {
+						variable : ref_no, 
+						depth : depth
+					},
+					success : function(args) {
+						$("[data-depth-no]").each(function(index) { 
+							if($(this).data("depth-no") >= depth){
+							   //$(this).html("");
+							}
+						});
+						$("#depth_" + target_depth).html(args);
+					}
+				});
+			} else {
+				$("[data-depth-no]").each(function(index) { 
+				//	console.log($(this).data("depth-no") + " > " + target_depth);
+					if($(this).data("depth-no") >= target_depth){
+						 var named = "depth_" + $(this).data("depth-no");
+						$("#"+named).html("");
+					}
+				});
+			}
+		}
+
+	$(function(){
+		$("#change_").change(function(){
+			if($("#change_").is(":checked")){
+				$("#check").css("display","");
+			} else {
+				$("#check").css("display","none");
+			}
+		});
+
+		/*
+		$("[data-action-ajax=category]").change(function(){
+			var ref_no = $(this).val();
+			alert(ref_no);
+			$.ajax({
+				type : "POST",
+				url : "/ko_admin/program/link_hub/category_ajax.php",
+				data : {
+					variable : ref_no 
+				},
+				success : function(args) {
+					$("td[data-member-form=cate_list]").append(args);
+				}
+			});
+		});
+		*/
+
+	});
+</script>
+<?
+
+	//몇차까지 카테고리 할수있는지
+	$cate_limit = "5";
+
+	if($mode == "modify"){
+
+		$mrow = mysql_fetch_array(mysql_query("SELECT * FROM koweb_dept WHERE no='$no'"));
+		$v = "";
+		$history = explode("|",$mrow[depth_history]);
+		
+		foreach($history as $value){
+
+			$vrow = mysql_fetch_array(mysql_query("SELECT * FROM koweb_dept WHERE no='$value'"));
+			$v .= $vrow[dept] . " > ";
+		}
+
+		$v = substr($v , 0, -3);
+	}
+?>
+<form action="<?=$PHP_SELF?>" method="post" name="form" enctype="multipart/form-data">
+	<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+	<input type="hidden" name="no" value="<?=$no?>" />
+	<input type="hidden" name="manager_type" value="dept" />
+	<input type="hidden" name="core" value="manager_setting" />
+	<input type="hidden" name="type" value="setting" />
+
+	<h2><i><?=$program[title]?></i></h2>
+	<div class="box">
+		<table class="bbsView">
+			<caption><?=$program[title]?></caption>
+			<colgroup>
+				<col style="width:15%"/>
+				<col />
+			</colgroup>
+			<tbody>
+			<? 	if($mode != "modify"){ ?>
+				<tr>
+					<th scope="row"><?=$important?><label for="area_list">기존 부서명</label></th>
+					<td data-member-form="cate_list" id="depth" data-depth-no="1">
+						<select name="category[]" id="category" data-action-ajax="category" onchange="javascript:action_ajax($(this).val(), '2');" multiple style="width:150px; height:200px; overflow-y:hidden;">
+							<option value="new">신규 부서생성</option>
+							<?
+								$query = "SELECT * FROM koweb_dept WHERE state='Y' AND depth='1'";
+								$result = mysql_query($query);
+								while($row = mysql_fetch_array($result)){
+							?>
+								<option value="<?=$row[no]?>"><?=$row[dept]?></option>
+							<? } ?>
+						</select>
+					<? for($i = 1; $i < $cate_limit; $i++){  ?>
+						<span data-member-form="cate_list" id="depth_<?=$i+1?>" data-depth-no="<?=$i+1?>"></span>
+					<? } ?>
+					</td>
+				</tr>
+			<? } else { ?>
+				<tr>
+					<th scope="row"><?=$important?><label for="area_list">기존 부서명</label></th>
+					<td>						
+						<div class="designCheck">
+							<?=$v?>
+							<input type="checkbox" name="change_" value="Y" id="change_"/> <label for="change_" style="margin-left:15px;">기존 부서명 변경시 체크해주세요.</label>
+						</div>
+					</td>
+				</tr>
+				<tr id="check" style="display:none;">
+					<th scope="row"><?=$important?><label for="area_list">부서명 수정</label></th>
+					<td data-member-form="cate_list" id="depth" data-depth-no="1">
+						<select name="category[]" id="category" data-action-ajax="category" onchange="javascript:action_ajax($(this).val(), '2');" multiple style="width:150px; height:200px; overflow-y:hidden;">
+							<option value="new">신규 부서명</option>
+							<?
+								$query = "SELECT * FROM koweb_dept WHERE state='Y' AND depth='1'";
+								$result = mysql_query($query);
+								while($row = mysql_fetch_array($result)){
+							?>
+								<option value="<?=$row[no]?>"><?=$row[dept]?></option>
+							<? } ?>
+						</select>
+						<? for($i = 1; $i < $cate_limit; $i++){  ?>
+							<span data-member-form="cate_list" id="depth_<?=$i+1?>" data-depth-no="<?=$i+1?>"></span>
+						<? } ?>
+						<p class="tip txt_red">* 하위부서가 존재하는 상위 부서는 변경 할 수 없습니다.</p>
+					</td>
+				</tr>
+			<? } ?>
+				<tr>
+					<th scope="row"><?=$important?><label for="area_list">부서명</label></th>
+					<td><input type="text" name="dept" value="<?=$mrow[dept]?>" class="input300"></td>
+				</tr>
+			</tbody>
+		</table>
+	<div class="btn_area tac">
+		<input class="button red" type="submit" value="등록">
+		<a href="?type=setting&core=manager_setting&manager_type=dept&amp;mode=list&amp;start=<?=$start?>&amp;no=<?=$row[no]?>" class="button gray">취소</a>
+	</div>
+</form>
+

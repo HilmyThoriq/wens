@@ -1,0 +1,180 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 5; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+if($status_cate){
+	$WHERE .= " AND status_cate = '$status_cate'";
+}
+
+$total_query = "SELECT * FROM board_patents WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+//$query = "SELECT * FROM board_patents WHERE 1=1  $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC LIMIT $start, $scale";
+if($status_cate == "Registered"){
+	 $query = "SELECT *, right(regi_date, 4) AS year FROM board_patents WHERE 1=1 $WHERE GROUP BY year ORDER BY right(regi_date, 4) DESC";
+} else {
+	 $query = "SELECT *, right(filing_date, 4) AS year FROM board_patents WHERE 1=1 $WHERE GROUP BY year ORDER BY right(filing_date, 4) DESC";
+}
+
+$result = mysql_query($query);
+
+?>
+
+<section id="container">
+	<div id="content">		
+        <div class="area_sub c_box">
+            <div class="inr">
+                <!-- 서브타이틀 -->
+                <div class="area_subtitle on">
+                    <h3></h3>
+                </div>
+                <!-- 서브 내용 -->
+                <div class="area_conts">
+			
+                    <div class="area_publicList yearsPart patent">
+						<!-- 등록된 게시글이 있을 경우 -->
+						
+						
+						<? while($row = mysql_fetch_array($result)) { ?>
+						<!-- 년도별 반복구간 -->
+						<div class="pub_section">
+							<?echo "<em>$row[year]</em>";?>
+							
+							<ul>
+							
+							<?
+							
+					
+							if($status_cate == "Registered"){
+								 $query = "SELECT *  FROM board_patents WHERE regi_date like '%$row[year]' $WHERE ORDER BY regi_date DESC";
+							} else {
+								$query = "SELECT * FROM board_patents WHERE filing_date like '%$row[year]' $WHERE  ORDER BY filing_date DESC";
+							}
+
+							?>
+
+
+
+							<? $result2 = mysql_query($query); ?>
+							<? while($row2 = mysql_fetch_array($result2)) { ?>
+							<?
+								$date_array = explode("-", $row2[filing_date]);
+								$date_month = "";
+								$date_year = "";
+								switch($date_array[1]) {
+									case "01" :
+										$date_month = "Jan";
+										break;
+									case "02" :
+										$date_month = "Feb";
+										break;
+									case "03" :
+										$date_month = "Mar";
+										break;
+									case "04" :
+										$date_month = "Apr";
+										break;
+									case "05" :
+										$date_month = "May";
+										break;
+									case "06" :
+										$date_month = "Jun";
+										break;
+									case "07" :
+										$date_month = "Jul";
+										break;
+									case "08" :
+										$date_month = "Aug";
+										break;
+									case "09" :
+										$date_month = "Sep";
+										break;
+									case "10" :
+										$date_month = "Oct";
+										break;
+									case "11" :
+										$date_month = "Nov";
+										break;
+									case "12" :
+										$date_month = "Dec";
+										break;
+									default : 
+										$date_month = $date_array[1];
+										break;
+								}
+								$date_year = substr($date_array[0], -2);
+							?>
+				
+								<!-- 반복구간 -->
+								<li>
+									<a href="/contents/05_patents/patents_view.html?board_id=board_patents&amp;mode=view&amp;no=<?=$row2[no]?>&cate=<?=$row2[category]?>" class="pub_cont w_box">
+										<div class="number">
+											<!-- <span><?=$row2[no]?></span> -->
+										</div>
+										<div class="info">
+											<div class="title">
+												<em><?=$row2[title]?></em>
+											</div>
+											<div class="detail typeB">
+												<span class="numb"><?=$row2[appli_num]?></span>
+												<span class="Filing"><?=$date_array[2] ?>-<?=$date_month ?>-<?=$date_year ?></span>
+											</div>
+											<span class="link">
+												<!-- 링크 또는 다운로드파일이 없을경우 a태그 비노출 -->
+												<!-- 파일 다운로드 -->
+
+												<?if($row2[file_1]){?>
+												<!-- <a href="#" download> -->
+													<i class="fa-solid fa-file-arrow-down"></i>
+												<!-- </a> -->
+												<?}?>
+												<!-- 링크 새창 -->
+												
+												<?if($row2[url_link]){?>
+												<!-- <a href="<?=$row2[url_link]?>" target="_blank"> -->
+													<i class="fa-solid fa-link"></i>
+												<!-- </a> -->
+												<?}?>
+											</span>
+										</div>
+									</a>
+								</li>
+								<!-- 반복구간 -->
+							 <? } ?>
+
+
+
+
+							</ul>
+						</div>
+						<? } ?>
+                       
+                        <!-- 등록된 계시글이 없을 경우 노출 -->
+                        <div class="empty w_box">
+                            <p>등록된 게시글이 없습니다.</p>
+                        </div>
+                    </div>
+				
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+<?include("../../inc/footer.html")?>

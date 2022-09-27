@@ -1,0 +1,106 @@
+<?
+//프로그램 변수 선언
+
+//필수항목
+$required = "";
+if($online[required] == "Y"){
+	$required = "<span class=\"marking\">필수항목</span>";
+}
+$temp_use = explode("|",$online['use_email']);
+$online['use_email'] = $temp_use[0];
+$use_email_r = $temp_use[1] ? $temp_use[1] : "";
+
+$temp_use = explode("|",$online['use_phone']);
+$online['use_phone'] = $temp_use[0];
+$use_phone_r = $temp_use[1] ? $temp_use[1] : "";
+?>
+<div id="print_area">
+	<table class="bbsView">
+		<caption><?=$mode_title?></caption>
+		<colgroup>
+			<col data-write="th" style="width:15%"/>
+			<col data-write="td" style="width:85%"/>
+		</colgroup>
+		<tbody>
+			<?
+				for($wrap_i = 1; $wrap_i <= 10; $wrap_i++){
+					$i = $sort[$wrap_i-1]; //솔트로 인한 진짜 인덱스
+					//프로그램 변수 선언
+					$variable_ = $online["variable_".$i];
+					$field_no = "variable_".$i;
+					$variable_ = explode("|", $variable_);
+					$tmp_name = $variable_[0];
+					$tmp_type = $variable_[1];
+					$tmp_state = $variable_[3];
+					$tmp_id = $variable_[4];
+					$tmp_view = $variable_[5];
+
+					if($tmp_state != "Y") continue;
+
+					//필수항목
+					$required = "";
+					$check = "";
+					$tmp_class = "";
+					$tmp_size_class = "input300";
+					$tmp_required = $variable_[2];
+
+					if($tmp_type == "cal"){
+						$tmp_type = "text";
+						$tmp_class = "datepicker";
+						$tmp_size_class = "input100";
+					}
+			?>
+				<tr>
+					<th scope="row"><label for="<?=$tmp_id?>"><?=$tmp_name?></label></th>
+					<td>
+						<?
+							if($tmp_type == "file"){
+									$ext = end(explode(".", strtolower($row[$field_no])));
+
+									if($ext == "png" || $ext == "gif" || $ext == "jpg" || $ext == "bmp" || $ext == "jpeg"){
+										$download =  "<a href=\"/upload/online/".$online_id."/".$row[$field_no]."\" target=\"_blank\">[다운로드]</a>";
+										$row[$field_no] = "<img src=\"/upload/online/".$online_id."/thumb_".$row[$field_no]."\">";
+									} else {
+										$download =  "<a href=\"/upload/online/".$online_id."/".$row[$field_no]."\" target=\"_blank\">[다운로드]</a>";
+										$row[$field_no] = $row[$field_no];
+									}
+							} else {
+										$download = "";
+										$row[$field_no] = nl2br($row[$field_no]);
+							}
+
+						?><?=$row[$field_no]?><br /><?=$download?>
+					</td>
+				</tr>
+			<? } ?>
+			<? if($online[use_phone] == "Y"){  ?>
+				<tr>
+					<th scope="row"><label for="phone">연락처</label></th>
+					<td>
+						<?=$phone[0]?> - <?=$phone[1]?> - <?=$phone[2]?>
+					</td>
+				</tr>
+			<? } ?>
+			<? if($online[use_addr] == "Y"){  ?>
+					<tr>
+						<th scope="row"><label for="phone">주소</label></th>
+						<td>
+							<?=$row[zip]?>	<?=$row[address1]?> <?=$row[address2]?>
+						</td>
+					</tr>
+				<? } ?>
+
+				<? if($online[use_email] == "Y"){  ?>
+					<tr>
+						<th scope="row"><label for="email1">이메일</label></th>
+						<td><?=$email[0]?>@<?=$email[1]?></td>
+						</tr>
+				<? } ?>
+				<tr>
+					<th scope="row"><label for="reg_date">등록일</label></th>
+					<td><?=$row[reg_date]?></td>
+				</tr>
+		</tbody>
+	</table>
+</div>
+<!-- //글쓰기 -->

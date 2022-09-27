@@ -1,0 +1,51 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+
+
+<section id="container">		
+	<div id="content">		
+		<div class="area_subpage_board">
+            <div class="inr">
+				<div class="join_area">
+					<div class="box join">
+						<p class="title">회원정보입력</p>
+						<form method="post" action="/member/member.php" enctype="multipart/form-data">
+						<input type="hidden" name="mode" value="login_proc">
+						<input type="hidden" name="return_url" value="">
+							<ul class="designValue">
+								<li data-member-login="id" data-member-form="id">
+									<label for="id">회원아이디</label>
+									<input type="text" id="id" name="id" class="inputFull required" title="아이디">
+								</li>
+								<li data-member-login="pw" data-member-form="pw1">
+									<label for="password">비밀번호</label>
+									<input type="password" id="password" name="password" class="inputFull required" title="비밀번호">
+								</li>
+							</ul>
+				
+							<input type="submit" value="Login" class="btn_login">
+							<!-- 
+								<div class="login_social">
+									<a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&amp;client_id=MaotQsM0gYCXI1ZgQU69&amp;redirect_uri=http%3A%2F%2Fcombine.koweb.co.kr%2Fmember%2Fmember.php%3Fmode%3Dnaver&amp;state=af702060a6f22a2bc6eddad8dc94f4fa" class="btn_login_naver">네이버 아이디로 로그인</a>
+													
+									<a href="https://kauth.kakao.com/oauth/authorize?client_id=bafb7f8a53e859e2d4d4448fd0f4818d&amp;redirect_uri=http://combine.koweb.co.kr/member/member.php?mode=kakao&amp;response_type=code&amp;state=bf44b9ae0e5d94538cd7ce173c005b19" class="btn_login_kakao">카카오계정으로 로그인</a>
+								</div>
+							-->
+							
+						</form>
+					</div>
+					<!-- 버튼 -->
+					<div class="btn_area social">
+						<!-- <a href="/member/member.php?mode=agree">회원가입</a> -->
+						<a href="/member/member.php?mode=find_id">아이디 찾기</a>
+						<a href="/member/member.php?mode=find_pw">비밀번호 찾기</a>
+					</div>
+					<!-- //버튼 -->
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<?include("../../inc/footer.html")?>

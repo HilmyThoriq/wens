@@ -1,0 +1,52 @@
+	<form action="<?=$PHP_SELF?>" name="join_form" method="post" id="agree_form">
+	<input type="hidden" name="step" value="2" />
+	<input type="hidden" name="mode" value="join" />		
+		<div class="join_area">
+			<h2><i>회원가입</i></h2>
+			<p>회원가입약관 및 개인정보처리방침안내 약관에  동의하셔야 회원가입 하실 수 있습니다.</p>
+			
+			<div class="box">
+				<h3>회원가입약관</h3>
+				<!-- 약관내용 -->
+				<textarea readonly id="agreeText01"><?=strip_tags($site[member_agree_content])?></textarea>
+				<!-- //약관내용 -->
+				<!-- 동의 -->
+				<div class="check">
+					<div class="designCheck">
+						<input type="checkbox" name="agree01" id="agree01" value="Y" /><label for="agree01">회원가입약관에 동의합니다.</label>
+					</div>
+				</div>
+				<!-- //동의 -->
+			</div>
+			<div class="box">
+				<h3>개인정보취급방침</h3>
+					<!-- 개인정보취급방침 내용 -->
+					<textarea readonly id="agreeText02"><?=strip_tags($site[member_agree_content2])?></textarea>
+				<!-- //개인정보취급방침 내용 -->
+				
+				<!-- 동의 -->
+				<div class="check">
+					<div class="designCheck">
+						<input type="checkbox" name="agree02" id="agree02" value="Y" /><label for="agree02">개인정보취급방침에 동의합니다.</label>
+					</div>
+				</div>
+			<!-- //동의 -->
+			</div>
+
+			<!-- 버튼 -->
+			<div class="btn_area">
+				<input type="submit" class="button black" value="약관동의" />
+				<a href="<?=$site[url]?>" class="button gray">메인으로</a>
+			</div>
+			<!-- //버튼 -->
+		</div>
+	</form>
+	<script type="text/javascript">
+		$("#agree_form").submit(function(){
+			if( $("#agree02:checked").val() != "Y" || $("#agree01:checked").val() != "Y" ){
+
+				alert("약관에 동의하셔야 회원가입을 진행 할 수 있습니다.");
+				return false;
+			} 
+		});
+	</script>

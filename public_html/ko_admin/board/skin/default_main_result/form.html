@@ -1,0 +1,479 @@
+<?
+$mode_title = "Write";
+$row[name] = $_SESSION['member_name'];
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = "Modfy";
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		if($board[is_membership] != "Y"){
+		//비밀번호가 없음
+			if($password == "" ){
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+			$password = hash("sha256", $password);
+			//비밀번호가 틀림
+			if($row[password] != $password){
+				alert("This post can only be checked by the author and manager.");
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+		} else {
+			if($_SESSION[member_id] != $row[id]){
+				error("This post can only be edited by the author and administrator.");
+				exit;
+			}
+		}
+	}
+}
+if($mode == "reply"){
+	$query = "SELECT name, comments, title FROM $board_id WHERE no='$ref_no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$comm_first_text = "<p>&nbsp;</p><hr> ".$row[name]." Posted by.<br>";
+	$comm_last_text= "<p>&nbsp;</p><hr><p></p><br />";
+	$row[comments] = $comm_first_text . $row[comments] . $comm_last_text;
+
+	$title_first_text = "This is $row[title] answer.";
+	$row[title] = $title_first_text;
+}
+?>
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="<?=$mode?>" />
+<input type="hidden" name="return_url" value="<?=$url?>" />
+<input type="hidden" name="no" value="<?=$row[no]?>" />
+<input type="hidden" name="ref_no" value="<?=$ref_no?>" />
+<input type="hidden" name="tag_type" value="<?=$tag_type?>" />
+
+<div class="table mainresultTable">
+	<table>
+		<thead>
+			<tr>
+				<th rowspan="3" class="yrs">Years</th>
+				<th colspan="3">Publications</th>
+				<th colspan="4">Patents</th>
+				<th colspan="2">Conferences</th>
+				<th colspan="2">Alumni</th>
+			</tr>
+			<tr>
+				<th colspan="3">Major Author (First Author & Corresponding Author​)</th>
+				<th colspan="2">Domestic</th>
+				<th colspan="2">International</th>
+				<th rowspan="2" class="two">Domestic</th>
+				<th rowspan="2" class="two">International</th>
+				<th rowspan="2" class="two">MS</th>
+				<th rowspan="2" class="two">PhD</th>
+			</tr>
+			<tr>
+				<th class="long">SCI</th>
+				<th class="long">Non-SCI</th>
+				<th class="long">Sum of IF</th>
+				<th>Application</th>
+				<th>Registeration</th>
+				<th>Application</th>
+				<th class="last">Registeration</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="yrs">Within 5 YR</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+						$result = mysql_query($query);
+						$total_sci = mysql_num_rows($result);
+					?>
+						<?=$total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND (type_publ = 'Non-SCI/SCIE')";
+						$result = mysql_query($query);
+						$total_non_sci = mysql_num_rows($result);
+					?>
+						<?=$total_non_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+						<?=$total_non_sci + $total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR) AND category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "Domestic Conference";
+						$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "International Conference";
+						$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_inter = mysql_num_rows($result);
+					?>
+						<?=$total_inter ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "M.S";
+						$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ms = mysql_num_rows($result);
+					?>
+						<?=$total_ms ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "Ph.D";
+						$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 5 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ph_d = mysql_num_rows($result);
+					?>
+						<?=$total_ph_d ?>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="yrs">Within 3 YR</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+						$result = mysql_query($query);
+						$total_sci = mysql_num_rows($result);
+					?>
+						<?=$total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND (type_publ = 'Non-SCI/SCIE')";
+						$result = mysql_query($query);
+						$total_non_sci = mysql_num_rows($result);
+					?>
+						<?=$total_non_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+						<?=$total_non_sci + $total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR) AND category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (DATE($compare_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "Domestic Conference";
+						$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "International Conference";
+						$query = "SELECT * FROM board_publication WHERE (DATE(publ_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_inter = mysql_num_rows($result);
+					?>
+						<?=$total_inter ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "M.S";
+						$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ms = mysql_num_rows($result);
+					?>
+						<?=$total_ms ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "Ph.D";
+						$query = "SELECT * FROM koweb_member WHERE (DATE(join_date) >= DATE_SUB(NOW(), INTERVAL 3 YEAR)) AND (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ph_d = mysql_num_rows($result);
+					?>
+						<?=$total_ph_d ?>
+					</span>
+				</td>
+			<tr>
+				<td class="yrs">Total</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE (type_publ = 'SCI/SCIE Q1' OR type_publ = 'SCI/SCIE Q2' OR type_publ = 'SCI/SCIE Q3' OR type_publ = 'SCI/SCIE Q4')";
+						$result = mysql_query($query);
+						$total_sci = mysql_num_rows($result);
+					?>
+						<?=$total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$query = "SELECT * FROM board_publication WHERE (type_publ = 'Non-SCI/SCIE')";
+						$result = mysql_query($query);
+						$total_non_sci = mysql_num_rows($result);
+					?>
+						<?=$total_non_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+						<?=$total_non_sci + $total_sci ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE category_inter_dome = '$cate_inter_dome' AND status_cate = '$stat_cate'";
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "Domestic";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Filed";
+						$compare_date = "filing_date";
+						$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_appli = mysql_num_rows($result);
+					?>
+						<?=$total_appli ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$cate_inter_dome = "International";
+						$stat_cate = "Registered";
+						$compare_date = "regi_date";
+						$query = "SELECT * FROM board_patents WHERE (category_inter_dome = '$cate_inter_dome') AND (status_cate = '$stat_cate')";
+
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "Domestic Conference";
+						$query = "SELECT * FROM board_publication WHERE (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_dome = mysql_num_rows($result);
+					?>
+						<?=$total_dome ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$publ_cate = "International Conference";
+						$query = "SELECT * FROM board_publication WHERE (category = '$publ_cate')";
+						$result = mysql_query($query);
+						$total_inter = mysql_num_rows($result);
+					?>
+						<?=$total_inter ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "M.S";
+						$query = "SELECT * FROM koweb_member WHERE (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ms = mysql_num_rows($result);
+					?>
+						<?=$total_ms ?>
+					</span>
+				</td>
+				<td style="text-align: center;">
+					<span>
+					<?
+						$g_alumni = "Ph.D";
+						$query = "SELECT * FROM koweb_member WHERE (group_alumni LIKE '%$g_alumni%')";
+						$result = mysql_query($query);
+						$total_ph_d = mysql_num_rows($result);
+					?>
+						<?=$total_ph_d ?>
+					</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	$(":checkbox[name='notice'][value='<?=$row['notice']?>']").prop("checked", true);
+	$(":checkbox[name='secret'][value='<?=$row['secret']?>']").prop("checked", true);
+</script>
+<!-- //글쓰기 -->
+<!-- 버튼 -->
+<!-- <div class="btn_area">
+	<input type="submit" onclick="msgImpletion();" class="button" value="Submit" />
+	<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=list&amp;start=<?=$start?>&cate=<?=$cate?>" class="button gray">Cancel</a>
+</div> -->
+</form>
+
+<!-- //버튼 -->

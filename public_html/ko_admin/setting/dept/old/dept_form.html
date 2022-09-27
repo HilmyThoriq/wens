@@ -1,0 +1,59 @@
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php"; ?>
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php"; ?>
+
+<? if($mode == "modify"){ 
+	$query = "SELECT * FROM koweb_dept WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+} 
+
+if(!$mode){
+	$mode = "write";
+}
+?>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script type="text/javascript">
+	$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true); 
+</script>
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+<input type="hidden" name="no" value="<?=$no?>" />
+<input type="hidden" name="manager_type" value="dept" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+	<h2 class="mt0">부서 등록</h2>
+	<table class="bbsView">
+		<colgroup>
+			<col style="width:15%;"/>
+			<col/>
+			<col style="width:15%;"/>
+			<col style="width:40%"/>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row">* 부서명</th>
+				<td colspan="3">
+					<input type="text" name="dept" size="10" maxlength="20" value="<?=$row[dept]?>" title="dept" class="input200 required"/></td>			
+				</td>
+			</tr>
+			<tr>
+				<th>비고</th>
+				<td colspan="3" class="memo">
+					<input type="text" name="memo" value="<?=$row[memo]?>" class=""/>
+				</td>
+			</tr>
+			<tr>
+				<th>사용여부</th>
+				<td colspan="3">
+					<input type="radio" name="state" value="Y" id="stateY" /> <label for="stateY">사용</label>
+					<input type="radio" name="state" value="N" id="stateN" /> <label for="stateN">미사용</label>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btn_area tac">
+		<input class="button red" type="submit" value="등록">
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=dept">취소</a>
+	</div>
+</form>

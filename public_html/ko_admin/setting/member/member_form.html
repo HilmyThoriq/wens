@@ -1,0 +1,650 @@
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php"; ?>
+<? include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php"; ?>
+
+<?	
+	$mod_2 = "required";
+if($mode == "modify"){ 
+
+	$query = "SELECT * FROM koweb_member WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	if(!$row[0]) {
+		error("비정상적인 접근입니다.");
+		exit;
+	}
+	//$email = explode("@",$row[email]);
+	$birthday = explode("-",$row[birthday]);
+	$phone = explode("-", $row[phone]);
+	$mod_ = "readOnly";
+	$mod_2 = "";
+
+	$group_time_researcher_arr = explode("^", $row[group_time_researcher]);
+	$group_part_researcher_arr = explode("^", $row[group_part_researcher]);
+	$group_alumni_arr = explode("^", $row[group_alumni]);
+
+	setHistory("관리자 회원관리", $row[id], "$row[id] 회원수정 진입");
+} 
+
+if(!$mode){
+	$mode = "write";
+}
+?>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script type="text/javascript">
+	function execDaumPostcode(){
+		new daum.Postcode(
+		{
+			oncomplete: function(data)
+			{
+				// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+				// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+				// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+				var fullAddr  = "";					// 최종 주소 변수
+				var extraAddr = "";					// 조합형 주소 변수
+
+				// 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+				if (data.userSelectedType === "R")
+				{
+					// 사용자가 도로명 주소를 선택했을 경우
+					fullAddr = data.roadAddress;
+				}
+				else
+				{
+					// 사용자가 지번 주소를 선택했을 경우(J)
+					fullAddr = data.jibunAddress;
+				}
+
+				// 사용자가 선택한 주소가 도로명 타입일때 조합한다.
+				if (data.userSelectedType === "R")
+				{
+					// 법정동명이 있을 경우 추가한다.
+					if (data.bname !== "")
+					{
+						extraAddr += data.bname;
+					}
+
+					// 건물명이 있을 경우 추가한다.
+					if (data.buildingName !== "")
+					{
+						extraAddr += (extraAddr !== "" ? ", " + data.buildingName : data.buildingName);
+					}
+
+					// 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+					fullAddr += (extraAddr !== "" ? " (" + extraAddr + ")" : "");
+				}
+
+				// 우편번호와 주소 정보를 해당 필드에 넣는다.
+				document.getElementById("zip").value      = data.zonecode;			// 5자리 새우편번호 사용
+				document.getElementById("address1").value = fullAddr;
+
+				// 커서를 상세주소 필드로 이동한다.
+				document.getElementById("address2").focus();
+			}
+		}).open();
+	}
+
+	function mail_check(){ 
+		if($("#tmp_mail").val() == "other"){
+			$("#email2").val("");
+			$("#email2").prop("disabled", "");
+		} else {
+			$("#email2").val("");
+			$("#email2").val($("#tmp_mail").val());
+			$("#email2").prop("disabled", "disabled");
+		}
+			$("#email3").val($("#email2").val());
+	}	
+
+	$(function() {
+		$("select[name='birth1'] option[value='<?=$row[auth_read]?>']").prop("selected", true);
+		$("select[name='tmp_email'] option[value='<?=$email[1]?>']").prop("selected", true);
+		$("select[name='tmp_mail'] option[value='<?=$email[1]?>']").prop("selected", true);
+		$("select[name='phone1'] option[value='<?=$phone[0]?>']").prop("selected", true);
+		$("select[name='birthday1'] option[value='<?=$birthday[0]?>']").prop("selected", true);
+		$("select[name='birthday2'] option[value='<?=$birthday[1]?>']").prop("selected", true);
+		$("select[name='birthday3'] option[value='<?=$birthday[2]?>']").prop("selected", true);
+		$("input:radio[name='gender']:radio[value='<?=$row[gender]?>']").prop("checked",true);
+		$("input:radio[name='level']:radio[value='<?=$row[auth_level]?>']").prop("checked",true);
+		$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true); 
+	});
+</script>
+
+<form method='post' action="<?=$PHP_SELF?>" name="form_member" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+<input type="hidden" name="no" value="<?=$no?>" />
+<input type="hidden" name="manager_type" value="member" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+<input type="hidden" name="email3" value="<?=$email[1]?>" id="email3" />
+<input type="hidden" name="return_no" value="<?=$return_no?>" id="return_no" />
+
+<h2 class="mt0">관리자 설정</h2>
+<div class="area_formTop">
+	<h3>Select Group</h3>
+	<ul class="groupMenu">
+		<li>
+			<div class="box">
+				<strong>Professor</strong>
+				<ul class="menu_check">
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" onclick="chk_professor()" name="group_professor[]" id="group01" <?if($row[group_professor] == "Professor") echo "checked";?> value="Professor">
+							<label for="group01">
+								<em>Professor</em>
+							</label> 
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<div class="box">
+				<strong>Full-time Resarcher</strong>
+				<ul class="menu_check">
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_time_researcher[]" id="group02" <?if(in_array("Post Doc.", $group_time_researcher_arr)) echo "checked";?> value="Post Doc.">
+							<label for="group02">
+								<em>Post Doc.</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_time_researcher[]" id="group03" <?if(in_array("Ph.D. Candidate",$group_time_researcher_arr)) echo "checked";?> value="Ph.D. Candidate">
+							<label for="group03">
+								<em>Ph.D. Candidate</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_time_researcher[]" id="group04" <?if(in_array("Integrated Candidate", $group_time_researcher_arr)) echo "checked";?> value="Integrated Candidate">
+							<label for="group04">
+								<em>Integrated Candidate</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_time_researcher[]" id="group05" <?if(in_array("M.S. Candidate", $group_time_researcher_arr)) echo "checked";?> value="M.S. Candidate">
+							<label for="group05">
+								<em>M.S. Candidate</em>
+							</label> 
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+
+
+		<li>
+			<div class="box">
+				<strong>Part-time Researcher</strong>
+				<ul class="menu_check">
+					<li>
+						<div class="designCheck">
+						   <input type="checkbox" name="group_part_researcher[]" id="group06" <?if(in_array("Part Post Doc", $group_part_researcher_arr)) echo "checked";?> value="Part Post Doc">
+							<label for="group06">
+								<em>Part Post Doc</em>
+							</label> 
+
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+						   <input type="checkbox" name="group_part_researcher[]" id="group07" <?if(in_array("Ph.D. Candidate", $group_part_researcher_arr)) echo "checked";?> value="Ph.D. Candidate">
+							<label for="group07">
+								<em>Ph.D. Candidate</em>
+							</label> 
+
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_part_researcher[]" id="group08" <?if(in_array("M.S. Candidate", $group_part_researcher_arr)) echo "checked";?> value="M.S. Candidate">
+							<label for="group08">
+								<em>M.S. Candidate</em>
+							</label> 
+
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_part_researcher[]" id="group09" <?if(in_array("Undergraduate", $group_part_researcher_arr)) echo "checked";?> value="Undergraduate">
+							<label for="group09">
+								<em>Undergraduate</em>
+							</label> 
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<div class="box">
+				<strong>Alumni</strong>
+				<ul class="menu_check">
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_alumni[]" id="group10" <?if(in_array("Post Doc.", $group_alumni_arr)) echo "checked";?> value="Post Doc.">
+							<label for="group10">
+								<em>Post Doc.</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+						   <input type="checkbox" name="group_alumni[]" id="group11" <?if(in_array("Ph.D.", $group_alumni_arr)) echo "checked";?> value="Ph.D.">
+							<label for="group11">
+								<em>Ph.D.</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+						   <input type="checkbox" name="group_alumni[]" id="group12" <?if(in_array("M.S", $group_alumni_arr)) echo "checked";?> value="M.S">
+							<label for="group12">
+								<em>M.S</em>
+							</label> 
+						</div>
+					</li>
+					<li>
+						<div class="designCheck">
+							<input type="checkbox" name="group_alumni[]" id="group13" <?if(in_array("Tesimonials", $group_alumni_arr)) echo "checked";?> value="Tesimonials">
+							<label for="group13">
+								<em>Tesimonials</em>
+							</label> 
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="adminCont">
+	<!-- Member  -->
+	<!-- 아래 내용부터 본 내용입니다.  -->
+	
+	<div class="area_formConts bbsView">
+		<div class="form_List">
+			<ul>
+				<!-- 아이디 -->
+				<li class="typeA">
+					<div class="tit">
+						<label for="id">* ID</label>
+					</div>
+					<div class="inBox">
+
+						<input type="text" name="id" size="10" value="<?=$row[id]?>" title="ID" class="inputFull" <?=$mod_?> />
+	   
+					</div>
+				</li>
+				<!-- 비밀번호 -->
+				<li>
+					<div class="tit">
+						<label for="password">* Password</label>
+					</div>
+					<div class="inBox">
+						<input type="password" name="password" id="password1" size="10" maxlength="20" value="" title="비밀번호" class="inputFull <?=$mod_?>"/>
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="password">* Confirm Password</label>
+					</div>
+					<div class="inBox">
+					<input type="password" id="password2" size="10" maxlength="20" value="" title="비밀번호" class="inputFull"/>
+			  
+					</div>
+				</li>
+
+				<!-- 이름 -->
+				<li>
+					<div class="tit">
+						<label for="firstName">* First name</label>
+					</div>
+					<div class="inBox">
+
+						<input type="text" name="first_name" size="10" value="<?=$row[first_name]?>" title="ID" class="inputFull required" />
+
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="lastName">* Last name</label>
+					</div>
+					<div class="inBox">
+
+					<input type="text" name="last_name" size="10" value="<?=$row[last_name]?>" title="비밀번호" class="inputFull required <?=$mod_?>"/>
+
+					</div>
+				</li>
+
+				<!-- 연락처 -->
+				<li>
+					<div class="tit">
+						<label for="email">E-mail</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="email" id="email" class="inputFull" value="<?=$row[email]?>" >
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="phone">Phone</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="phone" onKeyup="onlyNumber(this)" id="phone" class="inputFull" value="<?=$row[phone]?>" placeholder="Insert only number.">
+					</div>
+				</li>
+
+				<li>
+					<div class="tit">
+						<label for="rol">Rol</label>
+					</div>
+					<div class="inBox">
+						<select class="selectFull" name="Rol" id="Rol" onchange="for_professor(this.value)">
+							<option value="">Select</option>
+							<option value="Publisher" <?if($row[Rol]=="Publisher") echo "selected";?>>Publisher</option>
+							<option value="Developer" <?if($row[Rol]=="Developer") echo "selected";?>>Developer</option>
+							<option value="Professor" <?if($row[Rol]=="Professor") echo "selected";?>>Professor</option>
+							<option value="Ph.D. Candidate" <?if($row[Rol]=="Ph.D. Candidate") echo "selected";?>>Ph.D. Candidate</option>
+							<option value="M.S. Candidate" <?if($row[Rol]=="M.S. Candidate") echo "selected";?>>M.S. Candidate</option>
+							<option value="Undergraduate" <?if($row[Rol]=="Undergraduate") echo "selected";?>>Undergraduate</option>
+							<option value="Site Administrator" <?if($row[Rol]=="Site Administrator") echo "selected";?>>Site Administrator</option>
+							<option value="Guest" <?if($row[Rol]=="Guest") echo "selected";?>>Guest</option>
+							<option value="Ph.D. Alumni" <?if($row[Rol]=="Ph.D. Alumni") echo "selected";?>>Ph.D. Alumni</option>
+							<option value="Outsider" <?if($row[Rol]=="Outsider") echo "selected";?>>Outsider</option>
+							<option value="Post Doc." <?if($row[Rol]=="Post Doc.") echo "selected";?>>Post Doc.</option>
+							<option value="Corresponding Author" <?if($row[Rol]=="Corresponding Author") echo "selected";?>>Corresponding Author</option>
+							<option value="Part Time M.S" <?if($row[Rol]=="Part Time M.S") echo "selected";?>>Part Time M.S</option>
+							<option value="Part Time Post Doc" <?if($row[Rol]=="Part Time Post Doc") echo "selected";?>>Part Time Post Doc</option>
+							<option value="Part Time PhD" <?if($row[Rol]=="Part Time PhD") echo "selected";?>>Part Time PhD</option>
+							<option value="Integrated Candidate" <?if($row[Rol]=="Integrated Candidate") echo "selected";?>>Integrated Candidate</option>
+						</select>
+					</div>
+				</li>
+				<script>
+					function for_professor(role){
+						if(role == "Professor"){
+							document.getElementById('show_professor').style.display='block';
+						} else {
+							document.getElementById('show_professor').style.display='none';
+						}
+					}
+				</script>
+				<li class="inputFull" id="show_professor" style="display:none;">
+					<div>
+						<label for="smart_content">Professor Editor</label>
+					</div>
+					<div>
+						<textarea name="comments" id="smart_content" rows="2" cols="2" style="height:412px;" class="inputFull"><?=$row[comments]?></textarea>
+					</div>
+				</li> 
+
+				<li>
+					<div class="tit">
+						<label for="office">Office</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="office" id="office" class="inputFull" value="<?=$row[office]?>" >
+					</div>
+				</li>
+
+				<li>
+					<div class="tit">
+						<label for="last_company">Last Company</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="last_company" id="last_company" class="inputFull" value="<?=$row[last_company]?>">
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="graduate_date">Graduate Date</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="graduate_date" id="graduate_date" class="inputFull" value="<?=$row[graduate_date]?>">
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="Interest">Interest</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="Interest" id="Interest" class="inputFull" value="<?=$row[Interest]?>" >
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="last_education">Last Education</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="last_education" id="last_education" class="inputFull" value="<?=$row[last_education]?>">
+					</div>
+				</li>
+
+				<li>
+					<div class="tit">
+						<label for="last_job">Last Job</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="last_job" id="last_job" class="inputFull" value="<?=$row[last_job]?>" >
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="avatar">Avatar</label>
+					</div>
+					<div class="inBox">
+					  
+						<div class="designFile">
+
+							<?
+								$file_title = $row["file_1"];
+								$del_ = "Find File";
+								$del_2 = "";
+								if($file_title){
+									 $del_2 = "<a href='/upload/koweb_member/$file_title' target='_blank' class='button white'>Existing File : $file_title</a>";
+									 $del_3 = "<div class='designCheck' style='display:inline-block;'><input type='checkbox' value='Y' id='del_1' name='del_1'/><label for='del_1'>파일삭제</label></div>";
+								} else {
+									$del_2 = "";
+									$del_3 = "";
+								}
+								echo "<div class='designFile'><input type='text' readonly='readonly' value='$row[file_1]'/><input type='file' name='file_1' id='file_1'/><label for='file_1' class='button white'> $del_</label> </div>";
+							?>
+						</div>
+					   <em class="tip">첨부파일 가능 용량은 10MB 입니다</em>
+						
+					</div>
+				</li>
+				<li class="">
+					<div class="tit">
+						<label for="management">Management level</label>
+					</div>
+					<div class="inBox">
+						<ul class="check_list">
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="level" id="level1" value="1"><label for="level1">Manager</label>
+								</div>
+							</li>
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="level" id="level3" value="3"><label for="level3">Member</label>
+								</div>
+							</li>
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="level" id="level5" value="5"><label for="level5">Alumni</label>
+								</div>
+							</li>
+						</ul>	
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="last_job">Join Date</label>
+					</div>
+					<div class="inBox">
+						<div class="dateBox ">
+							<!-- 달력아이콘 클릭시 달력선택지 노출 -->
+							<input type="text" name="join_date" id="join_date" class="datepicker"  readonly value="<?=$row[join_date]?>">
+						</div>
+					</div>
+				</li>
+			
+				<li class="">
+					<div class="tit">
+						<label for="management">USE</label>
+					</div>
+					<div class="inBox">
+						<ul class="check_list">
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="state" id="stateY" value="Y" ><label for="stateY">Yes</label>
+								</div>
+							</li>
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="state" id="stateN" value="N"><label for="stateN">No</label>
+								</div>
+							</li>
+							<script type="text/javascript">
+								$("input[type=radio][name=state][value='"+"<?=$row[state]?>"+"']").prop("checked", true);
+							</script>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+	<div class="btn_area tac">
+		<input class="button red" onclick="chk_pswdAndSubmit()" type="" readonly value="Submit" style="cursor:pointer;">
+		<? if($return_no != ""){ ?>
+			<a class="button" href="?type=setting&core_id=setting&core=manager_setting&manager_type=dept&mode=view&no=<?=$return_no?>">Cancle</a>
+		<? } else { ?>
+			<a class="button" href="?type=setting&core=manager_setting&manager_type=member">Cancle</a>
+		<? } ?>
+	</div>
+
+</div>
+<script>
+	function onlyNumber(obj) {
+		obj.value = obj.value.replace(/[^0-9]/g, "");
+	}
+	function chk_pswdAndSubmit(){
+	var password1 = document.getElementById('password1').value;
+	var password2 = document.getElementById('password2').value;
+
+	var from_member = document.form_member;
+
+	if(!from_member.id.value){
+		alert('Insert Id.');
+		return;
+	}
+	<?if(!$row[id]){?>
+		if(!from_member.password.value){
+			alert('Insert Password.');
+			return;
+		}
+
+		//비밀번호 동일한지 체크관련 경고창
+		if($('#password2').val==''){
+			alert('Insert Confirm Passwrod.');
+			return;
+		}
+	<?}?>
+
+
+		// 여기까지 비밀번호 동일 체크
+
+/*
+		if(!from_member.first_name.value){
+			alert('Insert First Name.');
+			return;
+		}
+		if(!from_member.last_name.value){
+			alert('Insert Last Name.');
+			return;
+		}
+		if(!from_member.phone2.value){
+			alert('Insert Phone Number.');
+			return;
+		}
+		if(!from_member.phone3.value){
+			alert('Insert Phone Number.');
+			return;
+		}
+		if(!from_member.email1.value){
+			alert('Insert Email.');
+			return;
+		}
+		if(!from_member.email2.value){
+			alert('Insert Email.');
+			return;
+		}
+		if(!from_member.Rol.value){
+			alert('Insert Rol.');
+			return;
+		}
+		if($("input:checkbox").is(":checked")==false){
+			alert("At Least Choose One Group.");
+			return;
+		}
+		if(!from_member.office.value){
+			alert('Insert office.');
+			return;
+		}
+		if(!from_member.last_company.value){
+			alert('Insert last company.');
+			return;
+		}
+		if(!from_member.graduate_date.value){
+			alert('Insert graduate date.');
+			return;
+		}
+		if(!from_member.Interest.value){
+			alert('Insert Interest.');
+			return;
+		}
+		if(!from_member.last_education.value){
+			alert('Insert Last Education.');
+			return;
+		}
+		if(!from_member.last_job.value){
+			alert('Insert Last Job.');
+			return;
+		}
+		if(!from_member.Interest.value){
+			alert('Insert Interest.');
+			return;
+		}
+
+*/
+		if( password1 != password2 ){
+			alert('Incorrect Password.');
+			return false;
+		}
+
+
+		document.form_member.submit();
+	}
+
+	function chk_professor(){
+		if($("input:checkbox[id='group01']").is(":checked")==true){
+			$(".hide_and_show").show();
+			$(".hide_and_show").prop("disabled", false);
+		} else if ($("input:checkbox[id='group01']").is(":checked")==false) {
+			$(".hide_and_show").hide();
+			CKEDITOR.instances.smart_content.getData();
+			CKEDITOR.instances.smart_content.setData('');
+		}
+	}
+</script>
+
+
+
+

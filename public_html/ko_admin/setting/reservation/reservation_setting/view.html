@@ -1,0 +1,122 @@
+<?
+	$query = "SELECT * FROM $table_name WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$item_option = str_replace("|", ", ", $row['item_option']);
+?>
+<h3 class="bbsTitle"><?=$row['item_name']?></h3>
+<table class="bbsView">
+	<caption>예약상품 상세보기</caption>
+	<colgroup>
+		<col data-view="th" style="width:15%"/>
+		<col data-view="td" style="width:35%"/>
+		<col data-view="th" style="width:15%"/>
+		<col data-view="td" style="width:35%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row" data-view="count">옵션</th>
+			<td><?=$item_option?></td>
+		</tr>
+		<tr>
+			<td colspan="4" class="conts">
+				<div class="conts">
+					<!-- 이미지 view단표시 -->
+					<div class="img">
+						<?
+							$file_count = 0;
+							echo "<img src=\"/upload/reservation/$serve_name/$row[title_img]\" alt=\"\"/><br /><br />";
+							for ($i = 1; $i <= 5; $i++){
+								$file_title =  $row["file_".$i];
+								if($file_title){
+									echo "<img src=\"/upload/reservation/$serve_name/$file_title\" alt=\"\"/><br /><br />";
+									$file_count++;
+								}
+							}
+						?>
+					</div>
+					<!-- //이미지 view단표시 -->
+					<?=$row['item_content']?>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row" data-view="file">대표이미지</th>
+				<td colspan="3">
+					<!-- 파일목록 -->
+					<ul class="list_file">
+						<?
+						if($row[title_img]){
+								echo "<li><a href=\"/program/file.php?type=$manager_type&amp;type_id=$serve_name&amp;file=$row[title_img]\">$row[title_img]</a></li>";
+						  }
+						?>
+					</ul>
+				</td>
+			</tr>
+
+		<!-- 첨부파일이 있는경우 -->
+		<? if($file_count > 0){ ?>
+			<tr>
+				<th scope="row" data-view="file">첨부파일</th>
+				<td colspan="3">
+					<!-- 파일목록 -->
+					<ul class="list_file">
+						<?
+							for ($i = 1; $i <= 5; $i++){
+									$file_title =  $row["file_".$i];
+									if($file_title){
+										echo "<li><a href=\"/program/file.php?type=$manager_type&amp;type_id=$serve_name&amp;file=$file_title\">$file_title</a></li>";
+								  }
+							}
+						?>
+					</ul>
+				</td>
+			</tr>
+		<? } ?>
+		<!-- //첨부파일 -->
+	</tbody>
+</table>
+<!-- 이전/다음 -->
+<? if($type_view == "view") $add_queryStr = "&amp;type_view=view"; ?>
+<?
+	// 다음글, 이전글
+	$temp_next = mysql_fetch_array(mysql_query("SELECT no, item_name FROM $table_name WHERE  no>'$no' ORDER BY  no ASC LIMIT 1"));
+	if ($temp_next) $next = "$common_url&amp;mode=view&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;no={$temp_next['no']}".$add_queryStr;
+	else $next = "#";
+	// 이전글
+	$temp_prev = mysql_fetch_array(mysql_query("SELECT no, item_name FROM $table_name WHERE no<'$no' ORDER BY no DESC LIMIT 1"));
+	if ($temp_prev) $prev = "$common_url&amp;mode=view&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;no={$temp_prev['no']}".$add_queryStr;
+	else $prev = "#";
+?>
+<table class="bbsView page">
+	<caption>이전 다음 상품</caption>
+	<colgroup>
+		<col data-view="th" style="width:15%"/>
+		<col data-view="td" style="width:85%"/>
+	</colgroup>
+	<tbody>
+		<tr>
+			<th scope="row">이전 상품</th>
+			<td><a href="<?=$prev?>"><?=$temp_prev['item_name']?></a></td>
+		</tr>
+		<tr>
+			<th scope="row">다음 상품</th>
+			<td><a href="<?=$next?>"><?=$temp_next['item_name']?></a></td>
+		</tr>
+	</tbody>
+</table>
+<!-- //이전/다음 -->
+
+<!-- 버튼 -->
+<div class="btn_area">
+	<? if($_SESSION[is_admin]){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button">수정</a>
+	<? } ?>
+	<? if($_SESSION[is_admin]){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=delete&amp;return_mode=list&amp;no=<?=$row[no]?>" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');">삭제</a>
+	<? } else if($auth_delete){ ?>
+		<a href="<?=$common_url?>&amp;start=<?=$start?>&amp;mode=check&amp;return_mode=delete&amp;no=<?=$row[no]?>" class="button">삭제</a>
+	<? } ?>
+	<a href="<?=$common_url?>&amp;start=<?=$start?><?=$add_queryStr?>" class="button">목록</a>
+</div>
+<!-- //버튼 -->

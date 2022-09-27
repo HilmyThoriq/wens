@@ -1,0 +1,332 @@
+<?
+$mode_title = "Write";
+$row[name] = $_SESSION['member_name'];
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = "Modfy";
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		if($board[is_membership] != "Y"){
+		//비밀번호가 없음
+			if($password == "" ){
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+			$password = hash("sha256", $password);
+			//비밀번호가 틀림
+			if($row[password] != $password){
+				alert("This post can only be checked by the author and manager.");
+				url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]&amp;cate=$row[category]");
+				exit;
+			}
+		} else {
+			if($_SESSION[member_id] != $row[id]){
+				error("This post can only be edited by the author and administrator.");
+				exit;
+			}
+		}
+	}
+}
+if($mode == "reply"){
+	$query = "SELECT name, comments, title FROM $board_id WHERE no='$ref_no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$comm_first_text = "<p>&nbsp;</p><hr> ".$row[name]." Posted by.<br>";
+	$comm_last_text= "<p>&nbsp;</p><hr><p></p><br />";
+	$row[comments] = $comm_first_text . $row[comments] . $comm_last_text;
+
+	$title_first_text = "This is $row[title] answer.";
+	$row[title] = $title_first_text;
+}
+?>
+<form action="/ko_admin/board/skin/<?=$skin?>/proc.php" method="post" name="form_patent" enctype="multipart/form-data">
+<input type="hidden" name="board_id" value="<?=$board_id?>" />
+<input type="hidden" name="mode" value="<?=$mode?>" />
+<input type="hidden" name="return_url" value="<?=$url?>" />
+<input type="hidden" name="no" value="<?=$row[no]?>" />
+<input type="hidden" name="ref_no" value="<?=$ref_no?>" />
+<input type="hidden" name="tag_type" value="<?=$tag_type?>" />
+
+
+
+
+
+<div class="adminCont">
+                
+	<!-- Patents 양식 -->
+	<!-- 아래 내용부터 본 내용입니다.  -->
+   
+	<div class="area_formConts bbsView">
+		<div class="form_List">
+			<ul>
+				<li class="typeB">
+					<div class="tit">
+						<label for="title​​"><span class="import">*</span>Title​</label>
+					</div>
+					<div class="inBox">
+						<!-- <input type="text" name="title​​" id="title​​" class="inputFull" value="<?=$row[title]?>"> -->
+						<input type="text" name="title" id="title" class="inputFull required" value="<?=$row[title]?>" title="Subject"/>
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="role"><span class="import">*</span>Category​</label>
+					</div>
+					<div class="inBox">
+						<ul class="check_list">
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="category_inter_dome" id="category_inter_dome" value="International" <?if($row[category_inter_dome]=="International") echo "checked";?>><label for="category_inter_dome" >International</label>
+								</div>
+							</li>
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="category_inter_dome" id="category_inter_dome2" value="Domestic" <?if($row[category_inter_dome]=="Domestic") echo "checked";?>><label for="category_inter_dome2">Domestic</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="role"><span class="import">*</span>Status</label>
+					</div>
+					<div class="inBox">
+						<ul class="check_list">
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="status_cate" id="status_cate" value="Filed" <?if($row[status_cate]=="Filed") echo "checked";?>><label for="status_cate">Filed​</label>
+								</div>
+							</li>
+							<li>
+								<div class="designCheck">
+									<input type="radio" name="status_cate" id="status_cate2" value="Registered" <?if($row[status_cate]=="Registered") echo "checked";?>><label for="status_cate2">Registered​</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</li>
+			   
+				<li>
+					<div class="tit">
+						<label for="application">출원번호 <span class="sm">Application Number</span></label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="appli_num" id="appli_num" class="inputFull"  value="<?=$row[appli_num]?>">
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="patent">등록번호 <span class="sm">Patent Number</span></label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="patent_num" id="patent_num" class="inputFull" value="<?=$row[patent_num]?>">
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="filing">출원일 <span class="sm">Filing Date</span></label>
+					</div>
+					<div class="inBox">
+						<div class="dateBox">
+							<span><i class="fa-solid fa-calendar-days"></i></span>
+							<input type="text" name="filing_date" id="filing_date" value="<?=$row[filing_date]?>" class="datepicker" readonly>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="tit">
+						<label for="patent">등록일 <span class="sm">Registration Date</span></label>
+					</div>
+					<div class="inBox">
+						<div class="dateBox">
+							<span><i class="fa-solid fa-calendar-days"></i></span>
+							<input type="text" name="regi_date" id="regi_date" class="datepicker" readonly value="<?=$row[regi_date]?>">
+						</div>
+					</div>
+				</li>
+
+				<? $filled_ack_arr = explode("^", $row[filled_ack]); ?>
+				<li id="category_">
+					<div class="tit">
+						<label for="iacknowledgement"><span class="import">*</span>Acknowledgement</label>
+					</div>
+					<div id="category_area" class="career">
+						<input type="text" name="filled_ack[]" id="filled_ack_0" value="<?=$filled_ack_arr[0]?>" class="input300" onclick="ack_search(0)" readonly placeholder="Search Acknowledgement"/>
+						<a href="#" class="button gray" id="add_category2">+ Add</a>
+						<?
+							$count = 0;
+							foreach($chart_category_arr as $value){
+								if($count != 0){
+								$del_id = "#category_".$count;
+								$certificate_second_item = $certificate_second[$count];
+						?>
+							<div id="category_<?=$count?>">
+								<input type="text" name="filled_ack[]" id="filled_ack_<?=$count?>"  value="<?=$filled_ack_arr[$count]?>" class="input300"/>
+								<a href="#" id="del_category_<?=$count?>" class="button white" onclick="$('<?=$del_id?>').remove();">- Delete</a>
+							</div>
+						<?
+							}
+							$count++;
+						}
+						?>
+					</div>
+				</li>
+			   
+				<!-- <li>
+					<div class="tit">
+						<label for="acknowledgement​">Acknowledgement​</label>
+					</div>
+					<div class="inBox">
+						<div class="auto_search">
+							<input type="text" name="filled_ack" id="filled_ack"  class="inputFull autoSearch" placeholder="Search Acknowledgement" onclick="ack_search()" value="<?=$row[filled_ack]?>" readOnly data-control-button="search">
+							<button><i class="fa-solid fa-magnifying-glass"></i></button>
+						</div>
+						<a href="#" class="button gray" onclick="delete_info()"style="min-width:50px;" data-control-button="del">DELETE</a>
+					</div>
+				</li> -->
+
+				<li>
+					<div class="tit">
+						<label for="link">Link</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="link_url" id="link_url" class="inputFull" value="<?=$row[link_url]?>" placeholder="ex) http://www.naver.com">
+					</div>
+				</li>
+				
+				<? if($board[use_category] == "I") { ?>
+				<li>
+					<div class="tit">
+						<label for="classifyYear">Classify Year</label>
+					</div>
+					<div class="inBox">
+						<input type="text" name="category" id="category" value="<?=$row[category]?>" class="required inputFull" title="Category"/>
+					</div>
+				</li>
+				<? } ?>
+				<li>
+					<div class="tit">
+						<label for="document">Document</label>
+					</div>
+					<? if($board[file_count] != 0){ ?>
+					<div class="inBox">
+					   <?
+							for($i = 1; $i <= $board[file_count]; $i++) {
+									$file_title = $row["file_".$i];
+									$del_ = "File";
+									$del_2 = "";
+									if($file_title){
+										 $del_2 = "<a href='/upload/$board_id/$file_title' target='_blank' class='button white'>File : $file_title</a>";
+										 $del_3 = "<div class='designCheck mb10' style='display:inline-block;'><input type='checkbox' value='Y' id='del_$i' name='del_$i'/><label for='del_$i'>Delete</label></div>";
+									}
+									echo "<div class='designFile'><input type='text' readonly='readonly' value=''/><input type='file' name='file_$i' id='file_$i'/><label for='file_$i' class='button white'> $del_</label> $del_2 $del_3</div>";
+							 }
+						?>
+						<em class="tip">첨부파일 가능 용량은 <?=$board[file_limit_size]?>MB 입니다</em>
+					</div>
+					<? } ?>
+				</li>
+				<!-- <? if($board[is_membership] != "Y"){ ?>
+				<li>
+					<th scope="row"><span class="marking">required</span><label for="pin">Password</label></th>
+					<td colspan="3">
+						<input type="password" name="password" id="pin" value="" class="required" title="Password"  title="Password"/>
+						<em class="tip">※ Required when editing or deleting posts.</em>
+					</td>
+				</li>
+				<? } ?> -->
+			</ul>
+		</div>
+
+		<div class="btn_area">
+			<a href="#" class="button" onclick="submit_patent()">Submit</a>
+			<a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=list&amp;start=<?=$start?>&cate=<?=$cate?>" class="button gray">Cancel</a>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	$(":checkbox[name='notice'][value='<?=$row['notice']?>']").prop("checked", true);
+	$(":checkbox[name='secret'][value='<?=$row['secret']?>']").prop("checked", true);
+</script>
+</form>
+
+<script>
+		$("#add_category2").click(function(){
+		var count = $("#category_area > div").size() + 1;
+		var del_id2 = "category_"+count;
+		$("#category_area").append("<div id='category_"+count+"'> <input type='text' name='filled_ack[]' id='filled_ack_"+count+"' readonly onclick='ack_search("+count+")' placeholder='Search Acknowledgement' class='input300'/> <a href='#' id='del_category_"+count+"' class='button white' onclick='$(\"#"+del_id2+"\").remove();'><span>- Delete</span></a></div>");
+	});
+
+	function ack_search(cnt){
+		var popupX = (window.screen.width / 2) - (800 / 2);
+		var popupY= (window.screen.height /2) - (1200 / 2);
+		var get_id = $(this).parents("[data-control=data]").attr("id");
+		var new_window = window.open("/ko_admin/board/skin/default_publication/ack_search.html?cnt="+cnt+"&wrap_id="+get_id, "thi", "width=800,height=600,top="+popupY+",left="+popupX+",scrollbars");
+		new_window.focus();
+	}
+	function delete_info(){
+		$('#filled_ack').val('');
+	}
+
+	/*function ack_search(){
+		var popupX = (window.screen.width / 2) - (800 / 2);
+		var popupY= (window.screen.height /2) - (1200 / 2);
+		var get_id = $(this).parents("[data-control=data]").attr("id");
+		var new_window = window.open("/ko_admin/board/skin/default_patents/ack_search.html?wrap_id="+get_id, "thi", "width=800,height=600,top="+popupY+",left="+popupX+",scrollbars");
+		new_window.focus();
+	}
+	function delete_info(){
+		$('#filled_ack').val('');
+	}*/
+
+	$(function() {
+	  $( ".datepicker2" ).datepicker({
+		dateFormat: 'dd-M-yy',
+		prevText: '이전 달',
+		nextText: '다음 달',
+		//monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		//monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		dayNames: ['일','월','화','수','목','금','토'],
+		dayNamesShort: ['일','월','화','수','목','금','토'],
+		dayNamesMin: ['일','월','화','수','목','금','토'],
+		showMonthAfterYear: true,
+		changeMonth: true,
+		changeYear: true,
+		showOn: "both",
+		buttonText: "달력보기",
+	  });
+	});
+
+	function submit_patent(){
+		
+		var form_patent=document.form_patent;
+		if(!form_patent.title.value){
+			alert('Insert Title');
+			return;
+		}
+		if(!form_patent.category_inter_dome.value){
+			alert('Check Category');
+			return;
+		}
+		if(!form_patent.status_cate.value){
+			alert('Check Status');
+			return;
+		}
+		if(!document.getElementById('filled_ack_0').value){
+			alert("Insert Acknowledge");
+			return;
+		}
+		/*if(!form_patent.file_1.value){
+			alert('Insert Attachment');
+			return;
+		}*/
+		document.form_patent.submit();
+	}
+</script>

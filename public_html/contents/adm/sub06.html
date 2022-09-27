@@ -1,0 +1,195 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin">
+            <div class="adminCont">
+                
+                <!-- Publication -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+                <div class="area_formTop">
+                    <div class="formTab typeA">
+                        <ul>
+                            <li class="on">
+                                <a href="">전체</a>
+                            </li>
+                            <li>
+                                <a href="">International Journal</a>
+                            </li>
+                            <li>
+                                <a href="">International Conference​</a>
+                            </li>
+                            <li>
+                                <a href="">Domestic Journal​</a>
+                            </li>
+                            <li>
+                                <a href="">Domestic Conference​</a>
+                            </li>
+                            <li>
+                                <a href="">PhD Thesis​</a>
+                            </li>
+                            <li>
+                                <a href="">Master Thesis​</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="area_formConts">
+                    <div class="area_btn">
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>선택삭제</button>
+                        <button onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><i class="fa-solid fa-trash-can"></i>전체삭제</button>
+                    </div>
+
+                    <!-- 목록 -->
+                    <table class="bbsList form_public">
+                        <caption>acknowledgement 목록</caption>
+                        <colgroup>
+                            <col data-table="check" style="width: 5%"/>
+                            <col data-table="num" style="width: 5%"/>
+                            <col data-table="category" style="width: 10%"/>
+                            <col data-table="information"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" data-table="num">No.</th>
+                                <th scope="col" data-table="category">카테고리</th>
+                                <th scopt="col" data-table="information">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <!-- 반복구간 -->
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="num">88</td>
+                                <td data-table="category">Domestic confrence</td>
+                                <td data-table="information">
+                                    <div class="detailBox">
+                                        <div class="deTop">
+                                            <p class="p_title">FBI: A Federated Learning-Based Blockchain-Embedded Data Accumulation Scheme Using Drones for Internet of Things</p>
+                                            <p class="j_nam">Anik Islam, Ahmed Al Amin, Soo Young Shin</p>
+                                        </div>
+                                        <div class="deBottom">
+                                            <ul>
+                                                <li>
+                                                    <span>퍼스트아우터</span>
+                                                    <em>IEEE Wireless Communications Letters</em>
+                                                </li>
+                                                <li>
+                                                    <span>쿠퍼레이티브아우터</span>
+                                                    <em>Volume 11</em>
+                                                </li>
+                                               
+                                                <li>
+                                                    <span>Acknowledgement 네임</span>
+                                                    <em>pp 972-976</em>
+                                                </li>
+                                                <li>
+                                                    <span>Publish Date</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Under Review</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Acceptede</span>
+                                                    <em>IEEE Access</em>
+                                                </li>
+                                                <li>
+                                                    <span>Download</span>
+                                                   <em><a href="" download="">Download<i class="fa-solid fa-file-arrow-down"></i></a></em>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            
+                            </tr>
+                            <!-- 반복구간 끝 -->
+
+                            <tr>
+                                <td data-table="check">
+                                    <div class="designCheck">
+                                        <input type="checkbox" name="all_check" id="all_check" value="Y"><label for="all_check"></label>
+                                    </div>
+                                </td>
+                                <td data-table="num">88</td>
+                                <td data-table="category">Domestic confrence</td>
+                                <td data-table="information">
+                                    <div class="detailBox">
+                                        <div class="deTop">
+                                            <p class="p_title">FBI: A Federated Learning-Based Blockchain-Embedded Data Accumulation Scheme Using Drones for Internet of Things</p>
+                                            <p class="j_nam">Anik Islam, Ahmed Al Amin, Soo Young Shin</p>
+                                        </div>
+                                        <div class="deBottom">
+                                            <ul>
+                                                <li>
+                                                    <span>퍼스트아우터</span>
+                                                    <em>IEEE Wireless Communications Letters</em>
+                                                </li>
+                                                <li>
+                                                    <span>쿠퍼레이티브아우터</span>
+                                                    <em>Volume 11</em>
+                                                </li>
+                                               
+                                                <li>
+                                                    <span>Acknowledgement 네임</span>
+                                                    <em>pp 972-976</em>
+                                                </li>
+                                                <li>
+                                                    <span>Publish Date</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Under Review</span>
+                                                    <em>May 2022.</em>
+                                                </li>
+                                                <li>
+                                                    <span>Acceptede</span>
+                                                    <em>IEEE Access</em>
+                                                </li>
+                                                <li>
+                                                    <span>Download</span>
+                                                    <em><a href="" download="">Download<i class="fa-solid fa-file-arrow-down"></i></a></em>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            
+                            </tr>
+                            <tr>
+                                <td colspan="6" class="none">등록된 글이 없습니다.</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="btn_area">
+                    <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                    <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

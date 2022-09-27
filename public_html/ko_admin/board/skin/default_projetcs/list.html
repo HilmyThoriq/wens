@@ -1,0 +1,244 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 5; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+//리스트
+$total_query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+
+$query = "SELECT * FROM $board_id WHERE 1=1  $WHERE ORDER BY notice DESC, ref_group DESC, depth ASC, no DESC LIMIT $start, $scale";
+$result = mysql_query($query);
+?>
+
+
+<!-- 검색 및 버튼 -->
+<? //include "search.html"; ?>
+<!-- 검색 및 버튼 -->
+
+<? if($_SESSION[auth_level] < 4) { ?>
+<div class="adminCont">
+	
+	<!-- Projects list -->
+	<!-- 아래 내용부터 본 내용입니다.  -->
+	<div class="area_formTop">
+		<div class="formTab typeB">
+			<ul>
+				<li <?if(!$cate) echo "class='on'";?>>
+					<a href="/ko_admin/index.html?type=board&core_id=board_projetcs&core=manager_board">전체</a>
+				</li>
+				<li <?if($cate=="Previous Projects") echo "class='on'";?>>
+					<a href="/ko_admin/index.html?board_id=board_projetcs&cate=Previous Projects">Previous Project​s</a>
+				</li>
+				<li <?if($cate=="Ongoing Projects") echo "class='on'";?>>
+					<a href="/ko_admin/index.html?board_id=board_projetcs&cate=Ongoing Projects">Ongoing Projects​</a>
+				</li>
+										
+			</ul>
+		</div>
+	</div>
+<form action="<?=$PHP_SELF?>" method="GET" id="list_form">
+	<input type="hidden" name="mode" value="delete" />
+	<input type="hidden" name="classify" value="selected_del" />
+	<input type="hidden" name="board_id" value="board_projetcs" />
+	<input type="hidden" name="core" value="manager_board" />
+	<div class="area_formConts">
+		<? if($auth_write){?>
+			<div class="area_btn">
+				<a href="#" class="button" data-button-event="delete"><i class="fa-solid fa-trash-can"></i> 선택삭제</a>
+				<a href="<?=$PHP_SELF?>?mode=write&amp;board_id=<?=$board_id?>&cate=<?=$row[category]?>" class="button">WRITE</a>
+			</div>
+		<? } ?>
+		<!-- 목록 -->
+		<table class="bbsList form_prject">
+			<caption>acknowledgement 목록</caption>
+			<colgroup>
+				<col data-table="check" style="width: 5%"/>
+				<col data-table="num" style="width: 5%"/>
+				<col data-table="information"/>
+				<col data-table="acknowledgement​" style="width: 15%"/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col" data-table="check">
+						<div class="designCheck">
+							<input type="checkbox" name="all_checked" id="all_checked" value="Y"><label for="all_checked"></label>
+						</div>
+					</th>
+					<th scope="col" data-table="num">No.</th>
+					<th scopt="col" data-table="information">Detail</th>
+					<th scopt="col" data-table="acknowledgement">Acknowledgement</th>
+				</tr>
+			</thead>
+			<script>
+				$(function(){
+					/*$(":checkbox[name='lower'][value='<?=$lower?>']").prop("checked", true);*/
+					$("select[name='search_key'] option[value='<?=$search_key?>']").attr("selected", true);
+
+					$("#all_checked").change(function(){
+						if($(this).is(":checked")){
+							$("input:checkbox[name='info_check[]']").prop("checked", true);
+						} else {
+							$("input:checkbox[name='info_check[]']").prop("checked", false);
+						}
+					});
+
+					$("[data-button-event]").click(function(){
+						var this_event = $(this).data("button-event");
+
+						if(this_event == "delete"){
+							$("input[name=mode]").val("delete");
+							if($("input[name='info_check[]']:checked").length == 0){
+								 alert("There is no Selected item.");
+								 return;
+							}
+							if(confirm("Deleted Data cannot be recovered.\r\n\r\n Are you sure you want to delete it?")){
+								$("#list_form").submit();
+							}
+						}
+
+					});
+				});
+			</script>
+			<tbody>
+				<? if($total > 0) { ?>
+				<? $f_no = $total - $start; ?>
+				<? while($row = mysql_fetch_array($result)){ ?>
+					<?
+							$date_array = explode("-",  $row[reg_date]);
+							if($row[notice] == "Y") {
+								$no_title = "<em class='notice'>NOTICE</em>";
+								$f_no--;
+							} else {
+								$no_title = $f_no--;
+							}
+							$title_reply = "";
+
+							//현재글
+							if($no == $row[no]){
+								$total_txt = "<img src=\"/img/now_gul.gif\" />";
+							}
+
+							//7일 new 아이콘
+							if ($row[reg_date] >= date("Y-m-d", strtotime("-7 day"))) {
+								$title_new = "new";
+							} else unset($title_new);
+
+							//depth 가 1이상이면 답변 아이콘
+							if($row[depth] > 0){
+								//$padding_style = $row[depth] * 40;
+								$title_reply = "<em class='reply'>REPLY</em>";
+							}
+
+							$reply_query_count = "SELECT * FROM board_comment WHERE ref_board_no = '$row[no]' AND board_id = '$board_id'";
+							$reply_count_result = mysql_query($reply_query_count);
+							$reply_count = mysql_num_rows($reply_count_result);
+
+							if($reply_count > 0){
+								$reply_query = "SELECT * FROM board_comment  ref_board_no = '$row[no]' AND board_id = '$board_id ORDER BY reg_date DESC";
+								$reply_result = mysql_query($reply_query);
+								$reply_ico = "REPLY OK";
+							} else {
+								$reply_ico = "";
+							}
+
+					?>
+				<!-- 반복구간 -->
+				<tr>
+					<td data-table="check">
+						<div class="designCheck">
+							 <input type="checkbox" name="info_check[]" id="info_check<?=$row[no]?>" value="<?=$row[no]?>"><label for="info_check<?=$row[no]?>"></label>
+						</div>
+					</td>
+					<td data-table="num"><?=$no_title?></td>
+				 
+					<td data-table="information">
+						<div class="detailBox">
+							<div class="deTop">
+								<p class="en"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=view&amp;no=<?=$row[no]?>&cate=<?=$row[category]?>" class="<?=$title_new?>"><?=$row[title]?></a></p>
+								<p class="kr"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;mode=view&amp;no=<?=$row[no]?>&cate=<?=$row[category]?>" class="<?=$title_new?>"><?=$row[kor_title]?></a></p>
+							</div>
+							<div class="deBottom">
+								<ul>
+									<li>
+										<span>Funding Department​</span>
+										<em><?=$row[fund_department]?></em>
+									</li>
+									<li>
+										<span>Project Leader</span>
+										<em><?=$row[leader]?></em>
+									</li>
+								   
+									<li>
+										<span>Project Manager​</span>
+										<em><?=$row[manager]?></em>
+									</li>
+									<li>
+										<span>Publish Date</span>
+										<em><?=reset(explode(" ", $row[reg_date]))?></em>
+									</li>
+									<li>
+										<span>Role in Project​</span>
+										<em><?=$row[role]?></em>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</td>
+					<? $acknowledgement_arr = explode("^", $row[contents_02]); ?>
+					<? $cnt_ack = count($acknowledgement_arr) ;?>
+					<td data-table="acknowledgement">
+						<ul>
+							<? for($i=0; $i<$cnt_ack; $i++) { ?>
+							<li>
+								<span><i><?=$i+1?></i>차</span><em><?=$acknowledgement_arr[$i]?></em>
+							</li>
+							<? } ?>
+						</ul>
+					</td>
+				
+				</tr>
+				<? } ?>
+				<!-- 반복구간 끝 -->
+				<? } else { ?>
+					<tr>
+						<td colspan="3" class="none">There are no registered post.</td>
+					</tr>
+				<? } ?>
+				
+			</tbody>
+		</table>
+		
+	</div>
+
+  
+</div>
+<? } ?>
+
+<? if($auth_write){?>
+	<div class="search_bbs">
+	<!-- 버튼 -->
+		<div class="btn">
+			<a href="<?=$PHP_SELF?>?mode=write&amp;board_id=<?=$board_id?>&cate=<?=$row[category]?>" class="button">WRITE</a>
+		</div>
+	</div>
+<? } ?>
+</form>
+
+<!-- page -->
+<? include "paging.html"; ?>
+<!-- //page -->

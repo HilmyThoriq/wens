@@ -1,0 +1,79 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin">
+            <div class="adminCont">
+                
+                <!-- acknowledgement write Ver. -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+                <div class="area_formConts">
+
+                    <table class="bbsView">
+                        <caption>게시판 글쓰기</caption>
+                        <colgroup>
+                            <col data-write="th" style="width:15%"/>
+                            <col data-write="td" style="width:85%"/>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><span class="marking">필수항목</span><label for="title">Project name</label></th>
+                                <td><input type="text" name="title" id="title" class="inputFull"/></td>
+                            </tr>
+                           
+                            <tr>
+                                <th scope="row">Acknowledgement</th>
+                                <td>
+                                    <textarea name="" id="" class="inputFull"></textarea>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <th scope="row">Acknowledgement korea</th>
+                                <td>
+                                    <textarea name="" id="" class="inputFull"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="marking">필수항목</span><label for="title">IS Valid</label></th>
+                                <td>
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="use" id="use01" value="Y"><label for="use01">Yes</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="use" id="use02" value="N"><label for="use02">No</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- //글쓰기 -->
+                    
+                    <!-- 버튼 -->
+                    <div class="btn_area">
+                        <a href="#" class="button">저장</a>
+                        <a href="#" class="button gray">취소</a>
+                    </div>
+                    <!-- //버튼 -->
+                                
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>

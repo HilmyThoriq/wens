@@ -1,0 +1,132 @@
+<? if($mode == "modify"){ 
+	$query = "SELECT * FROM koweb_program_config WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$category = explode("|", $row[category_detail]);
+	$dept_auth_tmp = explode("|", $row[dept_auth]);
+} 
+if(!$mode){
+	$mode = "write";
+}
+?>
+<script type="text/javascript">
+	$(function() {
+		$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true); 
+		$("input:radio[name='user_view']:radio[value='<?=$row[user_view]?>']").prop("checked",true); 
+		$("input:radio[name='user_list']:radio[value='<?=$row[user_list]?>']").prop("checked",true); 
+	});
+</script>
+
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+<input type="hidden" name="no" value="<?=$no?>" />
+<input type="hidden" name="manager_type" value="program" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+	
+	<h2 class="mt0">프로그램 설정</h2>
+	<table class="bbsView">
+		<caption>프로그램 설정</caption>
+		<colgroup>
+			<col style="width:15%"/>
+			<col/>
+			<col style="width:15%"/>
+			<col style="width:35%"/>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row">프로그램 ID</th>
+				<? if($mode == "modify"){ ?>
+					<td colspan="3"><span><?=$row[id]?></span></td>
+				<? } else {?>
+					<td colspan="3"><input type="text" name="id" maxlength="" value="<?=$row[id]?>" title="프로그램 ID"  class="input300 required"/> <a href="#" class="button" onclick="id_ajax();">중복확인</a></td>
+				<? } ?>
+			</tr>
+			<tr>
+				<th scope="row">프로그램 제목</th>
+				<td><input type="text" name="title" maxlength="" value="<?=$row[title]?>" title="프로그램 제목" class="input300 required"/></td>			
+				<th scope="row">프로그램 테이블</th>
+				<td><input type="text" name="table" maxlength="" value="<?=$row[refer_table]?>" title="프로그램 테이블" class="required" /></td>
+			</tr>
+			<tr>
+				<th scope="row">유저 뷰페이지 사용</th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="user_view" value="Y" id="user_viewY" /><label for="user_viewY">사용</label>
+						<input type="radio" name="user_view" value="N" id="user_viewN"  checked="checked"/><label for="user_viewN">미사용</label>
+					</div>
+					<em class="tip"> * 사용시 사용자 페이지에서는 기존의 view.html이 아닌 user_view.html을 include 합니다. (미사용시는 그대로 view.html)</em>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">유저 리스트페이지 사용</th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="user_list" value="Y" id="user_listY" /><label for="user_listY">사용</label>
+						<input type="radio" name="user_list" value="N" id="user_listN"  checked="checked"/><label for="user_listN">미사용</label>
+					</div>
+					<em class="tip">* 사용시 사용자 페이지에서는 기존의 list.html이 아닌 user_list.html을 include 합니다. (미사용시는 그대로 list.html)</em>
+				</td>
+			</tr>
+			<!--<tr>
+				<th scope="row">연관 테이블 2</th>
+				<td><input type="text" name="relation_table2" size="50" maxlength="" value="<?=$row[relation_table2]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table2_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+			</tr>
+					<tr>
+				<th scope="row">연관 테이블 3</th>
+				<td><input type="text" name="relation_table3" size="50" maxlength="" value="<?=$row[relation_table3]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table3_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+			</tr>
+					<tr>
+				<th scope="row">연관 테이블 4</th>
+				<td><input type="text" name="relation_table4" size="50" maxlength="" value="<?=$row[relation_table4]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table4_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+			</tr>
+					<tr>
+				<th scope="row">연관 테이블 5</th>
+				<td><input type="text" name="relation_table5" size="50" maxlength="" value="<?=$row[relation_table5]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table5_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+			</tr>
+			<tr>
+				<th scope="row">사용자 URL</th>
+				<td><input type="text" name="user_url" size="50" maxlength="" value="<?=$row[user_url]?>" title="프로그램 테이블" /></td>
+			</tr>
+			<tr>
+				<th scope="row">관리자 URL</th>
+				<td><input type="text" name="admin_url" size="50" maxlength="" value="<?=$row[admin_url]?>" title="프로그램 테이블" /></td>
+			</tr>
+			
+			-->
+			<tr>
+				<th scope="row">사용여부</th>
+				<td>
+					<div class="designRadio">
+						<input type="radio" name="state" value="Y" id="stateY" checked="checked" /><label for="stateY">사용</label>
+						<input type="radio" name="state" value="N" id="stateN" /><label for="stateN">미사용</label>
+					</div>
+				</td>
+		
+				<th scope="row">부서별 권한 설정</th>
+				<td>
+					<div class="designCheck">
+						<input type="checkbox" name="dept_auth[]" value="" id="no_dept"/><label for="no_dept">사용안함</label>
+							<?
+							$dept_query = "SELECT * FROM koweb_dept WHERE state = 'Y'";
+							$dept_result = mysql_query($dept_query);
+							while($dept_auth = mysql_fetch_array($dept_result)){
+							?>
+							<input type="checkbox" name="dept_auth[]" value="<?=$dept_auth[no]?>" id="dept_auth_<?=$dept_auth[no]?>" data-dept-list/><label for="dept_auth_<?=$dept_auth[no]?>" ><?=$dept_auth[dept]?></label>
+							<? } ?>
+						</div>
+						<? foreach($dept_auth_tmp as $val){ ?>
+							<script type="text/javascript">
+								$(":checkbox[name='dept_auth[]'][value='<?=$val?>']").prop("checked", true);
+							</script>
+						<? } ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div class="btn_area">
+		<input class="button red" type="submit" value="등록">
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=program">취소</a>
+	</div>
+</form>

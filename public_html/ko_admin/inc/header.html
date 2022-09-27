@@ -1,0 +1,131 @@
+			<header>
+				<a href="/ko_admin/index.html"><h1>WEB Admin<em>홈페이지 통합관리자</em></h1></a>
+				<div class="util_area">
+					<ul>
+						<li><a href="/" target="_blank">홈페이지바로가기</a></li>
+						<li><a href="./logout.php">로그아웃</a></li>
+					</ul>
+				</div>
+			</header>
+			<!-- 해당 메뉴선택시 a태그에 class on처리 -->
+			<nav id="gnb">
+				<div class="gnb_area scrollbar-dynamic">
+					<!-- main -->
+					<div>
+						<em>MAIN</em>
+						<ul>
+							<li><a href="/ko_admin/index.html" data-gnb="main">대시보드</a></li>
+						</ul>
+					</div>
+					<!-- //main -->
+					<!-- Setting -->
+					<div>
+						<em>총괄관리</em>
+						<ul>
+							<? if($_SESSION[member_id] == "koweb"){?>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=board" <? if($manager_type == "board") echo "class='on'"; ?> data-gnb="setting">게시판 관리</a></li>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=program" <? if($manager_type == "program") echo "class='on'"; ?> data-gnb="setting">프로그램 관리</a></li>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=online" <? if($manager_type == "online") echo "class='on'"; ?> data-gnb="setting">온라인신청 관리</a></li>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=etc" <? if($manager_type == "etc") echo "class='on'"; ?>data-gnb="setting">기타프로그램 관리</a></li>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=reservation&amp;detail=item" <? if($manager_type == "reservation") echo "class='on'"; ?>data-gnb="setting">예약 관리</a></li>
+							<? } ?>
+
+							<!-- lecture 추가 프로그램 -->
+							<!-- <li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=lecture" <? if($manager_type == "lecture") echo "class='on'"; ?> data-gnb="setting">Lectures</a></li> -->
+
+
+							<!-- //추가 프로그램 끝 -->
+
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=site" <? if($manager_type == "site") echo "class='on'"; ?>data-gnb="setting">사이트 관리</a></li>
+						</ul>
+					</div>
+					<div>
+						<em>SETTING</em>
+						<ul>
+							<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=member" <? if($manager_type == "member") echo "class='on'"; ?> data-gnb="human">회원 관리</a></li>
+							<!--<li><a href="<?=$PHP_SELF?>?type=setting&amp;core=manager_setting&amp;manager_type=dept" <? if($manager_type == "dept") echo "class='on'"; ?> data-gnb="human">부서 관리</a></li>-->
+
+						</ul>
+					</div>
+					<!-- //Setting -->
+					<!-- board -->
+					<div>
+						<em>BOARD</em>
+						<ul data-drag-sort="koweb_board_config">
+						<?
+							$board_query = "SELECT * FROM koweb_board_config WHERE state = 'Y' AND ( dept_auth = '' OR dept_auth LIKE '%$_SESSION[member_dept]%' OR dept_auth is null ) ORDER BY sort ASC";
+							$board_result = mysql_query($board_query);
+							while($board = mysql_fetch_array($board_result)){
+								if($_SESSION[member_id] != "koweb"){
+									if($board[id] == "board_ko") continue;
+								}
+						?>
+							<? if($board[title] == "Main Research Results") { ?>
+							<li data-unique-no="<?=$board[no]?>"><a href="<?=$PHP_SELF?>?type=board&amp;core_id=<?=$board[id]?>&amp;core=manager_board&mode=modify&no=1" data-gnb="board" <? if($core_id == $board[id] || $board_id == $board[id] ) echo "class='on'";?>><?=$board[title]?></a></li>
+							<? } else if($board[title] == "Recruitment") { ?>
+								<? if($_SESSION[auth_level] == "1"){ ?>
+									<li data-unique-no="<?=$board[no]?>"><a href="<?=$PHP_SELF?>?type=board&amp;core_id=<?=$board[id]?>&amp;core=manager_board" data-gnb="board" <? if($core_id == $board[id] || $board_id == $board[id] ) echo "class='on'";?>><?=$board[title]?></a></li>
+							<? } ?>
+							<? } else { ?>
+							<li data-unique-no="<?=$board[no]?>"><a href="<?=$PHP_SELF?>?type=board&amp;core_id=<?=$board[id]?>&amp;core=manager_board" data-gnb="board" <? if($core_id == $board[id] || $board_id == $board[id] ) echo "class='on'";?>><?=$board[title]?></a></li>
+							<? } ?>
+						<? } ?>
+						</ul>
+					</div>
+					<!-- //board -->
+					<!-- Applications -->
+					<div>
+						<em>APPLICATIONS</em>
+						<ul data-drag-sort="koweb_program_config">
+						<?
+							$program_query = "SELECT * FROM koweb_program_config WHERE 1=1 AND ( dept_auth = '' OR dept_auth LIKE '%$_SESSION[member_dept]%' OR dept_auth is null ) AND state='Y' ORDER BY sort ASC";
+							$program_result = mysql_query($program_query);
+							while($program = mysql_fetch_array($program_result)){
+						?>
+							<li data-unique-no="<?=$program[no]?>"><a href="<?=$PHP_SELF?>?type=program&amp;core_id=<?=$program[id]?>&amp;core=manager_program" <? if($core_id == $program[id] || $program_id == $program[id] ) echo "class='on'"; ?> data-gnb="app"><?=$program[title]?></a></li>
+						<? } ?>
+						
+						</ul>
+					</div>
+					<!-- //Applications -->
+					<!-- Lecture -->
+				
+					<!-- //Lecture -->
+					<!-- online -->
+					<div>
+						<em>ONLINE FORM</em>
+						<ul>
+						<?
+							$online_query = "SELECT * FROM koweb_online_config WHERE 1=1 AND ( dept_auth = '' OR dept_auth LIKE '%$_SESSION[member_dept]%' OR dept_auth is null )";
+							$online_result = mysql_query($online_query);
+							while($online = mysql_fetch_array($online_result)){
+								
+						?>
+							<li><a href="<?=$PHP_SELF?>?type=online&amp;core_id=<?=$online[id]?>&amp;core=manager_online" <? if($core_id == $online[id] || $online_id == $online[id] ) echo "class='on'"; ?> data-gnb="app"><?=$online[title]?></a></li>
+						<? } ?>
+						</ul>
+					</div>
+					<!-- //Applications -->
+					<!-- log analysis -->
+					<!--
+					<div>
+						<em>SITE CONFIG</em>
+						<ul>
+						<?
+							$etc_query = "SELECT * FROM koweb_etc_config";
+							$etc_result = mysql_query($etc_query);
+							while($etc = mysql_fetch_array($etc_result)){
+						?>
+							<li><a href="<?=$PHP_SELF?>?type=etc&amp;core_id=<?=$etc[id]?>&amp;core=manager_etc" <? if($core_id == $etc[id] || $etc_id == $etc[id] ) echo "class='on'"; ?> data-gnb="visitor"><?=$etc[title]?></a></li>
+						<? } ?>
+						</ul>
+					</div>
+					-->
+					<!-- //log analysis -->
+				</div>
+			</nav>
+
+			<!-- 내용 -->
+			<div id="container">
+				<section class="content scrollbar-dynamic">
+					<div class="conts">

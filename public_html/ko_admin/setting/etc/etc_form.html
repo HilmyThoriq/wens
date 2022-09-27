@@ -1,0 +1,155 @@
+<? 	
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/config_setup.php"; 
+	include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php"; 
+?>
+
+<? if($mode == "modify"){ 
+	$query = "SELECT * FROM koweb_etc_config WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+//	$tmp_id = explode("_", $row[id]);
+//	$row[id] = $tmp_id[1];
+	$category = explode("|", $row[category_detail]);
+} 
+
+if(!$mode){
+	$mode = "write";
+}
+?>
+
+<script type="text/javascript">
+	$(function() {
+		$("select[name='auth_read'] option[value='<?=$row[auth_read]?>']").prop("selected", true);
+		$("select[name='auth_write'] option[value='<?=$row[auth_write]?>']").prop("selected", true);
+		$("select[name='auth_comment'] option[value='<?=$row[auth_comment]?>']").prop("selected", true);
+		$("select[name='auth_delete'] option[value='<?=$row[auth_delete]?>']").prop("selected", true);
+		$("select[name='auth_reply'] option[value='<?=$row[auth_reply]?>']").prop("selected", true);
+		$("select[name='skin'] option[value='<?=$row[skin]?>']").prop("selected", true);
+		$("select[name='file_count'] option[value='<?=$row[file_count]?>']").prop("selected", true);
+		$("input:radio[name='use_category']:radio[value='<?=$row[use_category]?>']").prop("checked",true); 
+		$("input:radio[name='use_reply']:radio[value='<?=$row[use_reply]?>']").prop("checked",true); 
+		$("input:radio[name='use_comment']:radio[value='<?=$row[use_comment]?>']").prop("checked",true); 
+		$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true); 
+		$(":checkbox[name='always_secret'][value='<?=$row['always_secret']?>']").prop("checked", true);
+		$(":checkbox[name='use_address'][value='<?=$row['use_address']?>']").prop("checked", true);
+
+
+		//카테고리 미사용일시 // 초기 로딩시 값 설정 disabled 설정
+		if ($("input:radio[name='use_category']:checked").val() == "N"){
+			$(".category_list").prop("disabled", true);
+		} else {
+			$(".category_list").prop("disabled", false);
+		}
+
+
+		//notice 스킨 카테고리, 답변사용 불가 // 초기 로딩시 값 설정 disabled 설정
+		if ($("#skin option:selected").val() == "notice"){
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+		} else {
+				$(".category_list").prop("disabled", false);
+				$(".use_reply").prop("disabled",  false);
+				$(".use_category").prop("disabled", false);
+		}
+		
+		$("input:radio[name='use_category']").click(function() {
+			if($(this).val() == "Y"){
+				$(".category_list").prop("disabled", false);
+			} else {
+				$(".category_list").prop("disabled", true);
+			}
+		});
+
+		$("#skin").change(function() { 
+			if($(this).val() == "notice") {
+				$(".use_category:radio[value='N']").prop("checked",true); 
+				$(".use_reply:radio[value='N']").prop("checked",true); 
+				$(".category_list").prop("disabled", true);
+				$(".use_reply").prop("disabled", true);
+				$(".use_category").prop("disabled", true);
+			} else {
+				$(".category_list").prop("disabled", false);
+				$(".use_reply").prop("disabled",  false);
+				$(".use_category").prop("disabled", false);
+			}
+		});
+
+	});
+</script>
+
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+<input type="hidden" name="no" value="<?=$no?>" />
+<input type="hidden" name="manager_type" value="etc" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+	<h2 class="mt0">사이트 설정</h2>
+	<table class="bbsView">
+		<caption>사이트 설정</caption>
+		<colgroup>
+			<col style="width:15%"/>
+			<col/>
+			<col style="width:15%"/>
+			<col style="width:35%"/>
+		</colgroup>
+		<tr>
+			<th scope="row">프로그램 ID</th>
+			<? if($mode == "modify"){ ?>
+				<td colspan="3"><span><?=$row[id]?></span></td>
+			<? } else {?>
+				<td colspan="3"><input type="text" name="id" maxlength="20" value="<?=$row[id]?>" title="프로그램 ID" class="input300 required" /></td>
+			<? } ?>
+		</tr>
+		<tr>
+			<th scope="row">프로그램 제목</th>
+			<td><input type="text" name="title" maxlength="" value="<?=$row[title]?>" title="프로그램 제목" class="input300 required" /></td>		
+			<th scope="row">프로그램 테이블</th>
+			<td><input type="text" name="table" maxlength="" value="<?=$row[table]?>" title="프로그램 테이블" class="required" /></td>
+		</tr>
+		<!--<tr>
+			<th scope="row">연관 테이블 1</th>
+			<td><input type="text" name="relation_table1" size="50" maxlength="" value="<?=$row[relation_table1]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table1_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+		</tr>
+				<tr>
+			<th scope="row">연관 테이블 2</th>
+			<td><input type="text" name="relation_table2" size="50" maxlength="" value="<?=$row[relation_table2]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table2_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+		</tr>
+				<tr>
+			<th scope="row">연관 테이블 3</th>
+			<td><input type="text" name="relation_table3" size="50" maxlength="" value="<?=$row[relation_table3]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table3_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+		</tr>
+				<tr>
+			<th scope="row">연관 테이블 4</th>
+			<td><input type="text" name="relation_table4" size="50" maxlength="" value="<?=$row[relation_table4]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table4_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+		</tr>
+				<tr>
+			<th scope="row">연관 테이블 5</th>
+			<td><input type="text" name="relation_table5" size="50" maxlength="" value="<?=$row[relation_table5]?>" title="프로그램 테이블" /> 메모 : <input type="text" name="relation_table5_memo" size="50" maxlength="" value="<?=$row[table]?>" class="" title="메모1" /></td>
+		</tr>
+
+
+
+		<tr>
+			<th scope="row">사용자 URL</th>
+			<td><input type="text" name="user_url" size="50" maxlength="" value="<?=$row[user_url]?>" title="프로그램 테이블" /></td>
+		</tr>
+		<tr>
+			<th scope="row">관리자 URL</th>
+			<td><input type="text" name="admin_url" size="50" maxlength="" value="<?=$row[admin_url]?>" title="프로그램 테이블" /></td>
+		</tr>
+		<tr>
+			<th scope="row">사용여부</th>
+			<td>
+				<label for=""><input type="radio" name="state" value="Y" checked="checked" /> Y</label>
+				<label for=""><input type="radio" name="state" value="N" /> N</label>
+			</td>
+		</tr>
+		-->
+	</table>
+
+	<div class="btn_area">
+		<input class="button red" type="submit" value="등록">
+		<a class="button" href="?type=setting&core=manager_setting&manager_type=etc">취소</a>
+	</div>
+</form>

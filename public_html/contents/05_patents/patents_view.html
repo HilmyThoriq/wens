@@ -1,0 +1,204 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+<? $query = "SELECT * FROM board_patents WHERE no=$no"; ?>
+<? $result = mysql_query($query); ?>
+<? $row = mysql_fetch_array($result); ?>
+
+<section id="container">		
+	<div id="content">
+        <div class="area_sub c_box">
+            <div class="inr">
+                <!-- 서브타이틀 -->
+                <div class="area_subtitle">
+                    <h3><?=$row[status_cate]?></h3>
+                </div>
+
+                <!-- 서브 내용 -->
+                <div class="area_conts area_prjView w_box">
+                    <div class="bbsNew_container v2">
+   
+                        <!-- 상세 -->
+                        <div class="bbsTitle_cont">
+                            <h3 class="bbsTitle"><?=$row[title]?></h3>
+                            <div class="bbsDate">
+                                <ul>
+                                <!-- <li>케이오웹</li> -->
+								<!-- 사용자 페이지 view count +1 -->
+								<? mysql_query("UPDATE board_patents SET view_count = view_count +1 WHERE no='$no'"); ?>
+								<? $reg_date = explode(" ", $row[reg_date]); ?>
+                                <li><i>작성일</i><?=$reg_date[0]?></li>
+                                <li><i>조회수</i><?=$row[view_count]+1?></li>
+                                </ul>
+                            </div>
+                    
+                        </div>
+                    
+                        <div class="bbsContent">        
+                            <div class="conts">
+
+                                <div class="prjDetail">
+                                   
+                                    <ul class="ul">
+                                        <li class="li typeB title">
+                                            <div>
+                                                <strong>Title</strong>
+                                                <div class="box_cont">
+                                                   <p><?=$row[title]?></p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="li">
+                                            <div>
+                                                <strong>Category</strong>
+                                                <div class="box_cont">
+                                                    <p><?=$row[category_inter_dome]?></p>
+                                                </div>
+                                            </div>
+                                         </li>
+                                         <li class="li">
+                                            <div>
+                                                <strong>Project</strong>
+                                                <div class="box_cont">
+													<? $filing_date = explode("-", $row[filing_date]); ?>
+                                                    <p><?=$row[filled_ack]?> (<?=$filing_date[2];?>)</p>
+                                                </div>
+                                            </div>
+                                         </li>
+                                         <li class="li">
+                                            <div>
+                                                <strong>patent_number</strong>
+                                                <div class="box_cont">
+                                                    <p>000-000000-0000</p>
+                                                </div>
+                                            </div>
+                                         </li>
+                                        <li class="li">
+                                            <div>
+                                                <strong>Application Number</strong>
+                                                <div class="box_cont">
+                                                    <p><?=$row[appli_num]?></p>
+                                                </div>
+                                            </div>
+                                         </li>
+                                       
+                                        <li class="li">
+                                            <div class="">
+                                                <strong>Link</strong>
+                                                <div class="box_cont">
+                                                    <a href="<?=$row[link_url]?>"   target="_blank" ><?=$row[link_url]?> <i class="fa-solid fa-link"></i></a>
+                                                </div>
+                                               
+                                            </div>
+                                         </li>
+                                        <li class="li typeB">
+                                            <div>
+                                                <strong>Document</strong>
+                                                <div class="box_cont">
+                                                    <div class="bbsFile" data-view="txt">
+                                                        <div class="file">                
+                                                           <ul>
+                                                              <!-- 디폴트, 첨부파일이 없을때 -->
+                                                              <!-- <li><em></em><p>첨부파일이 없습니다</p></li> -->
+															  <?
+																if($row[file_1]){
+																	for ($i = 1; $i <=10; $i++){
+																			$file_title =  $row["file_".$i];
+																			if($file_title){
+																				echo "<li><em></em><a href=\"/board/download.php?board_id=board_patents&amp;file=$file_title\">$file_title</a></li>";
+																		  }
+																	}
+																}else{
+																	echo "<li><em></em><p>첨부파일이 없습니다</p></li>";
+																}
+																?>
+                                                           </ul>			
+                                                        </div>
+                                                     </div>
+                                                </div>
+                                            </div>
+                                         </li>
+                                       
+                                    </ul>
+                                </div>
+                                
+                              <!-- 이미지 등록시 -->
+                                <!-- <figure class="img">
+                                    <img src="../../images/sample.jpg" alt="">
+                                </figure> -->
+                               
+                                
+                                
+
+                            </div>    
+                            <!-- 신청하는 버튼(CUSTOM) 있을때 -->
+                           
+                           
+                        </div>	     
+                    
+                        <!-- 수정&삭제 및 어드민 버튼이 있을때 admPager추가-->
+                        <div class="bbsPager">       
+                            <div class="inr_pager">
+                                <!-- 링크 뒤 #content 추가 -->            
+                                <a href="/contents/05_patents/user_patents.html?board_id=board_patents&amp;start=<?=$start?>&amp;cate=<?=$row[category]?>" class="pager_list">
+                                    <span>List</span>
+                                </a>
+                    
+                                <!-- 수정&삭제 및 어드민 버튼이 있을때만 마크업추가-->
+                                <!-- <ul class="admPager_btn">
+                                    <li><a href="">수정</a></li>
+                                    <li><a href="">삭제</a></li>
+                                </ul> -->
+                    
+                            </div>       
+                        </div>  
+						<?
+							$board_id = "board_patents";
+							// 다음글, 이전글
+							$temp_next = mysql_fetch_array(mysql_query("SELECT no, title FROM $board_id WHERE  no>'$no' ORDER BY  no ASC LIMIT 1"));
+							if ($temp_next) $next = "?no=$temp_next[no]&amp;mode=view&amp;board_id=$board_id&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;cate=$row[category]";
+							else $next = "#";
+							// 이전글
+							$temp_prev = mysql_fetch_array(mysql_query("SELECT no, title FROM $board_id WHERE no<'$no' ORDER BY no DESC LIMIT 1"));
+							if ($temp_prev) $prev = "?no=$temp_prev[no]&amp;mode=view&amp;board_id=$board_id&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;cate=$row[category]";
+							else $prev = "#";
+						?>
+						<div class="bbsControls">
+                            <ul>
+                                <li class="btn_ctrol prev">
+                                    <a href="<?=$prev?>">
+                                        <em>PREV</em>
+                                        <p>
+											<? if($temp_prev[title]) {?>
+												<?=$temp_prev[title]?>
+											<? } else { ?>
+												이전 게시물이 없습니다.
+											<? } ?>
+										</p>
+                                    </a>
+                                </li>
+                                <li class="btn_ctrol next">
+                                    <a href="<?=$next?>">
+                                        <em>NEXT</em>
+                                        <p>
+											<? if($temp_next[title]) {?>
+												<?=$temp_next[title]?>
+											<? } else { ?>
+												다음 게시물이 없습니다.
+											<? } ?>
+										</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+<?include("../../inc/footer.html")?>

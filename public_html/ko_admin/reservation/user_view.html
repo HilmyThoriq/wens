@@ -1,0 +1,88 @@
+<?
+$query =
+	"SELECT
+		*,
+		A.no as no,
+		A.state as state
+	FROM
+		koweb_reservation_date as A
+		LEFT JOIN koweb_reservation_item as B ON A.item_no = B.no
+	WHERE
+		A.no='$no'";
+	$result = mysql_query($query);
+	$res_row = mysql_fetch_array($result);
+	$item_option = str_replace(array("|","^"),array("<br />"," : "),$res_row['item_option']);
+	$item_option = $item_option == " : " ? "" : $item_option;
+	$online_no = $res_row['input_no'];
+
+	//예약설정 가져오기
+	$online_table = empty($res_row['input_id']) ? $reservation['online_config_id'] : $res_row['input_id'];
+	$online_config_no = $reservation['online_config_no'];
+
+	$online_query = "SELECT * FROM koweb_online_config where no='$online_config_no'";
+	$online_result = mysql_query($online_query);
+	$online = mysql_fetch_array($online_result);
+	$sort = explode("|",$online['sort']);
+
+	$temp_use = explode("|",$online['use_email']);
+	$online['use_email'] = $temp_use[0];
+	$use_email_r = $temp_use[1] ? $temp_use[1] : "";
+
+	$temp_use = explode("|",$online['use_phone']);
+	$online['use_phone'] = $temp_use[0];
+	$use_phone_r = $temp_use[1] ? $temp_use[1] : "";
+
+	$WHERE = "AND 1=2";
+	if($online['use_email'] == "Y" && $use_email_r=="R"){
+		if(!empty($_SESSION['s_email'])){
+			$WHERE_arr[] = " AND email='{$_SESSION['s_email']}'";
+		}else{
+			$WHERE_arr[] = " AND 1=2";
+		}
+	}
+	if($online['use_phone'] == "Y" && $use_phone_r=="R"){
+		$temp_phone = str_replace("-","",$_SESSION['s_phone']);
+		if(!empty($temp_phone)){
+			$WHERE_arr[] = " AND replace(phone,'-','')='$temp_phone'";
+		}else{
+			$WHERE_arr[] = " AND 1=2";
+		}
+	}
+	if(count($WHERE_arr) > 0) $WHERE = join(" " , $WHERE_arr);
+
+	$query = "SELECT * FROM $online_table WHERE no='$online_no' {$WHERE}";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+
+	if(!$row){
+		error("잘못된 접근입니다.");
+		exit;
+	}
+	$mode_title = $online[title]." 수정";
+	$phone = explode("-", $row[phone]);
+	$email = explode("@", $row[email]);
+	$sort = explode("|",$online['sort']);
+	switch ($res_row['state']) {
+		case '10': $state="<span class='txt_gray'>대기</span>"; break;
+		case '20': $state="<span class='txt_red'>미승인</span>"; break;
+		case '99': $state="<span class='txt_blue'>승인</span>"; break;
+		default : $state = ""; break;
+	}
+	//예약설정 가져오기 끝
+?>
+
+<p class="reserve_date"><span>예약 기간</span> <?=$res_row['start_year']?>-<?=$res_row['start_month']?>-<?=$res_row['start_day']?> ~ <?=$res_row['end_year']?>-<?=$res_row['end_month']?>-<?=$res_row['end_day']?></p>
+
+<!-- 상품정보 -->
+<? include ("item_view.html"); ?>
+<!-- 상품정보 -->
+
+<h3>고객정보<span class="reserve_state">예약 상태 : <i><?=$state?></i></span></h3>
+
+<? include ("online_view.html"); ?>
+
+<!-- 버튼 -->
+<div class="btn_area">
+	<a href="<?=$common_url?>&amp;year=<?=$year?>&amp;month=<?=$month?>" class="button">목록</a>
+</div>
+<!-- //버튼 -->

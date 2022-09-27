@@ -1,0 +1,54 @@
+<!-- area_subVisual -->
+<div class="area_subVisual">
+    <span class="bg06"></span>
+    <h2></h2>
+</div>
+<?include("../../inc/lnb.html")?>
+
+<!-- //area_subVisual -->
+
+<?
+$basename = basename($_SERVER['PHP_SELF']);
+$file_ = explode(".", $basename);	
+$common_ = substr($file_[0], 0, 5);
+?>
+<script type="text/javascript">
+	$(".gnb > li > a").removeClass("on");
+	$(".notice").addClass("on");
+	$(".notice_"+"<?=$file_[0]?>").addClass("on");
+	$(".notice_"+"<?=$common_?>").addClass("on");
+	$(".notice_"+"<?=$common_?>").parent('li').addClass("active");
+
+	var type = "<?=$type?>";
+
+	var board_id = "<?=$board_id?>";
+
+	if( type == "news" ){
+		$(".notice_news").addClass("on");
+		$(".notice_news").parent('li').addClass("on");
+	}else if( type == "gallery" ){
+		$(".notice_gallery").addClass("on");
+		$(".notice_gallery").parent('li').addClass("on");
+	}
+
+	if("<?=$board_id?>"){
+	//게시판일경우
+		$("."+"<?=$board_id?>").addClass("on");
+		$("."+"<?=$board_id?>").parent('li').addClass("active");
+
+
+		$("."+"notice_<?=$cate?>").addClass("on");
+		$("."+"notice_<?=$cate?>").parent('li').addClass("active");
+
+	}else{
+		$(".notice_"+"<?=$common_?>").addClass("on");
+	}
+
+	if("<?=$online_id?>"){
+	//게시판일경우
+		$("."+"<?=$online_id?>").addClass("on");
+		$("."+"<?=$online_id?>").parent('li').addClass("active");
+	}else{
+		$(".notice_"+"<?=$common_?>").addClass("on");
+	}
+</script>

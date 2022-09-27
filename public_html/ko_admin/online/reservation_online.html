@@ -1,0 +1,242 @@
+<?
+    $temp_use = explode("|",$online['use_email']);
+    $online['use_email'] = $temp_use[0];
+    $use_email_r = $temp_use[1] ? $temp_use[1] : "";
+
+    $temp_use = explode("|",$online['use_phone']);
+    $online['use_phone'] = $temp_use[0];
+    $use_phone_r = $temp_use[1] ? $temp_use[1] : "";
+    for($wrap_i = 1; $wrap_i <= 10; $wrap_i++){
+        $i = $sort[$wrap_i-1]; //솔트로 인한 진짜 인덱스
+
+        //프로그램 변수 선언
+        $variable_ = $online["variable_".$i];
+        $field_no = "variable_".$i;
+        $variable_ = explode("|", $variable_);
+        $tmp_name = $variable_[0];
+        $tmp_type = $variable_[1];
+        $tmp_state = $variable_[3];
+        $tmp_id = $variable_[4];
+        $tmp_view = $variable_[5];
+        $tmp_type_option = $variable_[7];
+        if($tmp_state != "Y") continue;
+
+        //필수항목
+        $required = "";
+        $check = "";
+        $tmp_class = "";
+        $tmp_size_class = "input300";
+        $tmp_required = $variable_[2];
+        if($tmp_required == "Y"){
+            $required = "<span class=\"marking\">필수항목</span>";
+            $check = "required";
+        }
+
+        if($tmp_type == "cal"){
+            $tmp_type = "text";
+            $tmp_class = "datepicker";
+            $tmp_size_class = "input100";
+        }
+
+        //타입옵션
+        $tmp_type_option_arr = explode("^",$tmp_type_option);
+        if($tmp_type_option_arr[0] == "") $tmp_type_option_arr[0] = "타입세부를 입력해주세요";
+?>
+    <tr>
+        <th scope="row"><?=$required?><label for="<?=$tmp_id?>"><?=$tmp_name?></label></th>
+        <td>
+        <? if($tmp_type == "textarea"){ ?>
+            <textarea name="variable_<?=$i?>" id="<?=$tmp_id?>" title="<?=$tmp_name?>" style="width:100%;"><?=$row[$field_no]?></textarea>
+        <? } elseif($tmp_type == "radio"){ ?>
+            <div id="<?=$tmp_id?>" class="designRadio">
+                <? foreach ($tmp_type_option_arr as $type_key => $type_value){ ?>
+                    <input <?=$row[$field_no] == $type_value ? "checked" : "" ?> type="<?=$tmp_type?>" name="variable_<?=$i?>" id="<?=$tmp_id?>_<?=$type_key?>" class="<?=$check?>_<?=$tmp_type?> <?=$tmp_class?>" value="<?=$type_value?>" title="<?=$tmp_name?>"/>
+                    <label for="<?=$tmp_id?>_<?=$type_key?>"><?=$type_value?></label>
+                <? } //foreach END ?>
+            </div>
+        <? } elseif($tmp_type == "select"){ ?>
+            <select name="variable_<?=$i?>" id="<?=$tmp_id?>" title="<?=$tmp_name?>" class="inputFull <?=$tmp_size_class?> <?=$check?>_<?=$tmp_type?> <?=$tmp_class?>">
+                <? foreach ($tmp_type_option_arr as $type_key => $type_value){ ?>
+                    <option <?=$row[$field_no] == $type_value ? "selected" : "" ?> value="<?=$type_value?>"><?=$type_value?></option>
+                <? } //foreach END ?>
+            </select>
+        <? } else { ?>
+            <input type="<?=$tmp_type?>" name="variable_<?=$i?>" id="<?=$tmp_id?>" class="inputFull <?=$tmp_size_class?> <?=$check?> <?=$tmp_class?>" value="<?=$row[$field_no]?>" title="<?=$tmp_name?>"/>
+        <? } ?>
+			<input type="hidden" name="variable_type_<?=$i?>" value="<?=$tmp_type?>" />
+        </td>
+    </tr>
+<? } ?>
+<? if($online[use_phone] == "Y"){
+    $check = "";
+    $required = "";
+    if($use_phone_r == "R"){
+        $required = "<span class=\"marking\">필수항목</span>";
+        $check = "required";
+    }
+    ?>
+    <tr>
+        <th scope="row"><?=$required?><label for="phone1">연락처</label></th>
+        <td class="tel">
+            <select name="phone1" id="phone1">
+                <option value="010" <?=$phone[0]== "010" ? "selected" : ""?>>010</option>
+                <option value="011" <?=$phone[0]== "011" ? "selected" : ""?>>011</option>
+                <option value="016" <?=$phone[0]== "016" ? "selected" : ""?>>016</option>
+                <option value="017" <?=$phone[0]== "017" ? "selected" : ""?>>017</option>
+                <option value="018" <?=$phone[0]== "018" ? "selected" : ""?>>018</option>
+                <option value="019" <?=$phone[0]== "019" ? "selected" : ""?>>019</option>
+            </select> -
+            <input type="text" name="phone2" id="phone2" class="input100 <?=$check?>" value="<?=$phone[1]?>" title="연락처 두번째 자릿수" /> - 
+			<input type="text" name="phone3" id="phone3" class="input100 <?=$check?>" value="<?=$phone[2]?>" title="연락처 세번째 자릿수" />
+            <? if($online['use_certi'] == "Y" && $site['use_sms']=="Y" && !empty($site['sms_id']) && !empty($site['sms_key']) && !$is_admin){ ?>
+                <button type='button' onclick="sms_send();" class='button white'>본인인증</button>
+            <? } ?>
+        </td>
+    </tr>
+    <? if($online['use_certi'] == "Y" && $site['use_sms']=="Y" && !empty($site['sms_id']) && !empty($site['sms_key']) && !$is_admin){ ?>
+    <tr>
+        <th scope="row"><span class="marking">필수항목</span>인증번호 입력</th>
+        <td>
+            <input type="text" name="sms_auth" value="" class="input200 required" id="sms_auth" title="인증번호"/>
+            <span id="auth_message"><a href="#" onclick="sms_auth();" class="button">확인</a></span>
+            <input type="hidden" name="sms_auth2" id="sms_auth2" value="" class="auth_required" />
+        </td>
+    </tr>
+    <? } ?>
+<? } ?>
+
+    <? if($online[use_email] == "Y"){
+        $check = "";
+        $required = "";
+        if($use_email_r == "R"){
+            $required = "<span class=\"marking\">필수항목</span>";
+            $check = "required";
+        }
+        ?>        
+        <tr>
+            <th scope="row"><?=$required?><label for="email1">이메일</label></th>
+            <td class="mail">
+                <input type="text" class="<?=$check?>" name="email1" id="email1" value="<?=$email[0]?>" class="input200"/>
+                @
+                <select name="tmp_mail" id="tmp_mail" onchange="javascript:mail_check();" title="이메일주소선택항목">
+                    <option value="">선택하세요</option>
+                    <option <?=$email[1] == "naver.com" ? "selected" : ""?> value="naver.com">naver.com</option>
+                    <option <?=$email[1] == "daum.net" ? "selected" : ""?> value="daum.net">daum.net</option>
+                    <option <?=$email[1] == "hanmail.net" ? "selected" : ""?> value="hanmail.net">hanmail.net</option>
+                    <option <?=$email[1] == "hotmail.com" ? "selected" : ""?> value="hotmail.com">hotmail.com</option>
+                    <option <?=$email[1] == "gmail.com" ? "selected" : ""?> value="gmail.com">gmail.com</option>
+                    <option <?=$email[1] == "other" ? "selected" : ""?> value="other">직접입력</option>
+                </select>
+                <input type="text" name="email2" class="<?=$check?>" value="<?=$email[1]?>" id="email2" disabled class="input200" title="이메일직접입력"/>
+                <input type="hidden" name="email3" id="email3" value="<?=$email[1]?>" />
+
+				<script type="text/javascript">
+					function mail_check(){
+						if($("#tmp_mail").val() == "other"){
+							$("#email2").val("");
+							$("#email2").prop("disabled", "");
+						} else {
+							$("#email2").val("");
+							$("#email2").val($("#tmp_mail").val());
+							$("#email2").prop("disabled", "disabled");
+						}
+							$("#email3").val($("#email2").val());
+					}
+				</script>
+            </td>
+        </tr>
+    <? } ?>
+
+    <? if($online[use_addr] == "Y"){  ?>        
+        <tr>
+            <th scope="row" rowspan="3"><label for="zip">주소</label></th>
+            <td class="address">
+                <input type="text" class="input200"  name="zip" id="zip" value="<?=$member[zip]?>" />
+                <a href="javascript:execDaumPostcode()" class="button white">우편번호검색</a>
+
+				<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+				<script type="text/javascript">
+					function execDaumPostcode()
+					{
+						new daum.Postcode(
+						{
+							oncomplete: function(data)
+							{
+								// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+								// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+								// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+								var fullAddr  = "";					// 최종 주소 변수
+								var extraAddr = "";					// 조합형 주소 변수
+
+								// 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+								if (data.userSelectedType === "R")
+								{
+									// 사용자가 도로명 주소를 선택했을 경우
+									fullAddr = data.roadAddress;
+								}
+								else
+								{
+									// 사용자가 지번 주소를 선택했을 경우(J)
+									fullAddr = data.jibunAddress;
+								}
+
+								// 사용자가 선택한 주소가 도로명 타입일때 조합한다.
+								if (data.userSelectedType === "R")
+								{
+									// 법정동명이 있을 경우 추가한다.
+									if (data.bname !== "")
+									{
+										extraAddr += data.bname;
+									}
+
+									// 건물명이 있을 경우 추가한다.
+									if (data.buildingName !== "")
+									{
+										extraAddr += (extraAddr !== "" ? ", " + data.buildingName : data.buildingName);
+									}
+
+									// 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+									fullAddr += (extraAddr !== "" ? " (" + extraAddr + ")" : "");
+								}
+
+								// 우편번호와 주소 정보를 해당 필드에 넣는다.
+								document.getElementById("zip").value      = data.zonecode;			// 5자리 새우편번호 사용
+								document.getElementById("address1").value = fullAddr;
+
+								// 커서를 상세주소 필드로 이동한다.
+								document.getElementById("address2").focus();
+							}
+						}).open();
+					}
+				</script>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="inputFull" name="address1" id="address1" value="<?=$member[address1]?>" title="상세주소1"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="inputFull" name="address2" id="address2" value="<?=$member[address2]?>" title="상세주소2"/>
+            </td>
+        </tr>
+    <? } ?>
+
+    <? if($online[use_private_agree] == "Y") { ?>
+        <tr>
+            <td colspan="2">			 	
+				<em><span class="marking">필수항목</span>개인정보 정보제공 약관</em>
+                <textarea id="" style="width:100%; height:200px;"  readonly><?=$online[private_text]?></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+				<em><span class="marking">필수항목</span>개인정보 정보제공 동의</em>
+				<div class="designRadio tac">
+					<input type="radio" name="agree" id="agree" value="Y"  title="개인정보 정보제공 동의" /><label for="agree"><b>동의합니다</b></label>
+					<input type="radio" name="agree" id="noagree" value="N"  title="개인정보 정보제공 동의" /><label for="noagree">동의하지 않습니다.</label>
+				</div>
+            </td>
+        </tr>
+    <? } ?>

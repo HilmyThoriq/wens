@@ -1,0 +1,184 @@
+<?
+	if (!$auth_read) error("보기 권한이 없습니다.");
+
+	$query = "SELECT * FROM $board_id WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	if($row[tag_type] != "TAG"){
+		$row[comments] = nl2br($row[comments]);
+	}				
+
+	//관리자가 아님
+	if(!$_SESSION[is_admin]){
+		//비밀번호가 없음 
+		if($row[secret] == "Y"){
+			if($board[is_membership] != "Y"){
+				if($password == "" ){
+					url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=view&amp;no=$row[no]&amp;start=$start");
+					exit;
+				}
+
+				//비밀번호가 틀림
+				$password = hash("sha256", $password);
+
+				if($row[password] != $password){
+					alert("해당게시물은 작성자 및 관리자만 확인 가능합니다.");
+					url("$PHP_SELF?board_id=$board_id&amp;start=$start&amp;mode=check&amp;return_mode=$mode&amp;no=$row[no]");
+					exit;
+				}
+			 } else {
+				if($_SESSION[member_id] != $row[id]){
+					error("해당게시물은 작성자 및 관리자만 확인 가능합니다.");
+					exit;
+				}
+			}
+		}
+	}
+	mysql_query("UPDATE $board_id SET view_count = view_count +1 WHERE no='$no'");
+	//depth 가 1이상이면 답변 아이콘
+	$title_reply = "";
+	if($row[depth] > 0){
+		//$padding_style = $row[depth] * 40;
+		$title_reply = "<em class='reply'>답변</em>";
+	}
+
+?>
+
+<div class="bbsNew_container">
+	<!-- 상세 -->
+    <div class="bbsTitle_cont">
+        <i>공지사항</i>
+		 <h3 class="bbsTitle"><?=$title_reply?><?=$row[title]?></h3>
+        <div class="bbsDate">
+            <ul class="lora">
+                <li><?=str_replace("-", ".", reset(explode(" ", $row[reg_date])))?></li>
+                <li><i>조회수</i><?=$row[view_count]?></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="bbsContent">        
+		<div class="conts">
+            <figure class="img">
+				<? 
+				$file_count = 0;
+					for ($i = 1; $i <= $board[file_count]; $i++){ 
+						$file_title =  $row["file_".$i];
+						if($file_title){ 
+							$ext = end(explode(".", strtolower($file_title)));
+							if($ext == "jpg" || $ext == "png" || $ext == "jpeg" || $ext == "bmp"){ 
+								echo "<img src=\"/upload/$board_id/$file_title\" alt=\"\"/>";
+							}
+							if($row["useDownload_".$i] == "Y"){
+								$file_count++;
+							}
+						} 
+					} 
+				?>
+            </figure>
+			<?=$row[comments]?>
+			<p style="opacity:0; visibility:visible; color:white;"><?=nl2br($row[etc])?></p>
+		</div>                	
+    </div>	 
+
+    <div class="bbsAdm">
+        <ul>
+			<? if($_SESSION[is_admin]){ ?>
+					 <li class="delete"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;start=<?=$start?>&amp;mode=delete&amp;return_mode=list&amp;no=<?=$row[no]?>" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');">삭제</a></li>
+			<? } else if($auth_delete){ ?>
+				<? if($board[is_membership] != "Y"){ ?>
+					 <li class="delete"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;start=<?=$start?>&amp;mode=check&amp;return_mode=delete&amp;no=<?=$row[no]?>">삭제</a></li>
+				<? } else { ?>
+					 <li class="delete"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;start=<?=$start?>&amp;mode=delete&amp;return_mode=delete&amp;no=<?=$row[no]?>">삭제</a></li>
+				<? } ?>
+			<? } ?>
+
+			<? if($auth_write){ ?>
+				<li class="modify"><a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;start=<?=$start?>&amp;mode=modify&amp;no=<?=$row[no]?>">수정</a></li>
+			<? } ?>
+
+			
+        </ul>
+    </div> 
+
+	<div class="bbsFile" data-view="txt">
+		<div class="file">
+			<ul>
+				<? 
+					if($file_count > 0){
+						for ($i = 1; $i <= $board[file_count]; $i++){ 
+								$file_title =  $row["file_".$i];
+								$use_Download = $row["useDownload_".$i];
+								if($file_title && $use_Download == "Y"){ 
+									echo "<li><em></em><a href=\"/board/download.php?board_id=$board_id&amp;file=$file_title\"  title=\"$file_title 파일 다운로드\">$file_title</a></li>";
+							  } 
+						} 
+					} else {
+						echo "<li><em></em><p>첨부파일이 없습니다</p></li>";
+					}
+				?>
+			</ul>
+		</div>
+	</div>
+
+	<?
+		// 다음글, 이전글
+		$temp_next = mysql_fetch_array(mysql_query("SELECT no, title FROM $board_id WHERE  no>'$no' ORDER BY  no ASC LIMIT 1"));
+		if ($temp_next) {
+			$next = "?no=$temp_next[no]&amp;mode=view&amp;board_id=$board_id&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;category=$category#content"; 
+			$next_title = $temp_next[title];
+		} else { 
+			$next = "#";
+			$next_title = "다음글이 없습니다.";
+		}
+		// 이전글
+		$temp_prev = mysql_fetch_array(mysql_query("SELECT no, title FROM $board_id WHERE no<'$no' ORDER BY no DESC LIMIT 1"));
+		if ($temp_prev) { 
+			$prev = "?no=$temp_prev[no]&amp;mode=view&amp;board_id=$board_id&amp;start=$start&amp;search_key=$search_key&amp;keyword=$keyword&amp;category=$category#content";
+			$prev_title = $temp_prev[title];
+		} else {
+			$prev = "#";
+			$prev_title = "이전글이 없습니다.";
+		}
+	?>
+
+
+    <div class="bbsPager">       
+        <div class="inr_pager">
+            <a class="pagerBtn prev" href="<?=$prev?>">
+                <em>prev</em>
+                <!-- 이전 글 제목 표출 -->
+                <!-- 이전글이 없을시 이전글이 없습니다. 표출 -->
+                <p id="prev_post"><?=$prev_title?></p>
+            </a>
+            
+            <!-- 링크 뒤 #content 추가 -->            
+            <a href="<?=$PHP_SELF?>?board_id=<?=$board_id?>&amp;start=<?=$start?>" class="pager_list">
+                <span>LIST</span>
+            </a>
+
+            <a class="pagerBtn next" href="<?=$next?>">
+                <em>next</em>
+                <!-- 다음 글 제목 표출 -->
+                <!-- 다음글이 없을시 다음글이 없습니다. 표출 -->
+				<p id="next_post"><?=$next_title?></p>
+            </a>
+        </div>       
+    </div>    
+
+</div>
+<? 
+	//코멘트 사용하는 게시판인지 확인
+	if($board[use_comment] == "Y" && $auth_comment) {
+		include "comment.html";
+	}
+?>
+
+
+
+<script type="text/javascript">
+	$(function(){
+		$(".sub_tit").hide();
+	});
+</script>
+<!-- //버튼 -->

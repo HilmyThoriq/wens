@@ -1,0 +1,103 @@
+<?
+include_once  $_SERVER['DOCUMENT_ROOT'] . "/ko_admin/auth_manager.php";
+
+$mode_title = $site[title]." 등록";
+
+if($mode == "modify"){
+	$query = "SELECT * FROM $program_table WHERE no='$no'";
+	$result = mysql_query($query);
+	$row = mysql_fetch_array($result);
+	$mode_title = $site[title]." 수정";
+}
+?>
+<form action="<?=$PHP_SELF?>" method="post" name="form" enctype="multipart/form-data">
+	<input type="hidden" name="program_id" value="<?=$program_id?>" />
+	<input type="hidden" name="mode" value="<?=$mode?>_proc" />
+	<input type="hidden" name="return_url" value="<?=$url?>" />
+	<input type="hidden" name="no" value="<?=$row[no]?>" />
+	<table class="bbsView">
+		<caption><?=$mode_title?></caption>
+		<colgroup>
+			<col data-write="th" style="width:15%"/>
+			<col data-write="td" style="width:35%"/>
+			<col data-write="th" style="width:15%"/>
+			<col/>
+		</colgroup>
+		<tbody>
+			<tr>
+				<th scope="row"><span class="marking">필수항목</span><label for="title">팝업 제목</label></th>
+				<td colspan="3"><input type="text" name="title" id="title" class="inputFull required" value="<?=$row[title]?>" title="제목" /></td>
+			</tr>
+			<tr>
+				<th scope="row"><span class="marking">필수항목</span>기간</th>
+				<td colspan="3"><input type="text" name="start_date" value="<?=$row[start_date]?>" title="시작일"  class="input200 datepicker" placeholder="예) <?=date('Y')?>-<?=date('m')?>-<?=date('d')?>" /> ~ <input type="text" name="end_date" value="<?=$row[end_date]?>"title="종료일" class="input200 datepicker" placeholder="예) <?=date('Y')?>-<?=date('m')?>-<?=date('d')?>" />
+			</tr>
+			<tr>
+				<th scope="row"><span class="marking">필수항목</span><label for="link_url">링크 연결 주소</label></th>
+				<td colspan="3">
+					<select name="link_type">
+						<option value="_blank">새창</option>
+						<option value="_self">현재창</option>
+					</select>
+					<input type="text" name="link_url" id="link_url" value="<?=$row[link_url]?>" title="사이트 주소" class="input400" placeholder="http://를 꼭 포함시켜주세요." />
+					<span class="marking">필수항목</span><span class="txt_red">링크연결을 원하지 않을시 '#'을 입력해 주세요.</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="state">팝업 크기</label></th>
+				<td>
+					<span style="margin-right:10px;">가로 <input type="text" name="width" value="<?=$row[width]?>" class="input100"/> px</span>
+					<span>세로 <input type="text" name="height" value="<?=$row[height]?>" class="input100"/> px</span>
+				</td>
+				<th scope="row"><label for="state">팝업 위치</label></th>
+				<td>
+					<span style="margin-right:10px;">가로 <input type="text" name="position_width" value="<?=$row[position_width]?>" class="input100"/> px</span>
+					<span>세로 <input type="text" name="position_height" value="<?=$row[position_height]?>" class="input100"/> px</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">텍스트</th>
+				<td colspan="3">
+					<textarea name="contents" id="smart_content" rows="2" cols="2" style="display:none;" class="inputFull"><?=$row[contents]?></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="title_img">이미지</label></th>
+				<td colspan="3">
+					<div class="designFile" style="display:inline-block">
+						<input type="text" readonly="readonly" value="" class="input400"/>
+						<input type="file" name="title_img" id="title_img"/>
+						<label for="title_img" class="button white">파일선택</label>
+					</div>
+					<? if($row[img]) { ?>
+						<span style="margin-left:10px;">기존 파일 : <a href="/upload/site/<?=$program_id?>/<?=$row[title_img]?>" target="_blank"><?=$row[img]?></a></span>
+						<div class="designCheck">
+							<input type='checkbox' value="Y" name='title_img_del' id="title_img_del"/><label for="title_img_del">삭제</label>
+						</div>
+					<? } ?>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><span class="marking">필수항목</span><label for="state">사용여부</label></th>
+				<td colspan="3">
+					<div class="designRadio">
+						<input type="radio" name="state" id="stateY" value="Y" checked /> <label for="stateY">사용</label>
+						<input type="radio" name="state" id="stateN" value="N" /> <label for="stateN">미사용</label>
+					</div>
+				</td>
+			</tr>
+
+
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		$("input:radio[name='state']:radio[value='<?=$row[state]?>']").prop("checked",true);
+		$("select[name='link_type'] option[value='<?=$row[link_type]?>']").prop("selected", true);
+	</script>
+	<!-- //글쓰기 -->
+	<!-- 버튼 -->
+	<div class="btn_area">
+		<input type="submit" onclick="msgImpletion();" class="button" value="저장" />
+		<a href="<?=$PHP_SELF?>?program_id=<?=$program_id?>&amp;mode=list&amp;start=<?=$start?>&amp;no=<?=$row[no]?>" class="button gray">취소</a>
+	</div>
+</form>

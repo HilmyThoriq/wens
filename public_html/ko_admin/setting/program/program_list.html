@@ -1,0 +1,53 @@
+<h2 class="mt0">프로그램 설정</h2>
+<!-- 프로그램설정 -->	
+<table class="bbsList">
+	<caption>프로그램 설정</caption>
+	<colgroup>
+		<col style="width:7%"/>
+		<col />
+		<col style="width:18%"/>
+		<col style="width:20%"/>
+		<col style="width:10%"/>
+		<col style="width:25%"/>
+	</colgroup>
+	<thead>
+		<tr>
+			<th scope="col">No.</th>
+			<th scope="col">프로그램 명</th>
+			<th scope="col">프로그램 아이디</th>
+			<? if($_SESSION['auth_admin_ci'] == "koweb"){ ?>
+				<th scope="col">테이블 명</th>
+				<th scope="col">사용여부</th>
+			<? } ?>
+			<th scope="col">설정변경</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?
+			$query = "SELECT * FROM koweb_program_config ORDER BY sort ASC";
+			$result = mysql_query($query);
+			$total = mysql_num_rows($result);
+			$f_no = 1;
+			 while($row = mysql_fetch_array($result)){ 
+		?>
+		<tr>
+			<td><?=$f_no++?></td>
+			<td><?=$row[title]?></td>
+			<td><?=$row[id]?></td>
+			<? if($_SESSION['auth_admin_ci'] == "koweb"){ ?>
+				<td><?=$row[refer_table]?></td>
+				<td><?=$row[state]?></td>
+			<? } ?>
+
+			<td>
+				<a href="<?=$request_uri?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button sm gray">수정</a> 
+				<a href="<?=$request_uri?>&amp;mode=delete&amp;no=<?=$row[no]?>" class="button sm white">삭제</a>
+			</td>
+		</tr>
+	<? } ?>
+	</tbody>
+</table>
+
+<div class="btn_area tar">
+	<a href="<?=$request_uri?>&mode=write" class="button"/>프로그램 등록</a>
+</div>

@@ -1,0 +1,9 @@
+<?
+$common_url = $PHP_SELF."?type=setting&amp;core=manager_setting&amp;manager_type=$manager_type&amp;detail=$detail";
+$file_server_path = realpath(__FILE__);
+$server_path = str_replace(basename(__FILE__), "", $file_server_path);
+$serve_name = $manager_type."_".$detail;
+$table_name = "koweb_".$serve_name;
+
+include ($server_path.$serve_name."/proc.php");
+?>

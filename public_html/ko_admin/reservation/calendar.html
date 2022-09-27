@@ -1,0 +1,239 @@
+<?
+include_once ($_SERVER['DOCUMENT_ROOT']."/lib/config.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/lib/function.php");
+
+$reservation_query = "SELECT * FROM koweb_reservation_config limit 0,1";
+$reservation_result = mysql_query($reservation_query);
+$reservation = mysql_fetch_array($reservation_result);
+
+//오늘날짜 정보
+$now_date = date("Y-m-d");
+if(!$select_date) $select_date = $now_date;
+$now_week = date("w", time());
+$now_data = explode("-", $now_date);
+
+$n_y = $now_data[0];	//년
+$n_m = $now_data[1];	//월
+$n_d = $now_data[2];	//일
+$c_d = date('d', strtotime("+{$reservation['min_before_days']} days", strtotime($now_date)));
+
+if($is_admin) $c_d = $now_data[2];
+
+if(!$year || !$month){
+	$calendar_day = date("Y-m-d");
+} else {
+	$calendar_day = date($year . "-" . $month . "-01");
+}
+
+$calendar_data = explode("-", $calendar_day);   //날짜를 년월일로 배열저장
+$calendar_y = $calendar_data[0];	//년
+$calendar_m = $calendar_data[1];	//월
+$calendar_d = $calendar_data[2];	//일
+
+$year  = $calendar_y;
+$month = $calendar_m;
+
+echo "<script>var now_year='{$year}'; var now_month='{$month}'; var max_days='{$reservation['max_days']}'</script>";
+$sday_end = date("t", mktime(0, 0, 0, $calendar_m, $calendar_d, $calendar_y));  //마지막날짜구하기
+
+//매월 1월 12월 다음 이전 년도
+$now_YM = intval($calendar_y . $calendar_m);	//달력 년월
+$n_YM   = intval($n_y . $n_m);		//현재 년월
+
+if($calendar_m == "01") {
+	$back_y = $calendar_y - 1;
+	$back_m = "12";
+	$next_y = $calendar_y;
+	$next_m = $calendar_m + 1;
+	$next_m = substr("0" . $next_m, strlen("0".$next_m)-2, strlen("0".$next_m));
+
+} else if($calendar_m == "12") {
+	$back_y = $calendar_y;
+	$back_m = $calendar_m - 1;
+	$back_m = substr("0".$back_m, strlen("0".$back_m)-2, strlen("0".$back_m));
+
+	$next_y = $calendar_y + 1;
+	$next_m = "01";
+} else {
+	$back_y = $calendar_y;
+	$back_m = $calendar_m - 1;
+	$back_m = substr("0".$back_m, strlen("0".$back_m)-2, strlen("0".$back_m));
+	$next_y = $calendar_y;
+	$next_m = $calendar_m +1 ;
+	$next_m = substr("0".$next_m, strlen("0".$next_m)-2 ,strlen("0".$next_m));
+}
+
+$time = strtotime($year.'-'.$month.'-01');
+list($tday, $sweek) = explode('-', date('t-w', $time));  // 총 일수, 시작요일
+$tweek = ceil(($tday + $sweek) / 7);  // 총 주차
+$lweek = date('w', strtotime($year.'-'.$month.'-'.$tday));  // 마지막요일
+$week = array("sun","mon","tue","web","thu","fri","sat");
+
+function loop_reservation_date_input($start,$end,$row){
+	global $day_info,$item_count,$item_list;
+	$start = (int)$start;
+	$end = (int)$end;
+
+	for($i=$start; $i<= $end; $i++){
+		if( !is_array($day_info[$i]) ) $day_info[$i] = array();
+		// 상품정보 그대로 삽입(일 에다가)
+		array_push($day_info[$i] , $row);
+
+		// 해당아이템 갯수 카운팅
+		if( !is_array($item_count[$i]) ) $item_count[$i] = array();
+		if(!isset($item_count[$i][$row['item_no']])) $item_count[$i][$row['item_no']] = 0;
+		$item_count[$i][$row['item_no']]++;
+
+		if(!in_array($row['item_no'],$item_list)) array_push($item_list,$row['item_no']);
+	}
+}
+
+// 예약 데이터 호출
+$query = "SELECT A.*,LEFT(A.start_date,6) as start_date,LEFT(A.end_date,6) as end_date  FROM koweb_reservation_date as A WHERE LEFT(end_date,6) >= {$year}{$month} and LEFT(start_date,6) <= {$year}{$month} and state != '20'";
+$result = mysql_query($query);
+$day_info = array(); // day의 예약 정보
+$item_count = array(); // 아이템 갯수 카운트
+$item_list = array(); // 그달에 호출된 아이템
+
+while($row = mysql_fetch_array($result)){
+
+	if($row['start_date'] == $year.$month && $row['end_date'] == $year.$month){
+	// 그 달에 예약시작과 종료가 있는 예약
+
+		loop_reservation_date_input($row['start_day'],$row['end_day'],$row);
+
+	}elseif($row['start_date'] == $year.$month && $row['end_date'] != $year.$month){
+	// 시작은 그 달이지만 종료는 다음달이상으로 넘어가는 예약
+
+		loop_reservation_date_input($row['start_day'],$sday_end,$row);
+
+	}elseif($row['start_date'] != $year.$month && $row['end_date'] == $year.$month){
+	// 시작은 이전달 이상이지만 이번달에 끝나는 예약
+
+		loop_reservation_date_input(1,$row['end_day'],$row);
+
+	}else{
+	// $month달 통째로 예약인 상태
+
+		loop_reservation_date_input(1,$sday_end,$row);
+
+	}
+
+}
+// 예약 데이터 호출 끝
+
+// 상품 데이터 호출
+if(!in_array($no,$item_list))
+	array_push($item_list,$no);
+$item_list_str = join("','",$item_list);
+
+$query = "SELECT * FROM koweb_reservation_item WHERE no in ('{$item_list_str}')";
+$result = mysql_query($query);
+$item_total_count = array();
+while($row = mysql_fetch_array($result)){
+	$item_total_count[$row['no']] = $row['item_cnt'];
+}
+
+// 상품 데이터 호출 끝
+?>
+<div class="control">
+    <div>
+		<?if(($year == $n_y && $month > $n_m )|| $year > $n_y){?>
+        <a href='javascript:call_calendar("<?=$back_y?>","<?=$back_m?>",<?=$no?>)' class="btn_prev"><?=$n_y?>이전달<?=$year?></a>
+		<? } ?>
+        <p><?=$year?>.<?=$month?></p>
+        <a href='javascript:call_calendar("<?=$next_y?>","<?=$next_m?>",<?=$no?>)' class="btn_next">다음달</a>
+    </div>
+    <a href='javascript:call_calendar("<?=$n_y?>","<?=$n_m?>",<?=$no?>)' class="btn_today">Today</a>
+</div>
+
+<!-- 달력 -->
+<div>
+    <!-- today표시 td class="today" 예약불가 class="none" 선택시 class="on" today일때 상관없이 none또는 on을 추가하면 해당 컬러가 반영됨 -->
+    <table id="cal_table">
+        <caption>일,월,화,수,목,금,토 요일별 정보를 제공하는 표</caption>
+        <thead>
+            <tr>
+                <th scope="col" data-calendar="sun">일</th>
+                <th scope="col" data-calendar="mon">월</th>
+                <th scope="col" data-calendar="tue">화</th>
+                <th scope="col" data-calendar="web">수</th>
+                <th scope="col" data-calendar="thu">목</th>
+                <th scope="col" data-calendar="fri">금</th>
+                <th scope="col" data-calendar="sat">토</th>
+            </tr>
+        </thead>
+        <tbody>
+		<? for ($n=1, $i=0; $i<$tweek; $i++) { ?>
+			<tr>
+			<?
+				for ($k=0; $k<7; $k++) {
+					$item_use_check = array();
+					// 1일 이전 빈값
+					if (($i == 0 && $k < $sweek) || ($i == $tweek-1 && $k > $lweek)) {
+						echo "<td></td>";
+						continue;
+					}
+					$n++;
+					$date = $n-1;
+					$trans_date = sprintf("%02d", $date);
+					$date_time = $year."-".$month."-".$trans_date;
+					$data_week = $week[date('w', strtotime($date_time))];
+
+					// today class 추가
+					if($date_time == $now_date) $today_class = "today";
+					else $today_class="";
+
+					// 갯수 체크
+					// 넘어오는 no값만 체크해서 foreach안써도 되지만 후에 달력이 중점이된 예약에서 활용할수잇도록 foreach 사용
+					foreach($item_list as $value){
+						$item_use_check[$value]['flag'] =  true;
+					}
+
+					if($n_y >= $calendar_y && $n_m >= $calendar_m && $c_d > $date){
+						$item_use_check[$no]['flag'] =  false;
+						$item_use_check[$no]['add_class'] = "none";
+					}else{
+						foreach ($day_info[$date] as $key => $value) {
+							if($item_count[$date][$value['item_no']] >= $item_total_count[$value['item_no']] && !$is_admin){
+								$item_use_check[$value['item_no']]['add_class'] = "none";
+								$item_use_check[$value['item_no']]['flag'] =  false;
+							}else{
+								$item_use_check[$value['item_no']]['add_class'] = "";
+								$item_use_check[$value['item_no']]['flag'] =  true;
+							}
+						}
+					}
+
+
+					$call_select_fun = $reservation['date_select_type'] == 1 ? "select_days1" : "select_days2";
+					// echo "<td data-calendar=\"$data_week\" class=\"$add_class $add_class2\"><a href=\"$PHP_SELF?board_id=$board_id&amp;select_date=$date_time&amp;year=$year&amp;month=$month\" data-load-list=\"$date_time\"><em>$date</em>";
+					if($item_use_check[$no]['flag'] || $is_admin){
+						echo "<td onclick='{$call_select_fun}(\"".$year."\",\"".$month."\",\"".$date."\")' data-date=\"$year$month$trans_date\" data-calendar=\"$data_week\" class=\"{$item_use_check[$no]['add_class']} $today_class\"><a href='javascript:void(0);'>";
+					}else{
+						echo "<td data-calendar=\"$data_week\" class=\"{$item_use_check[$no]['add_class']} $today_class\" data-date=\"$year$month$trans_date\"><a href='javascript:void(0);'>";
+					}
+					echo "<em>$date</em>";
+
+					echo "</a></td>";
+				?>
+			<? } ?>
+			</tr>
+		<? } ?>
+		</tbody>
+    </table>
+</div>
+<!-- //달력 -->
+<p class="tip"><span>회색음영 날짜는 예약 불가</span> 한 날입니다. 달력에서 예약날짜를 선택하세요.</p>
+
+<script>
+//캘린더만의 스크립트(해당 파일 호출할때마다 실행될수 있도록)
+if($("#reservation_end").val() != "" && $("#reservation_end").val() != undefined){
+	<? if($reservation['date_select_type'] == "1"){
+		echo "fill_cal1();";
+	}else{
+		echo "call_fun2();";
+	}?>
+
+}
+</script>

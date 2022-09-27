@@ -1,0 +1,65 @@
+<!-- area_subVisual -->
+<div class="area_subVisual">
+    <span class="bg02"></span>
+    <h2></h2>
+</div>
+
+
+
+<!-- //area_subVisual -->
+
+<?
+$basename = basename($_SERVER['PHP_SELF']);
+$file_ = explode(".", $basename);	
+$common_ = substr($file_[0], 0, 5);
+
+?>
+<script type="text/javascript">
+	$(".gnb > li > a").removeClass("on");
+	$(".members").addClass("on");
+	$(".members_"+"<?=$file_[0]?>").addClass("on");
+	$(".members_"+"<?=$common_?>").addClass("on");
+	$(".members_"+"<?=$common_?>").parent('li').addClass("active");
+
+
+<?
+if($cate_full=='Full_time_Researcher'){
+?>
+$(".Full_time_Researcher").addClass("on");
+$(".Full_time_Researcher").parent('li').addClass("active");
+
+<?}else if($cate3_on){
+?>
+$("."+"<?=$cate3_on?>").addClass("on");
+$("."+"<?=$cate3_on?>").parent('li').addClass("active");
+
+<?}else if($cate2_on){
+?>
+$("."+"<?=$cate2_on?>").addClass("on");
+$("."+"<?=$cate2_on?>").parent('li').addClass("active");
+
+<?}else if($cate_on){
+?>
+$("."+"<?=$cate_on?>").addClass("on");
+$("."+"<?=$cate_on?>").parent('li').addClass("active");
+
+<?}else if($mem_type=='professor'){
+?>
+$("."+"<?=$mem_type?>").addClass("on");
+$("."+"<?=$mem_type?>").parent('li').addClass("active");
+
+<?}else{?>
+
+	if("<?=$board_id?>"){
+	//게시판일경우
+		$("."+"<?=$board_id?>").addClass("on");
+		$("."+"<?=$board_id?>").parent('li').addClass("active");
+	}else{
+		$(".members_"+"<?=$common_?>").addClass("on");
+	}
+
+
+<?}?>
+
+
+</script>

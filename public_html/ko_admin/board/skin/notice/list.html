@@ -1,0 +1,84 @@
+<?
+//페이징 변수
+if (!$start) $start = 0;
+$scale = 10; // 리스트 수
+$page_scale	= 10; // 페이징 수
+
+//검색
+if($keyword){
+
+	if($search_key == ""){
+		$search_key = "title";
+	}
+	$WHERE .= " AND $search_key LIKE '%$keyword%'";
+}
+
+if($cate){
+	$WHERE .= " AND category = '{$cate}'";
+}
+
+//리스트
+$total_query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC";
+$total_result = mysql_query($total_query);
+$total = mysql_num_rows($total_result);
+
+$query = "SELECT * FROM $board_id WHERE 1=1 $WHERE ORDER BY notice DESC, reg_date DESC, no DESC LIMIT $start, $scale";
+
+$result = mysql_query($query);
+?>
+
+<!-- 검색 및 버튼 -->
+<? include "search.html"; ?>
+<!-- 검색 및 버튼 -->
+
+<ul class="bbsList">
+<?
+if($total <= 0){
+	echo "<li class='none'>등록된 글이 없습니다.</li>";
+} else {
+	while($row = mysql_fetch_array($result)){ ?>
+		<? 
+			$this_fileCount = 0;
+			$date_tmp = reset(explode(" ", $row[reg_date]));
+
+			$date_array = explode("-",  $date_tmp); 
+				if($row[notice] == "Y") { 
+					$notice = "<i class='notice'>공지</i>";
+				} else {
+					$notice = "";
+				}
+
+			for($i = 1; $i <= $board[file_count]; $i++){
+				if($row['file_'.$i] && $row['useDownload_'.$i] == "Y"){
+					$this_fileCount = 1;
+					break;
+				}
+			}
+		?>	
+			<!-- 리스트 시작 -->
+				<li>
+					<span class="date"><i><?=$date_array[2]?></i><?=$date_array[0]?>.<?=$date_array[1]?></span>
+					<a href="<?=$PHP_SELF?>?mode=view&amp;no=<?=$row[no]?>&amp;board_id=<?=$board_id?>&amp;start=<?=$start?>#content" class="subject"><?=$notice?><?=$row[title]?>
+					<? if($this_fileCount > 0){ ?>
+						<span>첨부파일있음</span>
+					<? } ?>
+					</a>
+					<a href="<?=$PHP_SELF?>?mode=view&amp;no=<?=$row[no]?>&amp;board_id=<?=$board_id?>&amp;start=<?=$start?>#content" class="more"><em>자세히보기</em></a>
+				</li>
+			<!-- 리스트 종료 -->
+	<? } ?>
+<? } ?>
+</ul>
+
+<? if($auth_write){?>
+	<div class="search_bbs">
+	<!-- 버튼 -->
+		<div class="btn">
+			<a href="<?=$PHP_SELF?>?mode=write&amp;board_id=<?=$board_id?>&cate=<?=$row[category]?>" class="button">글쓰기</a>
+		</div>
+	</div>
+<? } ?>
+	
+<!-- page -->
+<? include "paging.html"; ?>
+<!-- //page -->

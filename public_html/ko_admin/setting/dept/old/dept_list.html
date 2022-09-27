@@ -1,0 +1,72 @@
+<h2 class="mt0">부서 관리</h2>	
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="apply_proc" />
+<input type="hidden" name="manager_type" value="member" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+<table class="bbsList">
+	<caption>부서 관리</caption>
+	<colgroup>
+	<? if($site[use_member_okey] == "Y"){ ?>
+		<col style="width:5%"/>
+	<? } ?>
+		<col style="width:5%"/>
+		<col />
+		<col style="width:40%"/>
+		<col style="width:25%"/>
+	</colgroup>
+	<thead>
+		<tr>
+		<? if($site[use_member_okey] == "Y"){ ?>
+			<th scope="col"><input type="checkbox" name="all_checked" id="all_check"></th>
+		<? } ?>
+			<th scope="col">No.</th>
+			<th scope="col">부서</th>
+			<th scope="col">비고</th>
+			<th scope="col">관리</th>
+		</tr>
+	</thead>
+	<tbody>
+	<? 
+		$query = "SELECT * FROM koweb_dept ORDER BY no DESC";
+		$result = mysql_query($query);
+		$total = mysql_num_rows($result);
+		$rnum = $total;
+		while($row = mysql_fetch_array($result)){ ?>
+		<tr>
+		<? if($site[use_member_okey] == "Y"){ ?>
+			<td><?=$apply_member?></td>
+		<? } ?>
+			<td><?=$rnum--?></td>
+			<td><?=$row[dept]?></td>
+			<td><?=$row[memo]?></td>
+			<td>			
+				<a href="<?=$request_uri?>&amp;mode=modify&amp;no=<?=$row[no]?>" class="button sm gray">수정</a> 
+				<a href="<?=$request_uri?>&amp;mode=delete&amp;no=<?=$row[no]?>" class="button sm white">삭제</a>
+			</td>
+		</tr>
+	<? } ?>
+	</tbody>
+</table>
+
+<div class="btn_area right">
+<? if($site[use_member_okey] == "Y"){ ?>
+	<input type="submit" class="button red" value="일괄 승인" />
+<? } ?>
+	<a href="<?=$request_uri?>&mode=write" class="button"/>부서 등록</a>
+</div>
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#all_check").click(function(){
+		if($("#all_check").prop("checked")){
+            //input태그의 class 가 apply_check인 태그들을 찾아서 checked옵션을 true로 정의
+            $(".apply_check").prop("checked",true);
+            //클릭이 안되있으면
+		} else {
+			$(".apply_check").prop("checked",false);
+		}
+	});
+});
+</script>

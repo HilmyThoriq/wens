@@ -1,0 +1,128 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("../../inc/header.html")?>
+<?include("inc_visual.html")?>
+
+
+<section id="container">		
+	<div id="content">		
+		<div class="area_sub">
+            <div class="inr">
+               <!-- 서브타이틀 -->
+               <div class="area_subtitle on">
+                    <h3></h3>
+                </div>
+                <!-- 서브 내용 -->
+                <div class="area_conts">
+                   
+                    <div class="bbsSearch">
+                        <form action="" method="get">
+                            <div class="designSelect">
+                                <select name='cate'>
+                                    <option value="">전체</option>
+                                    <option value="제목">제목</option>
+                                    <option value="작성자">작성자</option>
+                                    <option value="내용">내용</option>
+                                </select>
+                            </div>
+                            <input type="text" id="keyword" name="keyword" value="">
+                            <input type="submit" class="button" value="검색">	
+                        </form>						
+                    </div>
+                
+                  <!-- 목록 6개 표시 -->
+                    <ul class="photoList">
+                        <!-- 반복 -->
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                        <!-- //반복 -->
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="img"><img src="../../images/sample.jpg" alt=""/></span>
+                                <em>침투성 농약은 잎이나 뿌리를 통해 식물체에 흡수되어 체관이나 물관을 타고 이행</em>
+                                <span class="write">
+                                    <em>2018-05-09</em>
+                                    <i>관리자</i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- //목록 -->	
+                        
+                    <!-- page -->
+                    <div class="pagination">
+                        <div class="page_control_prev">
+                            <a href="#" class="btn_end first">맨처음</a>
+                            <a href="#" class="btn_pager prev">이전</a>
+                        </div>		
+                        <ol>
+                            <li><a href="">1</a></li>
+                            <!-- 현재페이지일때 on -->
+                            <li class="on"><a href="">2</a></li>
+                            <li><a href="">3</a></li>
+                            <li><a href="">4</a></li>
+                            <li><a href="">5</a></li>
+                        </ol>
+                        <div class="page_control_next">
+                            <a href="#" class="btn_pager next">다음</a>
+                            <a href="#" class="btn_end last">맨마지막</a>			
+                        </div>			
+                    </div>
+                    <!-- //page -->
+
+                </div>
+            </div>
+        </div>
+	</div>
+</section>
+
+
+<?include("../../inc/footer.html")?>

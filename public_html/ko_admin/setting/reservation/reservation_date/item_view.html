@@ -1,0 +1,30 @@
+<h3 style="margin-top:40px;">제품정보</h3>
+<ul class="blogList">
+	<li>
+		<a href="javascript:location_item();" >
+			<span class="img">
+				<? if($res_row['title_img']){
+					$ext = end(explode(".", strtolower($res_row['title_img'])));
+					if($ext == "jpg" || $ext == "png" || $ext == "jpeg" || $ext == "bmp"){ ?>
+						<img src="/upload/reservation/reservation_item/thumb_<?=$res_row['title_img']?>" alt=""/>
+					<? }
+				} ?>
+			</span>
+			<!-- 제목 -->
+			<em><?=$res_row['item_name']?></em>
+			<p><?=mb_strimwidth($item_option,'0','260','...','utf-8')?></p>
+			<? if($board['price_use'] == 1){ ?>
+				<i>금액 : <?=number_format($res_row['item_price'])?> 원</i>
+			<? } ?>
+			<i><?=reset(explode(" ", $res_row['reg_date']))?></i>
+		</a>
+	</li>
+</ul>
+
+<script>
+function location_item(){
+	if(confirm("해상 상품정보로 이동하시겠습니까?")){
+			window.location.href=href="?type=setting&core=manager_setting&manager_type=reservation&detail=item&mode=view&no=<?=$res_row['item_no']?>";
+	}
+}
+</script>

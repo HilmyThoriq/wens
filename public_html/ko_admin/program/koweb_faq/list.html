@@ -1,0 +1,34 @@
+<!--<h3 class="title_sub"><?=$program[title]?></h2>-->
+<!-- 프로그램설정 -->	
+<?
+	$query = "SELECT * FROM koweb_faq ORDER BY no ASC";
+	$result = mysql_query($query);
+	$cnum = mysql_num_rows($result);
+?>
+
+<? if($cnum > 0) { ?>
+<dl class="faqList accordion">
+<? 	while($row = mysql_fetch_array($result)){ ?>
+<dt>
+	<a href="#"><?=$row[question]?></a> 
+</dt>
+<dd>
+	<div>
+	<?=nl2br($row[answer])?>
+	<? if($is_admin) { ?>
+		<div style="margin-top:30px;">
+			<a href="/ko_admin/index.html?type=program&core_id=<?=$program_id?>&core=manager_program&mode=modify&amp;no=<?=$row[no]?>" class="button sm">수정</a>
+			<a href="/ko_admin/index.html?type=program&core_id=<?=$program_id?>&core=manager_program&mode=delete&amp;no=<?=$row[no]?>" class="button sm white">삭제</a>
+		</div>
+	<? } ?>
+	</div>
+</dd>
+<? } ?>
+<? } else { 
+	echo "<div class=\"none_data type02\">등록된 글이 없습니다.</div>";
+ } ?>
+<? if($is_admin){ ?>
+<div class="btn_area tar">
+	<a href="<?=$request_uri?>&mode=write" class="button"/><?=$program[title]?> 등록</a>
+</div>
+<? } ?>

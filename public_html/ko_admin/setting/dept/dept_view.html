@@ -1,0 +1,117 @@
+<?
+$mrow = mysql_fetch_array(mysql_query("SELECT * FROM koweb_dept WHERE no='$no'"));
+$v = "";
+$history = explode("|",$mrow[depth_history]);
+
+foreach($history as $value){
+
+	$vrow = mysql_fetch_array(mysql_query("SELECT * FROM koweb_dept WHERE no='$value'"));
+	$v .= $vrow[dept] . " > ";
+}
+
+$v = substr($v , 0, -3);
+?>
+<h2 class="mt0"><?=$v?></h2>	
+<form method='post' action="<?=$PHP_SELF?>" enctype='multipart/form-data'>
+<input type="hidden" name="mode" value="apply_proc" />
+<input type="hidden" name="manager_type" value="member" />
+<input type="hidden" name="core" value="manager_setting" />
+<input type="hidden" name="type" value="setting" />
+<table class="bbsList">
+	<caption>회원 설정</caption>
+	<colgroup>
+	<? if($site[use_member_okey] == "Y"){ ?>
+		<col style="width:5%"/>
+	<? } ?>
+		<col style="width:5%"/>
+		<col style="width:10%"/>
+		<col />
+		<col style="width:10%"/>
+		<col style="width:20%"/>
+		<col style="width:10%"/>
+		<col style="width:25%"/>
+	</colgroup>
+	<thead>
+		<tr>
+		<? if($site[use_member_okey] == "Y"){ ?>
+			<th scope="col"><input type="checkbox" name="all_checked" id="all_check"></th>
+		<? } ?>
+			<th scope="col">No.</th>
+			<th scope="col">부서</th>
+			<th scope="col">아이디</th>
+			<th scope="col">이름</th>
+			<th scope="col">연락처</th>
+			<th scope="col">회원구분</th>
+			<th scope="col">관리</th>
+		</tr>
+	</thead>
+	<tbody>
+	<? 
+		$res_query = "SELECT * FROM koweb_dept WHERE 1=1 AND ref_group = '$mrow[ref_group]' AND depth >= '$mrow[depth]' AND depth_history LIKE '%$no%'";
+		$res_result = mysql_query($res_query);
+		while($res = mysql_fetch_array($res_result)){
+			$query = "SELECT *  FROM koweb_member WHERE 1=1 AND dept='$res[no]'";
+			$result = mysql_query($query);
+			$total = mysql_num_rows($result);
+			while($row = mysql_fetch_array($result)){ ?>
+			<?
+				if($row[is_admin] == "1") $admin_ = "Y";
+				else $admin_ = "N";
+
+				switch($row[auth_level]){
+					case "1" :
+						$auth_text = "관리자";
+						break;
+					case "3" :
+						$auth_text = "정회원";
+						break;
+					case "5" :
+						$auth_text = "준회원";
+						break;
+					case "99" :
+						$auth_text = "승인대기";
+						$apply_member = "<input type=\"checkbox\" name=\"check_apply[]\" class=\"apply_check\"  value=\"".$row[no]."\"/>";
+						break;
+				}
+			?>
+			<tr>
+			<? if($site[use_member_okey] == "Y"){ ?>
+				<td><?=$apply_member?></td>
+			<? } ?>
+				<td><?=$total--?></td>
+				<td><?=$res[dept]?></td>
+				<td><?=$row[id]?></td>
+				<td><?=$row[name]?></td>
+				<td><?=$row[phone]?></td>
+				<td><?=$auth_text?></td>
+				<td>			
+					<a href="?type=setting&core=manager_setting&manager_type=member&mode=view&no=<?=$row[no]?>&return_no=<?=$no?>" class="button sm gray">보기</a> <a href="?type=setting&core=manager_setting&manager_type=member&mode=modify&no=<?=$row[no]?>&return_no=<?=$no?>" class="button sm gray">수정</a> <a href="?type=setting&core=manager_setting&manager_type=member&mode=delete&no=<?=$row[no]?>&return_no=<?=$no?>" class="button sm white">삭제
+				</a>
+				</td>
+			</tr>
+		<? } ?>
+	<? } ?>
+	</tbody>
+</table>
+
+<div class="btn_area right">
+<? if($site[use_member_okey] == "Y"){ ?>
+	<input type="submit" class="button red" value="일괄 승인" />
+<? } ?>
+	<a href="<?=$request_uri?>&mode=write" class="button"/>회원  등록</a>
+</div>
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#all_check").click(function(){
+		if($("#all_check").prop("checked")){
+            //input태그의 class 가 apply_check인 태그들을 찾아서 checked옵션을 true로 정의
+            $(".apply_check").prop("checked",true);
+            //클릭이 안되있으면
+		} else {
+			$(".apply_check").prop("checked",false);
+		}
+	});
+});
+</script>

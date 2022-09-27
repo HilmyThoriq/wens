@@ -1,0 +1,193 @@
+<? include  $_SERVER['DOCUMENT_ROOT'] . "/head.php"; ?>
+<?include("../../inc/top.html")?>
+<?include("inc_visual.html")?>
+
+<section id="container">
+
+    <!-- 본문 -->
+    <div id="content">
+        <div class="area_admin ">
+            <div class="adminCont">
+                
+                <!-- Patents 양식 -->
+                <!-- 아래 내용부터 본 내용입니다.  -->
+               
+                <div class="area_formConts bbsView">
+                    <div class="form_List">
+                        <ul>
+                        
+                            <li class="typeB">
+                                <div class="tit">
+                                    <label for="title​​"><span class="import">*</span>Title​</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="title​​" id="title​​" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Category​</label>
+                                </div>
+                                <div class="inBox">
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="international" id="international" value="Y"><label for="international">International​</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="domestic" id="domestic" value="Y"><label for="domestic">Domestic</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="role"><span class="import">*</span>Status</label>
+                                </div>
+                                <div class="inBox">
+                                    <ul class="check_list">
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="filed" id="filed" value="Y"><label for="filed">Filed​</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="designCheck">
+                                                <input type="radio" name="register" id="register" value="Y"><label for="register">Registered​</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                           
+                            <li>
+                                <div class="tit">
+                                    <label for="application">출원번호 <span class="sm">Application Number</span></label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="application" id="application" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="patent">등록번호 <span class="sm">Patent Number</span></label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="patent" id="patent" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="filing">출원일 <span class="sm">Filing Date</span></label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="dateBox">
+                                        <span><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" name="filing" id="filing" >
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="patent">등록일 <span class="sm">Registration Date</span></label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="dateBox">
+                                        <span><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" name="filing" id="filing" >
+                                    </div>
+                                </div>
+                            </li>
+                           
+                            <li>
+                                <div class="tit">
+                                    <label for="acknowledgement​">Acknowledgement​</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="auto_search">
+                                        <input type="text" name="iacknowledgement" id="acknowledgement"  class="inputFull autoSearch">
+                                        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="tit">
+                                    <label for="link">Link</label>
+                                </div>
+                                <div class="inBox">
+                                    <input type="text" name="link" id="link" class="inputFull" >
+                                </div>
+                            </li>
+                            <li>
+                                <div class="tit">
+                                    <label for="document">Document</label>
+                                </div>
+                                <div class="inBox">
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <!-- 클릭시 첨부된 파일 삭제  -->
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                    <div class="designFile">
+                                        <input type="text" readonly="readonly" value="">
+                                        <input type="file" name="file_1" id="file_1">
+                                        <label for="file_1" class="button white">
+                                            <span> 파일선택</span>
+                                        </label>  
+                                        <button class="del"><i class="fa-solid fa-circle-minus"></i></button>
+                                    </div>
+                                   <em class="tip">첨부파일 가능 용량은 10MB 입니다</em>
+                                </div>
+                            </li>
+                          
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="btn_area">
+                        <input type="submit" onclick="msgImpletion();" class="button" value="저장">
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;start=&amp;mode=delete&amp;return_mode=list&amp;no=" class="button" onclick="return confirm('삭제한 데이터는 다시 복구 할 수 없습니다. 삭제하시겠습니까?');"><span>삭제</span></a>
+                        <a href="/ko_admin/index.html?board_id=board_center&amp;mode=list&amp;start=&amp;cate=" class="button gray"><span>취소</span></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- //본문 -->
+
+</section>
+
+<?include("inc/footer.html")?>
